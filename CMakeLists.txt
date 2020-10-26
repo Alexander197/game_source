@@ -3,12 +3,16 @@ cmake_minimum_required(VERSION 3.18.4 FATAL_ERROR)
 set(PROJECT_NAME game_source)
 project(${PROJECT_NAME})
 
-set(CMAKE_CXX_STANDART	 17)
 
 add_executable(${PROJECT_NAME} 
 	src/main.cpp
 	src/Renderer/ShaderProgram.cpp
-	src/Renderer/ShaderProgram.h)
+	src/Renderer/ShaderProgram.h
+	src/Resources/ResourceManager.cpp
+	src/Resources/ResourceManager.h
+)
+
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 #set(CMAKE_C_COMPILER /C/"Program files (x86)"/"Microsoft Visual Studio"/2019/professional/VC/Tools/MSVC/14.27.29110/bin/hostx64/x64/cl.exe)
 
@@ -22,3 +26,8 @@ target_link_libraries(${PROJECT_NAME} glfw)
 
 add_subdirectory(external/glad)
 target_link_libraries(${PROJECT_NAME} glad)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+					COMMAND ${CMAKE_COMMAND} -E copy_directory
+					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)

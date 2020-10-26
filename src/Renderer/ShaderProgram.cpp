@@ -19,7 +19,7 @@ namespace Renderer {
 		glAttachShader(m_ID, vertexShaderID);
 		glAttachShader(m_ID, fragmentShaderID);
 		glLinkProgram(m_ID);
-
+		
 		glDeleteShader(vertexShaderID);
 		glDeleteShader(fragmentShaderID);
 		
