@@ -30,7 +30,7 @@ std::string ResourceManager::getFileString(const std::string& relativeFilePath) 
 	return buffer.str();
 }
 
-std::shared_ptr<Renderer::ShaderProgram>ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, std::string fragmentPath)
+std::shared_ptr<Renderer::ShaderProgram>ResourceManager::loadShaders(const std::string& shaderName, const std::string& vertexPath, const std::string fragmentPath)
 {
 	std::string vertexString = getFileString(vertexPath);
 	if (vertexString.empty())
