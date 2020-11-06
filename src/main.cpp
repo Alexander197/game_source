@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <vector>
 
 #include "Renderer/ShaderProgram.h"
 #include "Resources/ResourceManager.h"
@@ -73,8 +74,12 @@ int main(int argc, char** argv)
         }
 
         auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/brick.jpg");
+        std::vector<std::string> subTextureNames = {"tex1","tex2","tex3","tex4","tex5","tex6","tex7","tex8"};
+
+        auto textureAtlas = resourceManager.loadTextureAtlas("DafaultTextureAtlas", "res/textures/different_textures.jpg", subTextureNames, 100, 100);
 
         auto pSprite = resourceManager.loadSprite("NewSprite", "DefaultTexture", "SpriteShader", 50, 50);
+        auto pTex1Sprite = resourceManager.loadSprite("Tex1Sprite", "DafaultTextureAtlas", "SpriteShader", 100, 100, "tex1");
 
         glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(g_windowSize.x), 0.0f, static_cast<float>(g_windowSize.y), -100.0f, 100.0f);
         
@@ -89,6 +94,9 @@ int main(int argc, char** argv)
             
             pSprite->setPosition(glm::vec2(100, 100));
             pSprite->render();
+
+            pTex1Sprite->setPosition(glm::vec2(300, 300));
+            pTex1Sprite->render();
 
 
             /* Swap front and back buffers */
