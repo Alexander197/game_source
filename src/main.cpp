@@ -6,11 +6,13 @@
 
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #include "Renderer/ShaderProgram.h"
 #include "Resources/ResourceManager.h"
 #include "Renderer/Texture2D.h"
 #include "Renderer/Sprite.h"
+#include "Renderer/AnimatedSprite.h"
 
 glm::ivec2 g_windowSize(680, 480);
 
@@ -73,13 +75,38 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/brick.jpg");
-        std::vector<std::string> subTextureNames = {"tex1","tex2","tex3","tex4","tex5","tex6","tex7","tex8"};
+        std::vector<std::string> subTextureNames = {
+            "tex1",
+            "tex2",
+            "tex3",
+            "tex4",
+            "tex5",
+            "tex6",
+            "tex7",
+            "tex8"};
 
         auto textureAtlas = resourceManager.loadTextureAtlas("DafaultTextureAtlas", "res/textures/different_textures.jpg", subTextureNames, 100, 100);
 
-        auto pSprite = resourceManager.loadSprite("NewSprite", "DefaultTexture", "SpriteShader", 50, 50);
-        auto pTex1Sprite = resourceManager.loadSprite("Tex1Sprite", "DafaultTextureAtlas", "SpriteShader", 100, 100, "tex1");
+        auto pTex1Sprite = resourceManager.loadSprite("Tex1Sprite", "DafaultTextureAtlas", "SpriteShader", 100, 100, "tex2");
+        pTex1Sprite->setPosition(glm::vec2(300, 300));
+
+        auto pAnim1 = resourceManager.loadAnimatedSprite("anim1", "DafaultTextureAtlas", "SpriteShader", 100, 100, "tex1");
+
+        std::vector<std::pair<std::string, uint64_t>> someState1;
+        someState1.emplace_back(std::make_pair<std::string, uint64_t>("tex1", 1000000000));
+        someState1.emplace_back(std::make_pair<std::string, uint64_t>("tex2", 1000000000));
+        someState1.emplace_back(std::make_pair<std::string, uint64_t>("tex3", 1000000000));
+
+        std::vector<std::pair<std::string, uint64_t>> someState2;
+        someState2.emplace_back(std::make_pair<std::string, uint64_t>("tex4", 1000000000));
+        someState2.emplace_back(std::make_pair<std::string, uint64_t>("tex5", 1000000000));
+        someState2.emplace_back(std::make_pair<std::string, uint64_t>("tex6", 1000000000));
+        
+        pAnim1->insertState("someState1", someState1);
+        pAnim1->insertState("someState2", someState2);
+
+        pAnim1->setPosition(glm::vec2(100, 100));
+        pAnim1->setState("someState1");
 
         glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(g_windowSize.x), 0.0f, static_cast<float>(g_windowSize.y), -100.0f, 100.0f);
         
@@ -87,17 +114,22 @@ int main(int argc, char** argv)
         pSpriteShaderProgram->setInt("tex", 0);
         pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
+        auto lastTime = std::chrono::high_resolution_clock::now();
+
         while (!glfwWindowShouldClose(pWindow))
         {
+            auto currentTime = std::chrono::high_resolution_clock::now();
+
+            uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - lastTime).count(); 
+            lastTime = currentTime;
+            pAnim1->update(duration);
+
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
-            
-            pSprite->setPosition(glm::vec2(100, 100));
-            pSprite->render();
 
-            pTex1Sprite->setPosition(glm::vec2(300, 300));
+            pAnim1->render();
+
             pTex1Sprite->render();
-
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);
