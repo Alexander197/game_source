@@ -13,12 +13,27 @@
 #define STBI_ONLY_PNG
 #include "stb_image.h"
 
-ResourceManager::ResourceManager(const std::string& executablePath)
+ResourceManager::ShaderProgramsMap_t ResourceManager::m_shaderProgramsMap;
+ResourceManager::TexturesMap_t ResourceManager::m_textures;
+ResourceManager::SpritesMap_t ResourceManager::m_sprites;
+ResourceManager::AnimatedSpritesMap_t ResourceManager::m_animatedSprites;
+std::string ResourceManager::m_path;
+
+void ResourceManager::unloadAllResources()
+{
+	m_shaderProgramsMap.clear();
+	m_textures.clear();
+	m_sprites.clear();
+	m_animatedSprites.clear();
+}
+
+void ResourceManager::setExecutablePath(const std::string& executablePath)
 {
 	size_t found = executablePath.find_last_of("/\\	");
 	m_path = executablePath.substr(0, found);
 }
-std::string ResourceManager::getFileString(const std::string& relativeFilePath) const
+
+std::string ResourceManager::getFileString(const std::string& relativeFilePath)
 {
 	std::ifstream f;
 	f.open(m_path + "/" + relativeFilePath.c_str(), std::ios::in | std::ios::binary);
