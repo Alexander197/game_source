@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <glm/vec2.hpp>
 
+class Tank;
+
 class Game {
 public:
 	Game(const glm::ivec2& windowSize);
@@ -24,4 +26,5 @@ private:
 
 	glm::ivec2 m_windowSize;
 	EGameState m_eCurrentGameState;
+	std::unique_ptr<Tank> m_pTank;
 };
