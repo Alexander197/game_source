@@ -20,9 +20,7 @@ namespace Renderer {
 			0.0f, 0.0f,
 			0.0f, 1.0f,
 			1.0f, 1.0f,
-			1.0f, 1.0f,
-			1.0f, 0.0f,
-			0.0f, 0.0f
+			1.0f, 0.0f
 		};
 
 		auto subTexture = m_pTexture->getSubTexture(std::move(initialSubTexture));
@@ -31,34 +29,33 @@ namespace Renderer {
 			subTexture.leftBottomUV.x, subTexture.leftBottomUV.y,
 			subTexture.leftBottomUV.x, subTexture.rightTopUV.y,
 			subTexture.rightTopUV.x, subTexture.rightTopUV.y,
+			subTexture.rightTopUV.x, subTexture.leftBottomUV.y
+		};
 
-			subTexture.rightTopUV.x, subTexture.rightTopUV.y,
-			subTexture.rightTopUV.x, subTexture.leftBottomUV.y,
-			subTexture.leftBottomUV.x, subTexture.leftBottomUV.y,
+		const GLuint indices[] = {
+			0, 1, 2,
+			2, 3, 0
 		};
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		glGenBuffers(1, &m_vertexCoordsVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertexCoordsVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexCoords), &vertexCoords, GL_STATIC_DRAW);
+		m_vertexCoordsBuffer.init(vertexCoords, sizeof(vertexCoords));
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-		glGenBuffers(1, &m_texCoordsVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_texCoordsVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), &texCoords, GL_STATIC_DRAW);
+		m_texCoordsBuffer.init(texCoords, sizeof(texCoords));
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-		glBindVertexArray(0);
+		m_indexBuffer.init(indices, sizeof(indices));
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
-	Sprite::~Sprite()
+	Sprite::~Sprite()	
 	{
-		glDeleteBuffers(1, &m_vertexCoordsVBO);
-		glDeleteBuffers(1, &m_texCoordsVBO);
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
@@ -79,7 +76,7 @@ namespace Renderer {
 		glActiveTexture(GL_TEXTURE0);
 		m_pTexture->bind();
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 		glBindVertexArray(0);
 	}
 	void Sprite::setPosition(const glm::vec2& position)

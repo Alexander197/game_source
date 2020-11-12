@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <GLFW\glfw3.h>
+#include <thread>
 
 Game::Game(const glm::ivec2& windowSize):m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize)
 {
@@ -31,6 +32,7 @@ void Game::render()
         m_pTank->render();
     }
 }
+
 void Game::update(const uint64_t delta)
 {
     //ResourceManager::getAnimatedSprite("anim1")->update(delta);
@@ -60,6 +62,7 @@ void Game::update(const uint64_t delta)
         {
             m_pTank->move(false);
         }
+
         m_pTank->update(delta);
     }
    

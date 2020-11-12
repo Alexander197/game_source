@@ -6,6 +6,9 @@
 #include <memory>
 #include <string>
 
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+
 namespace Renderer {
 
 	class Texture2D;
@@ -31,11 +34,15 @@ namespace Renderer {
 	protected:
 		std::shared_ptr<Texture2D> m_pTexture;
 		std::shared_ptr<ShaderProgram> m_pSharedProgram;
+		
 		glm::vec2 m_position;
 		glm::vec2 m_size;
 		float m_rotation;
+
 		GLuint m_vao;
-		GLuint m_vertexCoordsVBO;
-		GLuint m_texCoordsVBO;
+
+		VertexBuffer m_vertexCoordsBuffer;
+		VertexBuffer m_texCoordsBuffer;
+		IndexBuffer m_indexBuffer;
 	};
 }
