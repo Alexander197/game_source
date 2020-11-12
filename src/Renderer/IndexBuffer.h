@@ -20,4 +20,5 @@ namespace Renderer {
 	private:
 		GLuint m_id;
 	};
+
 }

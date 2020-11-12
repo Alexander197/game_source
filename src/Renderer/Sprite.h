@@ -8,6 +8,7 @@
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
 namespace Renderer {
 
@@ -39,7 +40,7 @@ namespace Renderer {
 		glm::vec2 m_size;
 		float m_rotation;
 
-		GLuint m_vao;
+		VertexArray m_vertexArray;
 
 		VertexBuffer m_vertexCoordsBuffer;
 		VertexBuffer m_texCoordsBuffer;

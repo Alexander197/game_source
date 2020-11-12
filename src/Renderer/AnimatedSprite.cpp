@@ -68,7 +68,7 @@ namespace Renderer {
 			};
 
 			m_texCoordsBuffer.update(texCoords, sizeof(texCoords));
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			m_texCoordsBuffer.unbind();
 			m_dirty = false;
 		}
 		Sprite::render();
