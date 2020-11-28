@@ -5,7 +5,7 @@
 #include <map>
 #include <glm/glm.hpp>
 
-namespace Renderer {
+namespace RenderEngine {
 	class Texture2D {
 	public:
 

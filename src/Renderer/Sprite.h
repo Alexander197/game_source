@@ -10,7 +10,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 
-namespace Renderer {
+namespace RenderEngine {
 
 	class Texture2D;
 	class ShaderProgram;
@@ -34,7 +34,7 @@ namespace Renderer {
 		void setRotation(const float rotation);
 	protected:
 		std::shared_ptr<Texture2D> m_pTexture;
-		std::shared_ptr<ShaderProgram> m_pSharedProgram;
+		std::shared_ptr<ShaderProgram> m_pShaderProgram;
 		
 		glm::vec2 m_position;
 		glm::vec2 m_size;

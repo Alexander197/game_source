@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include "Resources/ResourceManager.h"
+#include "Renderer/Renderer.h"
 
 #include "Game/Game.h"
 
@@ -19,7 +20,7 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
     g_windowSize.x = width;  
     g_windowSize.y = height;
-    glViewport(0, 0, width, height);
+    RenderEngine::Renderer::setViewport(0, 0, width, height);
 }
 
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
@@ -60,10 +61,10 @@ int main(int argc, char** argv)
 		std::cout<<"Can't load GLAD!"<<std::endl;
 		return -1;
 	}
-    std::cout<<"Renderer: "<<glGetString(GL_RENDERER)<<std::endl;
-    std::cout<<"OpenGL version: "<<glGetString(GL_VERSION)<<std::endl;
+    std::cout<<"Renderer: "<<RenderEngine::Renderer::getRendererStr()<<std::endl;
+    std::cout<<"OpenGL version: "<<RenderEngine::Renderer::getVersionStr()<<std::endl;
 	
-	glClearColor(0,0,0,1);
+    RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
 
     {
         ResourceManager::setExecutablePath(argv[0]);
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
             lastTime = currentTime;
             g_game.update(duration);
 
-            glClear(GL_COLOR_BUFFER_BIT);
+            RenderEngine::Renderer::clear();
             /* Render here */
 
             g_game.render();
