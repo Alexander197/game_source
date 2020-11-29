@@ -8,6 +8,9 @@
 #include <fstream>
 #include <iostream>
 
+#include <rapidjson/document.h>
+#include <rapidjson/error/en.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_JPEG
 #define STBI_ONLY_PNG
@@ -221,4 +224,99 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(std::
 
 	}
 	return pTexture;
+}
+bool ResourceManager::loadJSONResources(const std::string& JSONpath)
+{
+	const std::string JSONString = getFileString(JSONpath);
+	if (JSONString.empty())
+	{
+		std::cerr << "No JSON resources file!" << std::endl;
+		return false;
+	}
+	rapidjson::Document document;
+	rapidjson::ParseResult parseResult = document.Parse(JSONString.c_str());
+	if (!parseResult)
+	{
+		std::cerr << "JSON parse error: " << rapidjson::GetParseError_En(parseResult.Code()) << " (" << parseResult.Offset() << ")" << std::endl;
+		std::cerr << "In JSON file: "<< JSONpath <<std::endl;
+		return false;
+	}
+	
+	auto shadersIt = document.FindMember("shaders");
+	if (shadersIt != document.MemberEnd())
+	{
+		const auto shaders = shadersIt->value.GetArray();
+		for (const auto& currentShader : shaders)
+		{
+			const std::string name = currentShader["name"].GetString();
+			const std::string filePath_v = currentShader["filePath_v"].GetString();
+			const std::string filePath_f = currentShader["filePath_f"].GetString();
+			loadShaders(name, filePath_v, filePath_f);
+		}
+	}
+
+	auto textureAtlasesIt = document.FindMember("texureAtlases");
+	if (textureAtlasesIt != document.MemberEnd())
+	{
+		const auto textureAtlases = textureAtlasesIt->value.GetArray();
+		for (const auto& currentTexureAtlas : textureAtlases)
+		{
+			const std::string name = currentTexureAtlas["name"].GetString();
+			const std::string filePath = currentTexureAtlas["filePath"].GetString();
+
+			const unsigned int subTextureWidth = currentTexureAtlas["subTextureWidth"].GetUint();
+			const unsigned int subTextureHeigth = currentTexureAtlas["subTextureHeigth"].GetUint();
+
+			const auto subTexturesArray = currentTexureAtlas["subTextures"].GetArray();
+			std::vector<std::string> subTextures;
+			subTextures.reserve(subTexturesArray.Size());
+			
+			for (const auto& currentsubTextures : subTexturesArray)
+			{
+				subTextures.emplace_back(currentsubTextures.GetString());
+			}
+			loadTextureAtlas(name, filePath, subTextures, subTextureWidth, subTextureHeigth);
+		}
+	}
+
+	auto animatedSpritesIt = document.FindMember("animatedSprites");
+	if (animatedSpritesIt != document.MemberEnd())
+	{
+		const auto animatedSprites = animatedSpritesIt->value.GetArray();
+		for (const auto& currentAnimatedSprites : animatedSprites)
+		{
+			const std::string name = currentAnimatedSprites["name"].GetString();
+			const std::string textureAtlas = currentAnimatedSprites["textureAtlas"].GetString();
+			const std::string shader = currentAnimatedSprites["shader"].GetString();
+
+			const unsigned int initialWidth = currentAnimatedSprites["initialWidth"].GetUint();
+			const unsigned int initialHeight = currentAnimatedSprites["initialHeight"].GetUint();
+
+			const std::string initialState = currentAnimatedSprites["initialState"].GetString();
+
+			auto pAnimSprite = loadAnimatedSprite(name, textureAtlas, shader, initialWidth, initialHeight, initialState);
+			if (!pAnimSprite)
+			{
+				continue;
+			}
+			const auto states = currentAnimatedSprites["states"].GetArray();
+			for (const auto& currentState : states)
+			{
+				const std::string stateName = currentState["stateName"].GetString();
+				 
+				const auto framesArray = currentState["frames"].GetArray();
+				std::vector<std::pair<std::string, uint64_t>> state;
+				state.reserve(framesArray.Size());
+				
+				for (const auto& currentFrame : framesArray)
+				{
+					const std::string subTexture = currentFrame["subTexture"].GetString();
+					const uint64_t duration = currentFrame["duration"].GetUint();
+					state.emplace_back(std::pair<std::string, uint64_t>(subTexture, duration));
+				}
+				pAnimSprite->insertState(stateName, std::move(state));
+			}
+		}
+	}
+	return true;
 }
