@@ -25,6 +25,135 @@
 				"yellow_Right_1_1",
 				"yellow_Right_1_2" 
 			]
+		},
+		{
+			"name"             : "mapTextureAtlas",
+			"filePath"         : "res/textures/map1.png",
+			"width"            : 160,
+			"height"           : 128,
+			"subTextureWidth"  : 32,
+			"subTextureHeigth" : 32,
+			"subTextures"      : [
+				"brick_full",
+				"brick_right",
+				"brick_bottom",
+				"brick_left",
+				"brick_top",
+				"beton_full",
+				"beton_right",
+				"beton_bottom",
+				"beton_left",
+				"beton_top",
+				"water_1",
+				"bush",
+				"steel",
+				"eagle",
+				"eagle_broken",
+				"water_2",
+				"water_3",
+				"brick_left_top",
+				"brick_right_top",
+				"brick_left_bottom",
+				"brick_right_bottom"
+			]
+		}
+	],
+	"sprites" : [
+		{
+			"name" 			 : "brick_full",
+			"textureAtlas"   : "mapTextureAtlas",
+			"shader"         : "spriteShader",
+			"subTextureName" : "brick_full"
+		},
+		{
+			"name" 	 		 : "brick_right",
+			"textureAtlas"   : "mapTextureAtlas",
+			"shader" 		 : "spriteShader",
+			"subTextureName" : "brick_right"
+		},
+		{
+			"name" 			 : "brick_bottom",
+			"textureAtlas"   : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_bottom"
+		},
+		{
+			"name"	 	     : "brick_left",
+			"textureAtlas"   : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_left"
+		},
+		{
+			"name"			 : "brick_top",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_top"
+		},
+		{
+			"name"			 : "beton_full",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "beton_full"
+		},
+		{
+			"name"			 : "beton_right",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "beton_right"
+		},
+		{
+			"name"			 : "beton_bottom",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "beton_bottom"
+		},
+		{
+			"name"			 : "beton_left",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "beton_left"
+		},
+		{
+			"name"			 : "beton_top",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "beton_top"
+		},
+		{
+			"name"			 : "bush",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "bush"
+		},
+		{
+			"name"			 : "steel",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "steel"
+		},
+		{
+			"name"			 : "brick_right_top",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_right_top"
+		},
+		{
+			"name" 			 : "brick_left_top",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_left_top"
+		},
+		{
+			"name"			 : "brick_left_bottom",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_left_bottom"
+		},
+		{
+			"name"			 : "brick_right_bottom",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"subTextureName" : "brick_right_bottom"
 		}
 	],
 	
@@ -33,8 +162,6 @@
 			"name"          : "yellowTank_1",
 			"textureAtlas"  : "tanksTextureAtlas",
 			"shader"        : "spriteShader",
-			"initialWidth"  : 32,
-			"initialHeight" : 32,
 			"initialState"  : "yellow_Up_1_1",
 			"states"        : [
 				{
@@ -89,6 +216,52 @@
 						}
 					]
 				}
+			]
+		},
+		{
+			"name"          : "waterSprite",
+			"textureAtlas"  : "mapTextureAtlas",
+			"shader"        : "spriteShader",
+			"initialState"  : "water_1",
+			"states"        : [
+				{
+					"stateName" : "waterFlow",
+					"frames" : [
+						{
+							"subTexture" : "water_1",
+							"duration"   : 500000000
+						},
+						{
+							"subTexture" : "water_2",
+							"duration"   : 500000000
+						},
+						{
+							"subTexture" : "water_3",
+							"duration"   : 500000000
+						}
+					]
+				}
+			]
+		}
+	],
+	
+	"levels" : [
+		{
+			"description" : [
+				"DDDDDDDDDDDD",
+				"D1D1D1D1D1D1D",
+				"D4D4D4D4D4D4D",
+				"D4D4D4D4D4D4D",
+				"D4D4D494D4D4D",
+				"D4D4D3D3D4D4D",
+				"D3D3D1D1D3D3D",
+				"1D11D3D3D11D1",
+				"8D33D1D1D33D8",
+				"D1D1D444D1D1D",
+				"D4D4D4D4D4D4D",
+				"D4D4D3D3D4D4D",
+				"D4D4DH1GD4D4D",
+				"DDDDD0E2DDDDD"
 			]
 		}
 	]
