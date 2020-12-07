@@ -28,7 +28,7 @@
 		},
 		{
 			"name"             : "mapTextureAtlas",
-			"filePath"         : "res/textures/map1.png",
+			"filePath"         : "res/textures/map.png",
 			"width"            : 160,
 			"height"           : 128,
 			"subTextureWidth"  : 32,
@@ -63,183 +63,179 @@
 			"name" 			 : "brick_full",
 			"textureAtlas"   : "mapTextureAtlas",
 			"shader"         : "spriteShader",
-			"subTextureName" : "brick_full"
+			"initialSubTexture" : "brick_full"
 		},
 		{
 			"name" 	 		 : "brick_right",
 			"textureAtlas"   : "mapTextureAtlas",
 			"shader" 		 : "spriteShader",
-			"subTextureName" : "brick_right"
+			"initialSubTexture" : "brick_right"
 		},
 		{
 			"name" 			 : "brick_bottom",
 			"textureAtlas"   : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_bottom"
+			"initialSubTexture" : "brick_bottom"
 		},
 		{
 			"name"	 	     : "brick_left",
 			"textureAtlas"   : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_left"
+			"initialSubTexture" : "brick_left"
 		},
 		{
 			"name"			 : "brick_top",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_top"
+			"initialSubTexture" : "brick_top"
 		},
 		{
 			"name"			 : "beton_full",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "beton_full"
+			"initialSubTexture" : "beton_full"
 		},
 		{
 			"name"			 : "beton_right",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "beton_right"
+			"initialSubTexture" : "beton_right"
 		},
 		{
 			"name"			 : "beton_bottom",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "beton_bottom"
+			"initialSubTexture" : "beton_bottom"
 		},
 		{
 			"name"			 : "beton_left",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "beton_left"
+			"initialSubTexture" : "beton_left"
 		},
 		{
 			"name"			 : "beton_top",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "beton_top"
+			"initialSubTexture" : "beton_top"
 		},
 		{
 			"name"			 : "bush",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "bush"
+			"initialSubTexture" : "bush"
 		},
 		{
 			"name"			 : "steel",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "steel"
+			"initialSubTexture" : "steel"
 		},
 		{
 			"name"			 : "brick_right_top",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_right_top"
+			"initialSubTexture" : "brick_right_top"
 		},
 		{
 			"name" 			 : "brick_left_top",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_left_top"
+			"initialSubTexture" : "brick_left_top"
 		},
 		{
 			"name"			 : "brick_left_bottom",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_left_bottom"
+			"initialSubTexture" : "brick_left_bottom"
 		},
 		{
 			"name"			 : "brick_right_bottom",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
-			"subTextureName" : "brick_right_bottom"
-		}
-	],
-	
-	"animatedSprites" : [
+			"initialSubTexture" : "brick_right_bottom"
+		},
 		{
-			"name"          : "yellowTank_1",
+			"name"          : "yellowTank_1_Up",
 			"textureAtlas"  : "tanksTextureAtlas",
 			"shader"        : "spriteShader",
-			"initialState"  : "yellow_Up_1_1",
-			"states"        : [
+			"initialSubTexture"  : "yellow_Up_1_1",
+			"frames" : [
 				{
-					"stateName" : "tankUpState",
-					"frames" : [
-						{
-							"subTexture" : "yellow_Up_1_1",
-							"duration"   : 200000000
-						},
-						{
-							"subTexture" : "yellow_Up_1_2",
-							"duration"   : 200000000
-						}
-					]
+					"subTexture" : "yellow_Up_1_1",
+					"duration"   : 500000000
 				},
 				{
-					"stateName" : "tankLeftState",
-					"frames" : [
-						{
-							"subTexture" : "yellow_Left_1_1",
-							"duration"   : 200000000
-						},
-						{
-							"subTexture" : "yellow_Left_1_2",
-							"duration"   : 200000000
-						}
-					]
-				},
-				{
-					"stateName" : "tankDownState",
-					"frames" : [
-						{
-							"subTexture" : "yellow_Down_1_1",
-							"duration"   : 200000000
-						},
-						{
-							"subTexture" : "yellow_Down_1_2",
-							"duration"   : 200000000
-						}
-					]
-				},
-				{
-					"stateName" : "tankRightState",
-					"frames" : [
-						{
-							"subTexture" : "yellow_Right_1_1",
-							"duration"   : 200000000
-						},
-						{
-							"subTexture" : "yellow_Right_1_2",
-							"duration"   : 200000000
-						}
-					]
+					"subTexture" : "yellow_Up_1_2",
+					"duration"   : 500000000
 				}
 			]
 		},
 		{
-			"name"          : "waterSprite",
-			"textureAtlas"  : "mapTextureAtlas",
-			"shader"        : "spriteShader",
-			"initialState"  : "water_1",
-			"states"        : [
+			"name"		         : "yellowTank_1_Left",
+			"textureAtlas"		 : "tanksTextureAtlas",
+			"shader"       		 : "spriteShader",
+			"initialSubTexture"  : "yellow_Up_1_1",
+			"frames" : [
 				{
-					"stateName" : "waterFlow",
-					"frames" : [
-						{
-							"subTexture" : "water_1",
-							"duration"   : 500000000
-						},
-						{
-							"subTexture" : "water_2",
-							"duration"   : 500000000
-						},
-						{
-							"subTexture" : "water_3",
-							"duration"   : 500000000
-						}
-					]
+					"subTexture" : "yellow_Left_1_1",
+					"duration"   : 500000000
+				},
+				{
+					"subTexture" : "yellow_Left_1_2",
+					"duration"   : 500000000
+				}
+			]
+		},
+		{
+			"name"          : "yellowTank_1_Down",
+			"textureAtlas"  : "tanksTextureAtlas",
+			"shader"        : "spriteShader",
+			"initialSubTexture"  : "yellow_Up_1_1",
+			"frames" : [
+				{
+					"subTexture" : "yellow_Down_1_1",
+					"duration"   : 500000000
+				},
+				{
+					"subTexture" : "yellow_Down_1_2",
+					"duration"   : 500000000
+				}
+			]
+		},
+		{
+			"name"          	 : "yellowTank_1_Right",
+			"textureAtlas"  	 : "tanksTextureAtlas",
+			"shader"      		 : "spriteShader",
+			"initialSubTexture"  : "yellow_Up_1_1",
+			"frames" : [
+				{
+					"subTexture" : "yellow_Right_1_1",
+					"duration"   : 500000000
+				},
+				{
+					"subTexture" : "yellow_Right_1_2",
+					"duration"   : 500000000
+				}
+			]
+		},
+		{
+			"name"         	  	 : "waterSprite",
+			"textureAtlas"  	 : "mapTextureAtlas",
+			"shader"        	 : "spriteShader",
+			"initialSubTexture"  : "water_1",
+			"frames" : [
+				{
+					"subTexture" : "water_1",
+					"duration"   : 500000000
+				},
+				{
+					"subTexture" : "water_2",
+					"duration"   : 500000000
+				},
+				{
+					"subTexture" : "water_3",
+					"duration"   : 500000000
 				}
 			]
 		}

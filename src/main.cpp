@@ -13,14 +13,34 @@
 
 #include "Game/Game.h"
 
-glm::ivec2 g_windowSize(680, 480);
+glm::ivec2 g_windowSize(32 * 13, 32 * 14);
 std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height) 
 {
     g_windowSize.x = width;  
     g_windowSize.y = height;
-    RenderEngine::Renderer::setViewport(width, height,0,0);
+
+    const float aspect_ratio = 13.0f / 14.0f;
+
+    unsigned int viewPortWidth = width;
+    unsigned int viewPortHeight = height;
+
+    unsigned int viewPortLeftOffset = 0.0f;
+    unsigned int viewPortBottomOffset = 0.0f;
+
+    if (static_cast<float>(width) / height > aspect_ratio)
+    {
+        viewPortWidth = height * aspect_ratio;
+        viewPortLeftOffset = (width - viewPortWidth) / 2;
+    }
+    else
+    {
+        viewPortHeight = width / aspect_ratio;
+        viewPortBottomOffset = (height - viewPortHeight) / 2;
+    }
+
+    RenderEngine::Renderer::setViewport(viewPortWidth, viewPortHeight, viewPortLeftOffset, viewPortBottomOffset);
 }
 
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)

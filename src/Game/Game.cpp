@@ -9,7 +9,6 @@
 #include "../Resources/ResourceManager.h"
 #include "../Renderer/Texture2D.h"
 #include "../Renderer/Sprite.h"
-#include "../Renderer/AnimatedSprite.h"
 
 #include <iostream>
 #include <GLFW\glfw3.h>
@@ -31,9 +30,6 @@ void Game::render()
    
     if (m_pTank) {
         m_pTank->render();
-    }
-    if (m_waterSprite) {
-        m_waterSprite->render(glm::vec2(300.0f, 300.0f), glm::vec2(32.0f, 32.0f), 0.0f);
     }
     if (m_pLevel) {
         m_pLevel->render();
@@ -75,9 +71,6 @@ void Game::update(const uint64_t delta)
 
         m_pTank->update(delta);
     }
-    if (m_waterSprite) {
-        m_waterSprite->update(delta);
-    }
    
 }
 void Game::setKey(const int key, const int action)
@@ -100,25 +93,12 @@ bool Game::init()
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
-    auto pYellowTank_1 = ResourceManager::getAnimatedSprite("yellowTank_1");
-    m_waterSprite = ResourceManager::getAnimatedSprite("waterSprite");
+    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1_Up"),
+                                     ResourceManager::getSprite("yellowTank_1_Left"),
+                                     ResourceManager::getSprite("yellowTank_1_Down"),
+                                     ResourceManager::getSprite("yellowTank_1_Right"),
+                                     0.0000002f, glm::vec2(0.0f, 0.0f), glm::vec2(32.0f, 32.0f));
 
-    if (!pYellowTank_1)
-    {
-        std::cerr << "Can't find animated sprite: " << "yellowTank_1" << std::endl;
-        return false;
-    }
-    if (!m_waterSprite)
-    {
-        std::cerr << "Can't find animated sprite: " << "waterSprite" << std::endl;
-        return false;
-    }
-
-    pYellowTank_1->setState("tankUpState");
-
-    m_waterSprite->setState("waterFlow");
-
-    m_pTank = std::make_unique<Tank>(pYellowTank_1, 0.0000001f, glm::vec2(200.0f, 200.0f), glm::vec2(32.0f, 32.0f));
     m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[0]);
 
     return true;
