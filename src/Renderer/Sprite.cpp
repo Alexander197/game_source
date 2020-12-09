@@ -13,7 +13,10 @@ namespace RenderEngine {
 				   std::shared_ptr<ShaderProgram> pSharedProgram) : 
 		m_pTexture(std::move(pTexture)), 													
 		m_pShaderProgram(std::move(pSharedProgram)),
-		m_lastFrameId(0)
+		m_currentAnimationState(EAnimationStates::None),
+		m_currentFrame(0), 
+		m_currentFrameDuration(0),
+		m_currentAnimationTime(0)
 	{
 		const GLfloat vertexCoords[] = {
 			0.0f, 0.0f,
@@ -55,21 +58,24 @@ namespace RenderEngine {
 	}
 	Sprite::~Sprite()	{}
 
-	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const size_t frameId ) const
+	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation) const
 	{
-		if (m_lastFrameId != frameId)
+		if (!m_activeAnimation.empty() && m_currentAnimationState != EAnimationStates::None)
 		{
-			m_lastFrameId = frameId;
-			const FrameDescription& currentFrameDescription = m_framesDescriptions[frameId];
+			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
+			if (it != m_animations.end())
+			{
+					const FrameDescription& currentFrameDescription = it->second[m_currentFrame];
 
-			const GLfloat texCoords[] = {
-				currentFrameDescription.leftBottomUV.x, currentFrameDescription.leftBottomUV.y,
-				currentFrameDescription.leftBottomUV.x, currentFrameDescription.rightTopUV.y,
-				currentFrameDescription.rightTopUV.x, currentFrameDescription.rightTopUV.y,
-				currentFrameDescription.rightTopUV.x, currentFrameDescription.leftBottomUV.y
-			};
+					const GLfloat texCoords[] = {
+						currentFrameDescription.leftBottomUV.x, currentFrameDescription.leftBottomUV.y,
+						currentFrameDescription.leftBottomUV.x, currentFrameDescription.rightTopUV.y,
+						currentFrameDescription.rightTopUV.x, currentFrameDescription.rightTopUV.y,
+						currentFrameDescription.rightTopUV.x, currentFrameDescription.leftBottomUV.y
+					};
 
-			m_texCoordsBuffer.update(texCoords, sizeof(texCoords));
+					m_texCoordsBuffer.update(texCoords, sizeof(texCoords));
+			}
 		}
 		
 		m_pShaderProgram->use();
@@ -90,18 +96,84 @@ namespace RenderEngine {
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	}
 
-	void Sprite::insertFrames(std::vector<FrameDescription> framesDescriptions)
+	bool Sprite::update(const uint64_t delta)
 	{
-		m_framesDescriptions = std::move(framesDescriptions);
+		if(!m_activeAnimation.empty() && m_currentAnimationState != EAnimationStates::None)
+		{
+			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
+			if (it != m_animations.end())
+			{
+				m_currentAnimationTime += delta;
+
+				while (m_currentAnimationTime >= m_currentFrameDuration)
+				{
+					m_currentAnimationTime -= m_currentFrameDuration;
+					++m_currentFrame;
+
+					if (m_currentFrame == it->second.size())
+					{
+						m_currentFrame = 0;
+						switch (m_currentAnimationState)
+						{
+						case EAnimationStates::Once:
+							m_currentAnimationState = EAnimationStates::None;
+							break;
+						case Sprite::EAnimationStates::Looped:
+							break;
+						}
+					}
+					m_currentFrameDuration = it->second[m_currentFrame].duration;
+				}
+				return true;
+			}
+			m_currentAnimationState = EAnimationStates::None;
+		}
+		return false;
 	}
 
-	uint64_t Sprite::getFrameDuration(const size_t frameId) const
+	void Sprite::insertAnimation(const std::string& animationName, const std::vector<FrameDescription> framesDescriptions)
 	{
-		return m_framesDescriptions[frameId].duration;
+		m_animations.emplace(animationName, framesDescriptions);
 	}
 
-	size_t Sprite::getFramesCount() const
+	bool Sprite::startAnimationLooped(const std::string& activeAnimation)
 	{
-		return m_framesDescriptions.size();
+		if (m_activeAnimation != activeAnimation || m_currentAnimationState != EAnimationStates::Looped)
+		{
+			m_activeAnimation = activeAnimation;
+			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
+			if (it != m_animations.end())
+			{
+				m_currentFrame = 0;
+				m_currentAnimationTime = 0;
+				m_currentFrameDuration = it->second[0].duration;
+				m_currentAnimationState = EAnimationStates::Looped;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Sprite::startAnimationOnce(const std::string& activeAnimation)
+	{
+			m_activeAnimation = activeAnimation;
+			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
+			if (it != m_animations.end())
+			{
+				m_currentFrame = 0;
+				m_currentAnimationTime = 0;
+				m_currentFrameDuration = it->second[0].duration;
+				m_currentAnimationState = EAnimationStates::Once;
+				return true;
+			}
+		return false;
+	}
+	
+	void Sprite::stopAnimation()
+	{
+		if (m_currentAnimationState != EAnimationStates::None)
+		{
+			m_currentAnimationState = EAnimationStates::None;
+		}
 	}
 }

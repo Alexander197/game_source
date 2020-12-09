@@ -239,12 +239,12 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 	if (spritesIt != document.MemberEnd())
 	{
 		const auto sprites = spritesIt->value.GetArray();
-		for (const auto& currentSprites : sprites)
+		for (const auto& currentSprite : sprites)
 		{
-			const std::string name = currentSprites["name"].GetString();
-			const std::string textureAtlas = currentSprites["textureAtlas"].GetString();
-			const std::string shader = currentSprites["shader"].GetString();
-			const std::string subTextureName = currentSprites["initialSubTexture"].GetString();
+			const std::string name = currentSprite["name"].GetString();
+			const std::string textureAtlas = currentSprite["textureAtlas"].GetString();
+			const std::string shader = currentSprite["shader"].GetString();
+			const std::string subTextureName = currentSprite["initialSubTexture"].GetString();
 
 			auto pSprite = loadSprite(name, textureAtlas, shader, subTextureName);
 			if (!pSprite)
@@ -252,24 +252,29 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 				continue;
 			}
 
-			auto framesIt = currentSprites.FindMember("frames");
-			if (framesIt != currentSprites.MemberEnd())
+			auto animationsIt = currentSprite.FindMember("animations");
+			if (animationsIt != currentSprite.MemberEnd())
 			{
-				const auto frames = framesIt->value.GetArray();
-				std::vector<RenderEngine::Sprite::FrameDescription> framesDescriptions;
-				framesDescriptions.reserve(frames.Size());
+				const auto animations = animationsIt->value.GetArray();
+				for (const auto& currentAnimation : animations)
+				{
+					const std::string animationName = currentAnimation["animationName"].GetString();
+					const auto frames = currentAnimation["frames"].GetArray();
 
-				for (const auto& currentFrame : frames)
-				{ 
-					const std::string subTexture = currentFrame["subTexture"].GetString();
-					const uint64_t duration = currentFrame["duration"].GetUint64();
+					std::vector<RenderEngine::Sprite::FrameDescription> framesDescriptions;
+					framesDescriptions.reserve(frames.Size());
+					for (const auto& currentFrame : frames)
+					{
+						const std::string subTexture = currentFrame["subTexture"].GetString();
+						const uint64_t duration = currentFrame["duration"].GetUint64();
 
-					const auto pTextureAtlas = getTexture(textureAtlas);
-					const auto &pSubTexture = pTextureAtlas->getSubTexture(subTexture);
+						const auto pTextureAtlas = getTexture(textureAtlas);
+						const auto& pSubTexture = pTextureAtlas->getSubTexture(subTexture);
 
-					framesDescriptions.emplace_back(pSubTexture.leftBottomUV, pSubTexture.rightTopUV, duration);
+						framesDescriptions.emplace_back(pSubTexture.leftBottomUV, pSubTexture.rightTopUV, duration);
+					}
+					pSprite->insertAnimation(std::move(animationName), std::move(framesDescriptions));
 				}
-				pSprite->insertFrames(std::move(framesDescriptions));
 			}
 		}
 	}

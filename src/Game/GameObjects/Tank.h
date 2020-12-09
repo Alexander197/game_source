@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "IGameObject.h"
-#include "../../Renderer/SpriteAnimator.h"
 
 namespace RenderEngine {
 	class Sprite;
@@ -20,10 +19,7 @@ public:
 		Right
 	};
 
-	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite_up,
-		 std::shared_ptr<RenderEngine::Sprite> pSprite_left,
-		 std::shared_ptr<RenderEngine::Sprite> pSprite_down,
-		 std::shared_ptr<RenderEngine::Sprite> pSprite_right,
+	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 		 const float velocity,
 		 const glm::vec2& position,
 		 const glm::vec2& size);
@@ -35,15 +31,7 @@ public:
 
 private:
 	EOrientation m_eOrientation;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite_up;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite_left;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite_down;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite_right;
-
-	RenderEngine::SpriteAnimator m_spriteAnimator_up;
-	RenderEngine::SpriteAnimator m_spriteAnimator_left;
-	RenderEngine::SpriteAnimator m_spriteAnimator_down;
-	RenderEngine::SpriteAnimator m_spriteAnimator_right;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
 
 	bool m_move;
 	float m_velocity;

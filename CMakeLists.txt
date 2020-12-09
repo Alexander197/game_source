@@ -25,8 +25,6 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/VertexBufferLayout.h
 	src/Renderer/Renderer.cpp
 	src/Renderer/Renderer.h
-	src/Renderer/SpriteAnimator.cpp
-	src/Renderer/SpriteAnimator.h
 	src/Game/Game.cpp
 	src/Game/Game.h
 	src/Game/GameObjects/Tank.cpp
