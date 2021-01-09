@@ -15,7 +15,7 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 {}
 void Tank::render() const
 {
-	m_pSprite->render(m_position, m_size, m_rotation, m_spriteAnimator.getCurrentFrame(), m_spriteAnimator.getActiveAnimation());
+	m_pSprite->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator.getCurrentFrame(), m_spriteAnimator.getActiveAnimation());
 }
 void Tank::setOrientation(const EOrientation eOrientation)
 {

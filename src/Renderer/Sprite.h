@@ -43,7 +43,7 @@ namespace RenderEngine {
 		Sprite(const Sprite&) = delete;
 		Sprite& operator = (const Sprite&) = delete;
 
-		void render(const glm::vec2 position, const glm::vec2 size, const float rotation, const size_t frame_id = 0, const std::string& animationName = "", const float layer = 0.0f) const;
+		void render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer, const size_t frame_id = 0, const std::string& animationName = "") const;
 
 		void insertAnimation(const std::string& animationName, const std::vector<FrameDescription> framesDescriptions);
 		std::vector<FrameDescription> getAnimation(const std::string& animationName) const;

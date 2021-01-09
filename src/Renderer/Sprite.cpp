@@ -54,7 +54,7 @@ namespace RenderEngine {
 	}
 	Sprite::~Sprite()	{}
 
-	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const size_t frame_id, const std::string& animationName, const float layer) const
+	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer, const size_t frame_id, const std::string& animationName) const
 	{
 		if (!animationName.empty())
 		{
