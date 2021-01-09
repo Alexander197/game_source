@@ -43,7 +43,7 @@ namespace RenderEngine {
 		Sprite(const Sprite&) = delete;
 		Sprite& operator = (const Sprite&) = delete;
 
-		void render(const glm::vec2 position, const glm::vec2 size, const float rotation) const;
+		void render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer = 0.0f) const;
 		
 		bool update(const uint64_t delta);
 

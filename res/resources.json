@@ -54,7 +54,8 @@
 				"brick_left_top",
 				"brick_right_top",
 				"brick_left_bottom",
-				"brick_right_bottom"
+				"brick_right_bottom",
+				"border"
 			]
 		}
 	],
@@ -156,6 +157,24 @@
 			"initialSubTexture" : "brick_right_bottom"
 		},
 		{
+			"name"			 : "eagle",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"initialSubTexture" : "eagle"
+		},
+		{
+			"name"			 : "eagle_broken",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"initialSubTexture" : "eagle_broken"
+		},
+		{
+			"name"			 : "border",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"initialSubTexture" : "border"
+		},
+		{
 			"name"          : "yellowTank_1",
 			"textureAtlas"  : "tanksTextureAtlas",
 			"shader"        : "spriteShader",
@@ -214,26 +233,51 @@
 					]
 				}
 			]
+		},
+		{
+			"name"          : "water",
+			"textureAtlas"  : "mapTextureAtlas",
+			"shader"        : "spriteShader",
+			"initialSubTexture"  : "water_1",
+						"animations" : [
+				{
+					"animationName"	 : "flow",
+					"frames" : [
+						{
+							"subTexture" : "water_1",
+							"duration"   : 5000000000
+						},
+						{
+							"subTexture" : "water_2",
+							"duration"   : 5000000000
+						},
+						{
+							"subTexture" : "water_3",
+							"duration"   : 5000000000
+						}
+					]
+				}
+			]
 		}
 	],
 	
 	"levels" : [
 		{
 			"description" : [
-				"DDDDDDDDDDDD",
-				"D1D1D1D1D1D1D",
+				"DDDDDDDDDDDDD",
+				"4444444444444",
+				"4DDDDDDDDDDD4",
+				"4D444444444D4",
+				"4DDDDDDDDDDD4",
+				"4DDD4DDD4DDD4",
+				"4DDD4DDD4DDD4",
+				"444444D444444",
+				"DFFFDDDDDFFFD",
+				"DKKKD444DKKKD",
 				"D4D4D4D4D4D4D",
-				"D4D4D4D4D4D4D",
-				"D4D4D494D4D4D",
-				"D4D4D3D3D4D4D",
-				"D3D3D1D1D3D3D",
-				"1D11D3D3D11D1",
-				"8D33D1D1D33D8",
-				"D1D1D444D1D1D",
-				"D4D4D4D4D4D4D",
-				"D4D4D3D3D4D4D",
-				"D4D4DH1GD4D4D",
-				"DDDDD0E2DDDDD"
+				"D4D4DDDDD4D4D",
+				"D4D4DCCCD4D4D",
+				"DDDDDCACDDDDD"
 			]
 		}
 	]

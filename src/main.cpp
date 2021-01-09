@@ -13,7 +13,8 @@
 
 #include "Game/Game.h"
 
-glm::ivec2 g_windowSize(32 * 13, 32 * 14);
+glm::ivec2 g_windowSize(640, 480);
+
 std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height) 
@@ -21,7 +22,7 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
     g_windowSize.x = width;  
     g_windowSize.y = height;
 
-    const float aspect_ratio = 13.0f / 14.0f;
+    const float aspect_ratio = static_cast<float>(g_game->getCurrentLevelWidth()) / g_game->getCurrentLevelHeight();
 
     unsigned int viewPortWidth = width;
     unsigned int viewPortHeight = height;
@@ -85,10 +86,14 @@ int main(int argc, char** argv)
     std::cout<<"OpenGL version: "<<RenderEngine::Renderer::getVersionStr()<<std::endl;
 	
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
+    RenderEngine::Renderer::setDepthTest(true);
 
     {
         ResourceManager::setExecutablePath(argv[0]);
         g_game->init();
+        g_windowSize.x = static_cast<int>(g_game->getCurrentLevelWidth());
+        g_windowSize.y = static_cast<int>(g_game->getCurrentLevelHeight());
+        glfwSetWindowSize(pWindow, g_windowSize.x, g_windowSize.y);
 
         auto lastTime = std::chrono::high_resolution_clock::now();
 

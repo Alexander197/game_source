@@ -4,8 +4,9 @@
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 		   const float velocity,
 		   const glm::vec2& position,
-		   const glm::vec2& size) :
-	IGameObject(position, size, 0.0f),
+		   const glm::vec2& size,
+		   const float layer) :
+	IGameObject(position, size, 0.0f, layer),
 	m_eOrientation(EOrientation::Up),
 	m_pSprite(std::move(pSprite)),
 	m_move(false),
