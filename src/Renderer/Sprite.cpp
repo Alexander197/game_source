@@ -12,11 +12,7 @@ namespace RenderEngine {
 				   std::string initialSubTexture,
 				   std::shared_ptr<ShaderProgram> pSharedProgram) : 
 		m_pTexture(std::move(pTexture)), 													
-		m_pShaderProgram(std::move(pSharedProgram)),
-		m_currentAnimationState(EAnimationStates::None),
-		m_currentFrame(0), 
-		m_currentFrameDuration(0),
-		m_currentAnimationTime(0)
+		m_pShaderProgram(std::move(pSharedProgram))
 	{
 		const GLfloat vertexCoords[] = {
 			0.0f, 0.0f,
@@ -58,14 +54,14 @@ namespace RenderEngine {
 	}
 	Sprite::~Sprite()	{}
 
-	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer) const
+	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const size_t frame_id, const std::string& animationName, const float layer) const
 	{
-		if (!m_activeAnimation.empty() && m_currentAnimationState != EAnimationStates::None)
+		if (!animationName.empty())
 		{
-			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
+			AnimationsMap_t::const_iterator it = m_animations.find(animationName);
 			if (it != m_animations.end())
 			{
-					const FrameDescription& currentFrameDescription = it->second[m_currentFrame];
+					const FrameDescription& currentFrameDescription = it->second[frame_id];
 
 					const GLfloat texCoords[] = {
 						currentFrameDescription.leftBottomUV.x, currentFrameDescription.leftBottomUV.y,
@@ -97,84 +93,19 @@ namespace RenderEngine {
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	}
 
-	bool Sprite::update(const uint64_t delta)
-	{
-		if(!m_activeAnimation.empty() && m_currentAnimationState != EAnimationStates::None)
-		{
-			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
-			if (it != m_animations.end())
-			{
-				m_currentAnimationTime += delta;
-
-				while (m_currentAnimationTime >= m_currentFrameDuration)
-				{
-					m_currentAnimationTime -= m_currentFrameDuration;
-					++m_currentFrame;
-
-					if (m_currentFrame == it->second.size())
-					{
-						m_currentFrame = 0;
-						switch (m_currentAnimationState)
-						{
-						case EAnimationStates::Once:
-							m_currentAnimationState = EAnimationStates::None;
-							break;
-						case Sprite::EAnimationStates::Looped:
-							break;
-						}
-					}
-					m_currentFrameDuration = it->second[m_currentFrame].duration;
-				}
-				return true;
-			}
-			m_currentAnimationState = EAnimationStates::None;
-		}
-		return false;
-	}
-
 	void Sprite::insertAnimation(const std::string& animationName, const std::vector<FrameDescription> framesDescriptions)
 	{
 		m_animations.emplace(animationName, framesDescriptions);
 	}
 
-	bool Sprite::startAnimationLooped(const std::string& activeAnimation)
+	std::vector<Sprite::FrameDescription> Sprite::getAnimation(const std::string& animationName) const
 	{
-		if (m_activeAnimation != activeAnimation || m_currentAnimationState != EAnimationStates::Looped)
+		std::vector<Sprite::FrameDescription> animation;
+		AnimationsMap_t::const_iterator it = m_animations.find(animationName);
+		if (it != m_animations.end())
 		{
-			m_activeAnimation = activeAnimation;
-			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
-			if (it != m_animations.end())
-			{
-				m_currentFrame = 0;
-				m_currentAnimationTime = 0;
-				m_currentFrameDuration = it->second[0].duration;
-				m_currentAnimationState = EAnimationStates::Looped;
-				return true;
-			}
+			animation = it->second;
 		}
-		return false;
-	}
-
-	bool Sprite::startAnimationOnce(const std::string& activeAnimation)
-	{
-			m_activeAnimation = activeAnimation;
-			AnimationsMap_t::const_iterator it = m_animations.find(m_activeAnimation);
-			if (it != m_animations.end())
-			{
-				m_currentFrame = 0;
-				m_currentAnimationTime = 0;
-				m_currentFrameDuration = it->second[0].duration;
-				m_currentAnimationState = EAnimationStates::Once;
-				return true;
-			}
-		return false;
-	}
-	
-	void Sprite::stopAnimation()
-	{
-		if (m_currentAnimationState != EAnimationStates::None)
-		{
-			m_currentAnimationState = EAnimationStates::None;
-		}
+		return animation;
 	}
 }

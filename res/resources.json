@@ -157,22 +157,31 @@
 			"initialSubTexture" : "brick_right_bottom"
 		},
 		{
-			"name"			 : "eagle",
-			"textureAtlas"	 : "mapTextureAtlas",
-			"shader"		 : "spriteShader",
-			"initialSubTexture" : "eagle"
-		},
-		{
-			"name"			 : "eagle_broken",
-			"textureAtlas"	 : "mapTextureAtlas",
-			"shader"		 : "spriteShader",
-			"initialSubTexture" : "eagle_broken"
-		},
-		{
 			"name"			 : "border",
 			"textureAtlas"	 : "mapTextureAtlas",
 			"shader"		 : "spriteShader",
 			"initialSubTexture" : "border"
+		},
+		{
+			"name"			 : "eagle",
+			"textureAtlas"	 : "mapTextureAtlas",
+			"shader"		 : "spriteShader",
+			"initialSubTexture" : "eagle",
+			"animations" : [
+				{
+					"animationName"	 : "break",
+					"frames" : [
+						{
+							"subTexture" : "eagle",
+							"duration"   : 200000000
+						},
+						{
+							"subTexture" : "eagle_broken",
+							"duration"   : 200000000
+						}
+					]
+				}
+			]
 		},
 		{
 			"name"          : "yellowTank_1",
@@ -194,7 +203,7 @@
 					]
 				},
 				{
-					"animationName" 	 : "move_left",
+					"animationName"  : "move_left",
 					"frames" : [
 						{
 							"subTexture" : "yellow_Left_1_1",
@@ -245,15 +254,15 @@
 					"frames" : [
 						{
 							"subTexture" : "water_1",
-							"duration"   : 5000000000
+							"duration"   : 500000000
 						},
 						{
 							"subTexture" : "water_2",
-							"duration"   : 5000000000
+							"duration"   : 500000000
 						},
 						{
 							"subTexture" : "water_3",
-							"duration"   : 5000000000
+							"duration"   : 500000000
 						}
 					]
 				}

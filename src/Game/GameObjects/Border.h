@@ -15,5 +15,5 @@ public:
 	virtual void update(const uint64_t delta) override;
 
 private:
-	std::shared_ptr<RenderEngine::Sprite> m_pCurrentSprite;
+	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
 };

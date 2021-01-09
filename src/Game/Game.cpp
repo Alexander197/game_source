@@ -28,11 +28,12 @@ void Game::render()
     //ResourceManager::getAnimatedSprite("anim1")->render();
     //ResourceManager::getSprite("Tex1Sprite")->render();
    
-    if (m_pTank) {
-        m_pTank->render();
-    }
+    
     if (m_pLevel) {
         m_pLevel->render();
+    }
+    if (m_pTank) {
+        m_pTank->render();
     }
     
 }
@@ -97,11 +98,9 @@ bool Game::init()
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
-
-    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
-                                     0.0000001f, glm::vec2(32.0f, 16.0f), glm::vec2(32.0f, 32.0f), 0.0f);
-
     
+    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
+        0.0000001f, glm::vec2(32.0f, 16.0f), glm::vec2(32.0f, 32.0f), 1.0f);
 
     return true;
 }

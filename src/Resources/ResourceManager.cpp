@@ -271,7 +271,7 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 						const auto pTextureAtlas = getTexture(textureAtlas);
 						const auto& pSubTexture = pTextureAtlas->getSubTexture(subTexture);
 
-						framesDescriptions.emplace_back(pSubTexture.leftBottomUV, pSubTexture.rightTopUV, duration);
+ 						framesDescriptions.emplace_back(pSubTexture.leftBottomUV, pSubTexture.rightTopUV, duration);
 					}
 					pSprite->insertAnimation(std::move(animationName), std::move(framesDescriptions));
 				}

@@ -43,15 +43,10 @@ namespace RenderEngine {
 		Sprite(const Sprite&) = delete;
 		Sprite& operator = (const Sprite&) = delete;
 
-		void render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer = 0.0f) const;
-		
-		bool update(const uint64_t delta);
+		void render(const glm::vec2 position, const glm::vec2 size, const float rotation, const size_t frame_id = 0, const std::string& animationName = "", const float layer = 0.0f) const;
 
 		void insertAnimation(const std::string& animationName, const std::vector<FrameDescription> framesDescriptions);
-		
-		bool startAnimationLooped(const std::string& activeAnimation);
-		bool startAnimationOnce(const std::string& activeAnimation);
-		void stopAnimation();
+		std::vector<FrameDescription> getAnimation(const std::string& animationName) const;
 
 
 	protected:
@@ -64,14 +59,8 @@ namespace RenderEngine {
 		VertexBuffer m_texCoordsBuffer;
 		IndexBuffer m_indexBuffer;
 
-		size_t m_currentFrame;
-		uint64_t m_currentFrameDuration;
-		uint64_t m_currentAnimationTime;
-
 		typedef std::map<const std::string, std::vector<FrameDescription>> AnimationsMap_t;
 		AnimationsMap_t m_animations;
 		
-		std::string m_activeAnimation;
-		mutable EAnimationStates m_currentAnimationState;
 	};
 }

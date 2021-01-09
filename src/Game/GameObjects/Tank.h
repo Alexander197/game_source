@@ -5,6 +5,8 @@
 #include <memory>
 
 #include "IGameObject.h"
+#include "../../Renderer/SpriteAnimator.h"
+#include "../../Renderer/Sprite.h"
 
 namespace RenderEngine {
 	class Sprite;
@@ -33,6 +35,7 @@ public:
 private:
 	EOrientation m_eOrientation;
 	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
+	RenderEngine::SpriteAnimator m_spriteAnimator;
 
 	bool m_move;
 	float m_velocity;

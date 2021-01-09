@@ -1,5 +1,4 @@
 #include "Tank.h"
-#include "../../Renderer/Sprite.h"
 
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 		   const float velocity,
@@ -9,13 +8,14 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	IGameObject(position, size, 0.0f, layer),
 	m_eOrientation(EOrientation::Up),
 	m_pSprite(std::move(pSprite)),
+	m_spriteAnimator(m_pSprite),
 	m_move(false),
 	m_velocity(velocity),
 	m_moveOffset(glm::vec2(0.0f, 1.0f))
 {}
 void Tank::render() const
 {
-	m_pSprite->render(m_position, m_size, m_rotation);
+	m_pSprite->render(m_position, m_size, m_rotation, m_spriteAnimator.getCurrentFrame(), m_spriteAnimator.getActiveAnimation());
 }
 void Tank::setOrientation(const EOrientation eOrientation)
 {
@@ -56,23 +56,23 @@ void Tank::update(const uint64_t delta)
 		switch (m_eOrientation)
 		{
 		case Tank::EOrientation::Up:
-			m_pSprite->startAnimationLooped("move_up");
+			m_spriteAnimator.startAnimationLooped("move_up");
 			break;
 		case Tank::EOrientation::Left:
-			m_pSprite->startAnimationLooped("move_left");
+			m_spriteAnimator.startAnimationLooped("move_left");
 			break;
 		case Tank::EOrientation::Down:
-			m_pSprite->startAnimationLooped("move_down");
+			m_spriteAnimator.startAnimationLooped("move_down");
 			break;
 		case Tank::EOrientation::Right:
-			m_pSprite->startAnimationLooped("move_right");
+			m_spriteAnimator.startAnimationLooped("move_right");
 			break;
 		}
-		m_pSprite->update(delta);
+		m_spriteAnimator.update(delta);
 	}
 	else
 	{
-		m_pSprite->stopAnimation();
+		m_spriteAnimator.stopAnimation();
 	}
 	
 }

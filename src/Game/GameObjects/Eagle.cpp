@@ -1,17 +1,17 @@
-#include "Water.h"
+#include "Eagle.h"
 
-Water::Water(std::shared_ptr<RenderEngine::Sprite> pSprite, const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer) :
+Eagle::Eagle(std::shared_ptr<RenderEngine::Sprite> pSprite, const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer) :
 	IGameObject(position, size, rotation, layer),
 	m_pSprite(std::move(pSprite)),
 	m_spriteAnimator(m_pSprite)
 {
-	m_spriteAnimator.startAnimationLooped("flow");
+	m_spriteAnimator.startAnimationLooped("break");
 }
-void Water::render() const
+void Eagle::render() const
 {
 	m_pSprite->render(m_position, m_size, m_rotation, m_spriteAnimator.getCurrentFrame(), m_spriteAnimator.getActiveAnimation(), m_layer);
 }
-void Water::update(const uint64_t delta)
+void Eagle::update(const uint64_t delta)
 {
 	m_spriteAnimator.update(delta);
 }

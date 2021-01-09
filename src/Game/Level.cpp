@@ -2,6 +2,8 @@
 #include "GameObjects/BrickWall.h"
 #include "GameObjects/BetonWall.h"
 #include "GameObjects/Water.h"
+#include "GameObjects/Eagle.h"
+#include "GameObjects/Bush.h"
 #include "GameObjects/Border.h"
 #include "../Resources/ResourceManager.h"
 
@@ -29,10 +31,7 @@ std::shared_ptr<IGameObject> createGameObjectFromDescription(const char descript
 		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_full"), position, size, rotation, -1.0f);
 		break;
 	case 'A':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("eagle"), position, size, rotation, 0.0f);
-		break;
-	case 'B':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("eagle_broken"), position, size, rotation, 0.0f);
+		return std::make_shared<Eagle>(ResourceManager::getSprite("eagle"), position, size, rotation, 1.0f);
 		break;
 	case 'C':
 		return std::make_shared<BetonWall>(ResourceManager::getSprite("beton_full"), position, size, rotation, 0.0f);
@@ -56,7 +55,7 @@ std::shared_ptr<IGameObject> createGameObjectFromDescription(const char descript
 		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right_top"), position, size, rotation, 0.0f);
 		break;
 	case 'K':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("bush"), position, size, rotation, 1.0f);
+		return std::make_shared<Bush>(ResourceManager::getSprite("bush"), position, size, rotation, 1.0f);
 		break;
 	case 'D':
 		return nullptr;

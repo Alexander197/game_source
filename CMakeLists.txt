@@ -25,6 +25,8 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/VertexBufferLayout.h
 	src/Renderer/Renderer.cpp
 	src/Renderer/Renderer.h
+	src/Renderer/SpriteAnimator.cpp
+	src/Renderer/SpriteAnimator.h
 	src/Game/Game.cpp
 	src/Game/Game.h
 	src/Game/GameObjects/Tank.cpp
@@ -39,6 +41,10 @@ add_executable(${PROJECT_NAME}
 	src/Game/GameObjects/Water.cpp
 	src/Game/GameObjects/Border.h
 	src/Game/GameObjects/Border.cpp
+	src/Game/GameObjects/Eagle.h
+	src/Game/GameObjects/Eagle.cpp
+	src/Game/GameObjects/Bush.h
+	src/Game/GameObjects/Bush.cpp
 	src/Game/Level.cpp
 	src/Game/Level.h
  )
