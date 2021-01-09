@@ -9,8 +9,6 @@
 
 #include <iostream>
 
-const unsigned int BLOCK_SIZE = 32;
-
 std::shared_ptr<IGameObject> createGameObjectFromDescription(const char description, const glm::vec2 position, const glm::vec2 size, const float rotation = 0) 
 {
 	switch (description)
@@ -77,6 +75,8 @@ Level::Level(const std::vector<std::string>& levelDescription)
 	m_width = levelDescription[0].length();
 	m_height = levelDescription.size();
 
+	m_playerRespawn_1 = {32.0f, 16.0f};
+
 	m_mapObjects.reserve(m_width * m_height + 4);
 
 	unsigned int currentBottomOffset = static_cast<unsigned int>(BLOCK_SIZE * (m_height - 1) + BLOCK_SIZE / 2.0f);
@@ -85,7 +85,15 @@ Level::Level(const std::vector<std::string>& levelDescription)
 		unsigned int currentLeftOffset = BLOCK_SIZE;
 		for (const char currentElement : currentRow)
 		{
-			m_mapObjects.emplace_back(createGameObjectFromDescription(currentElement, glm::vec2(currentLeftOffset, currentBottomOffset), glm::vec2(BLOCK_SIZE, BLOCK_SIZE)));
+			switch (currentElement)
+			{
+			case 'V':
+				m_playerRespawn_1 = { currentLeftOffset, currentBottomOffset };
+				break;
+			default:
+				m_mapObjects.emplace_back(createGameObjectFromDescription(currentElement, glm::vec2(currentLeftOffset, currentBottomOffset), glm::vec2(BLOCK_SIZE, BLOCK_SIZE)));
+				break;
+			}
 			currentLeftOffset += BLOCK_SIZE;
 		}
 		currentBottomOffset -= BLOCK_SIZE;
@@ -109,7 +117,7 @@ void Level::render() const
 		}
 	}
 }
-void Level::update(const uint64_t delta)
+void Level::update(const double delta)
 {
 	for (const auto& currentMapObject : m_mapObjects)
 	{

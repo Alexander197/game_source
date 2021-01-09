@@ -10,7 +10,7 @@ void Bush::render() const
 {
 	m_pSprite->render(m_position, m_size, m_rotation, m_layer);
 }
-void Bush::update(const uint64_t delta)
+void Bush::update(const double delta)
 {
 
 }

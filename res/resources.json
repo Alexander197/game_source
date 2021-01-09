@@ -173,11 +173,11 @@
 					"frames" : [
 						{
 							"subTexture" : "eagle",
-							"duration"   : 200000000
+							"duration"   : 200
 						},
 						{
 							"subTexture" : "eagle_broken",
-							"duration"   : 200000000
+							"duration"   : 200
 						}
 					]
 				}
@@ -194,11 +194,11 @@
 					"frames" : [
 						{
 							"subTexture" : "yellow_Up_1_1",
-							"duration"   : 200000000
+							"duration"   : 200
 						},
 						{
 							"subTexture" : "yellow_Up_1_2",
-							"duration"   : 200000000
+							"duration"   : 200
 						}
 					]
 				},
@@ -207,11 +207,11 @@
 					"frames" : [
 						{
 							"subTexture" : "yellow_Left_1_1",
-							"duration"   : 200000000
+							"duration"   : 200
 						},
 						{
 							"subTexture" : "yellow_Left_1_2",
-							"duration"   : 200000000
+							"duration"   : 200
 						}
 					]
 				},
@@ -220,11 +220,11 @@
 					"frames" : [
 						{
 							"subTexture" : "yellow_Down_1_1",
-							"duration"   : 200000000
+							"duration"   : 200
 						},
 						{
 							"subTexture" : "yellow_Down_1_2",
-							"duration"   : 200000000
+							"duration"   : 200
 						}
 					]
 				},
@@ -233,11 +233,11 @@
 					"frames" : [
 						{
 							"subTexture" : "yellow_Right_1_1",
-							"duration"   : 200000000
+							"duration"   : 200
 						},
 						{
 							"subTexture" : "yellow_Right_1_2",
-							"duration"   : 200000000
+							"duration"   : 200
 						}
 					]
 				}
@@ -254,15 +254,15 @@
 					"frames" : [
 						{
 							"subTexture" : "water_1",
-							"duration"   : 500000000
+							"duration"   : 500
 						},
 						{
 							"subTexture" : "water_2",
-							"duration"   : 500000000
+							"duration"   : 500
 						},
 						{
 							"subTexture" : "water_3",
-							"duration"   : 500000000
+							"duration"   : 500
 						}
 					]
 				}
@@ -278,7 +278,7 @@
 				"4DDDDDDDDDDD4",
 				"4D444444444D4",
 				"4DDDDDDDDDDD4",
-				"4DDD4DDD4DDD4",
+				"4DDD4DVD4DDD4",
 				"4DDD4DDD4DDD4",
 				"444444D444444",
 				"DFFFDDDDDFFFD",

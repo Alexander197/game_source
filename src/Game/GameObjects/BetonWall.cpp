@@ -10,7 +10,7 @@ void BetonWall::render() const
 {
 	m_pSprite->render(m_position, m_size, m_rotation, m_layer);
 }
-void BetonWall::update(const uint64_t delta)
+void BetonWall::update(const double delta)
 {
 
 }

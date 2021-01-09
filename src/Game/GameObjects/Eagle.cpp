@@ -11,7 +11,7 @@ void Eagle::render() const
 {
 	m_pSprite->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator.getCurrentFrame(), m_spriteAnimator.getActiveAnimation());
 }
-void Eagle::update(const uint64_t delta)
+void Eagle::update(const double delta)
 {
 	m_spriteAnimator.update(delta);
 }

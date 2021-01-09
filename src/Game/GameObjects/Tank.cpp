@@ -47,11 +47,11 @@ void Tank::move(const bool move)
 {
 	m_move = move;
 }
-void Tank::update(const uint64_t delta)
+void Tank::update(const double delta)
 {
 	if (m_move)
 	{
-		m_position += delta * m_velocity * m_moveOffset;
+		m_position += static_cast<float>(delta) * m_velocity * m_moveOffset;
 		
 		switch (m_eOrientation)
 		{

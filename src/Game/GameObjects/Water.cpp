@@ -11,7 +11,7 @@ void Water::render() const
 {
 	m_pSprite->render(m_position, m_size, m_rotation, m_layer, m_spriteAnimator.getCurrentFrame(), m_spriteAnimator.getActiveAnimation());
 }
-void Water::update(const uint64_t delta)
+void Water::update(const double delta)
 {
 	m_spriteAnimator.update(delta);
 }

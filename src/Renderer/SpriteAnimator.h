@@ -22,7 +22,7 @@ namespace RenderEngine {
 		std::string getActiveAnimation() const { return m_activeAnimation; }
 		size_t getCurrentFrame() const { return m_currentFrame; }
 
-		void update(const uint64_t delta);
+		void update(const double delta);
 
 		bool startAnimationLooped(const std::string& activeAnimation);
 		bool startAnimationOnce(const std::string& activeAnimation);
