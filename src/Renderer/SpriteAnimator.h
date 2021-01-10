@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <functional>
 
 namespace RenderEngine {
 	class Sprite;
@@ -25,7 +26,10 @@ namespace RenderEngine {
 		void update(const double delta);
 
 		bool startAnimationLooped(const std::string& activeAnimation);
+
 		bool startAnimationOnce(const std::string& activeAnimation);
+		bool startAnimationOnce(const std::string& activeAnimation, std::function<void()> callback);
+
 		void stopAnimation();
 
 	private:
@@ -35,7 +39,10 @@ namespace RenderEngine {
 
 		EAnimationStates m_currentAnimationState;
 		size_t m_currentFrame;
-		uint64_t m_currentFrameDuration;
-		uint64_t m_currentAnimationTime;
+		double m_currentFrameDuration;
+		double m_currentAnimationTime;
+
+		std::function<void()> m_callback;
+		bool m_isCallback;
 	};
 }

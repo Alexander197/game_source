@@ -23,7 +23,294 @@
 				"yellow_Down_1_1",
 				"yellow_Down_1_2",
 				"yellow_Right_1_1",
-				"yellow_Right_1_2" 
+				"yellow_Right_1_2",
+				
+				"white_Up_1_1",
+				"white_Up_1_2",
+				"white_Left_1_1",
+				"white_Left_1_2",
+				"white_Down_1_1",
+				"white_Down_1_2",
+				"white_Right_1_1",
+				"white_Right_1_2",
+				
+				"yellow_Up_2_1",
+				"yellow_Up_2_2",
+				"yellow_Left_2_1",
+				"yellow_Left_2_2",
+				"yellow_Down_2_1",
+				"yellow_Down_2_2",
+				"yellow_Right_2_1",
+				"yellow_Right_2_2",
+				
+				"white_Up_2_1",
+				"white_Up_2_2",
+				"white_Left_2_1",
+				"white_Left_2_2",
+				"white_Down_2_1",
+				"white_Down_2_2",
+				"white_Right_2_1",
+				"white_Right_2_2",
+				
+				"yellow_Up_3_1",
+				"yellow_Up_3_2",
+				"yellow_Left_3_1",
+				"yellow_Left_3_2",
+				"yellow_Down_3_1",
+				"yellow_Down_3_2",
+				"yellow_Right_3_1",
+				"yellow_Right_3_2",
+				
+				"white_Up_3_1",
+				"white_Up_3_2",
+				"white_Left_3_1",
+				"white_Left_3_2",
+				"white_Down_3_1",
+				"white_Down_3_2",
+				"white_Right_3_1",
+				"white_Right_3_2",
+				
+				"yellow_Up_4_1",
+				"yellow_Up_4_2",
+				"yellow_Left_4_1",
+				"yellow_Left_4_2",
+				"yellow_Down_4_1",
+				"yellow_Down_4_2",
+				"yellow_Right_4_1",
+				"yellow_Right_4_2",
+				
+				"white_Up_4_1",
+				"white_Up_4_2",
+				"white_Left_4_1",
+				"white_Left_4_2",
+				"white_Down_4_1",
+				"white_Down_4_2",
+				"white_Right_4_1",
+				"white_Right_4_2",
+				
+				"yellow_Up_5_1",
+				"yellow_Up_5_2",
+				"yellow_Left_5_1",
+				"yellow_Left_5_2",
+				"yellow_Down_5_1",
+				"yellow_Down_5_2",
+				"yellow_Right_5_1",
+				"yellow_Right_5_2",
+				
+				"white_Up_5_1",
+				"white_Up_5_2",
+				"white_Left_5_1",
+				"white_Left_5_2",
+				"white_Down_5_1",
+				"white_Down_5_2",
+				"white_Right_5_1",
+				"white_Right_5_2",
+				
+				"yellow_Up_6_1",
+				"yellow_Up_6_2",
+				"yellow_Left_6_1",
+				"yellow_Left_6_2",
+				"yellow_Down_6_1",
+				"yellow_Down_6_2",
+				"yellow_Right_6_1",
+				"yellow_Right_6_2",
+				
+				"white_Up_6_1",
+				"white_Up_6_2",
+				"white_Left_6_1",
+				"white_Left_6_2",
+				"white_Down_6_1",
+				"white_Down_6_2",
+				"white_Right_6_1",
+				"white_Right_6_2",
+				
+				"yellow_Up_7_1",
+				"yellow_Up_7_2",
+				"yellow_Left_7_1",
+				"yellow_Left_7_2",
+				"yellow_Down_7_1",
+				"yellow_Down_7_2",
+				"yellow_Right_7_1",
+				"yellow_Right_7_2",
+				
+				"white_Up_7_1",
+				"white_Up_7_2",
+				"white_Left_7_1",
+				"white_Left_7_2",
+				"white_Down_7_1",
+				"white_Down_7_2",
+				"white_Right_7_1",
+				"white_Right_7_2",
+				
+				"yellow_Up_8_1",
+				"yellow_Up_8_2",
+				"yellow_Left_8_1",
+				"yellow_Left_8_2",
+				"yellow_Down_8_1",
+				"yellow_Down_8_2",
+				"yellow_Right_8_1",
+				"yellow_Right_8_2",
+				
+				"white_Up_8_1",
+				"white_Up_8_2",
+				"white_Left_8_1",
+				"white_Left_8_2",
+				"white_Down_8_1",
+				"white_Down_8_2",
+				"white_Right_8_1",
+				"white_Right_8_2",
+				
+				"green_Up_1_1",
+				"green_Up_1_2",
+				"green_Left_1_1",
+				"green_Left_1_2",
+				"green_Down_1_1",
+				"green_Down_1_2",
+				"green_Right_1_1",
+				"green_Right_1_2",
+				
+				"red_Up_1_1",
+				"red_Up_1_2",
+				"red_Left_1_1",
+				"red_Left_1_2",
+				"red_Down_1_1",
+				"red_Down_1_2",
+				"red_Right_1_1",
+				"red_Right_1_2",
+				
+				"green_Up_2_1",
+				"green_Up_2_2",
+				"green_Left_2_1",
+				"green_Left_2_2",
+				"green_Down_2_1",
+				"green_Down_2_2",
+				"green_Right_2_1",
+				"green_Right_2_2",
+				
+				"red_Up_2_1",
+				"red_Up_2_2",
+				"red_Left_2_1",
+				"red_Left_2_2",
+				"red_Down_2_1",
+				"red_Down_2_2",
+				"red_Right_2_1",
+				"red_Right_2_2",
+				
+				"green_Up_3_1",
+				"green_Up_3_2",
+				"green_Left_3_1",
+				"green_Left_3_2",
+				"green_Down_3_1",
+				"green_Down_3_2",
+				"green_Right_3_1",
+				"green_Right_3_2",
+				
+				"red_Up_3_1",
+				"red_Up_3_2",
+				"red_Left_3_1",
+				"red_Left_3_2",
+				"red_Down_3_1",
+				"red_Down_3_2",
+				"red_Right_3_1",
+				"red_Right_3_2",
+				
+				"green_Up_4_1",
+				"green_Up_4_2",
+				"green_Left_4_1",
+				"green_Left_4_2",
+				"green_Down_4_1",
+				"green_Down_4_2",
+				"green_Right_4_1",
+				"green_Right_4_2",
+				
+				"red_Up_4_1",
+				"red_Up_4_2",
+				"red_Left_4_1",
+				"red_Left_4_2",
+				"red_Down_4_1",
+				"red_Down_4_2",
+				"red_Right_4_1",
+				"red_Right_4_2",
+				
+				"green_Up_5_1",
+				"green_Up_5_2",
+				"green_Left_5_1",
+				"green_Left_5_2",
+				"green_Down_5_1",
+				"green_Down_5_2",
+				"green_Right_5_1",
+				"green_Right_5_2",
+				
+				"red_Up_5_1",
+				"red_Up_5_2",
+				"red_Left_5_1",
+				"red_Left_5_2",
+				"red_Down_5_1",
+				"red_Down_5_2",
+				"red_Right_5_1",
+				"red_Right_5_2",
+				
+				"green_Up_6_1",
+				"green_Up_6_2",
+				"green_Left_6_1",
+				"green_Left_6_2",
+				"green_Down_6_1",
+				"green_Down_6_2",
+				"green_Right_6_1",
+				"green_Right_6_2",
+				
+				"red_Up_6_1",
+				"red_Up_6_2",
+				"red_Left_6_1",
+				"red_Left_6_2",
+				"red_Down_6_1",
+				"red_Down_6_2",
+				"red_Right_6_1",
+				"red_Right_6_2",
+				
+				"green_Up_7_1",
+				"green_Up_7_2",
+				"green_Left_7_1",
+				"green_Left_7_2",
+				"green_Down_7_1",
+				"green_Down_7_2",
+				"green_Right_7_1",
+				"green_Right_7_2",
+				
+				"red_Up_7_1",
+				"red_Up_7_2",
+				"red_Left_7_1",
+				"red_Left_7_2",
+				"red_Down_7_1",
+				"red_Down_7_2",
+				"red_Right_7_1",
+				"red_Right_7_2",
+				
+				"green_Up_8_1",
+				"green_Up_8_2",
+				"green_Left_8_1",
+				"green_Left_8_2",
+				"green_Down_8_1",
+				"green_Down_8_2",
+				"green_Right_8_1",
+				"green_Right_8_2",
+				
+				"red_Up_8_1",
+				"red_Up_8_2",
+				"red_Left_8_1",
+				"red_Left_8_2",
+				"red_Down_8_1",
+				"red_Down_8_2",
+				"red_Right_8_1",
+				"red_Right_8_2",
+				
+				"respawn_1",
+				"respawn_2",
+				"respawn_3",
+				"respawn_4",
+				
+				"shield_1",
+				"shield_2"
 			]
 		},
 		{
@@ -184,6 +471,52 @@
 			]
 		},
 		{
+			"name"          : "water",
+			"textureAtlas"  : "mapTextureAtlas",
+			"shader"        : "spriteShader",
+			"initialSubTexture"  : "water_1",
+						"animations" : [
+				{
+					"animationName"	 : "flow",
+					"frames" : [
+						{
+							"subTexture" : "water_1",
+							"duration"   : 500
+						},
+						{
+							"subTexture" : "water_2",
+							"duration"   : 500
+						},
+						{
+							"subTexture" : "water_3",
+							"duration"   : 500
+						}
+					]
+				}
+			]
+		},
+		{
+			"name"          : "shield",
+			"textureAtlas"  : "tanksTextureAtlas",
+			"shader"        : "spriteShader",
+			"initialSubTexture"  : "shield_1",
+						"animations" : [
+				{
+					"animationName"	 : "shield",
+					"frames" : [
+						{
+							"subTexture" : "shield_1",
+							"duration"   : 80
+						},
+						{
+							"subTexture" : "shield_2",
+							"duration"   : 80
+						}
+					]
+				}
+			]
+		},
+		{
 			"name"          : "yellowTank_1",
 			"textureAtlas"  : "tanksTextureAtlas",
 			"shader"        : "spriteShader",
@@ -240,29 +573,42 @@
 							"duration"   : 200
 						}
 					]
-				}
-			]
-		},
-		{
-			"name"          : "water",
-			"textureAtlas"  : "mapTextureAtlas",
-			"shader"        : "spriteShader",
-			"initialSubTexture"  : "water_1",
-						"animations" : [
+				},
 				{
-					"animationName"	 : "flow",
+					"animationName"   : "respawn",
 					"frames" : [
 						{
-							"subTexture" : "water_1",
-							"duration"   : 500
+							"subTexture" : "respawn_1",
+							"duration"   : 100
 						},
 						{
-							"subTexture" : "water_2",
-							"duration"   : 500
+							"subTexture" : "respawn_2",
+							"duration"   : 100
 						},
 						{
-							"subTexture" : "water_3",
-							"duration"   : 500
+							"subTexture" : "respawn_3",
+							"duration"   : 100
+						},
+						{
+							"subTexture" : "respawn_4",
+							"duration"   : 100
+						},
+						{
+							"subTexture" : "respawn_3",
+							"duration"   : 100
+						},
+						{
+							"subTexture" : "respawn_2",
+							"duration"   : 100
+						}
+					]
+				},
+				{
+					"animationName"   : "spawned",
+					"frames" : [
+						{
+							"subTexture" : "yellow_Up_1_1",
+							"duration"   : 1
 						}
 					]
 				}

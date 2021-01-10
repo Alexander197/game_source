@@ -6,26 +6,43 @@ namespace RenderEngine {
 		m_currentFrame(0),
 		m_currentAnimationTime(0),
 		m_currentFrameDuration(0),
-		m_currentAnimationState(EAnimationStates::None)
+		m_currentAnimationState(EAnimationStates::None),
+		m_isCallback(false)
 	{
 
 	}
 	void SpriteAnimator::update(const double delta)
 	{
-		if (m_activeAnimationDescription.size() != 0)
-		{
-			m_currentAnimationTime += delta;
-
-			while (m_currentAnimationTime >= m_currentFrameDuration)
+		if(m_currentAnimationState != EAnimationStates::None)
+		{ 
+			if (m_activeAnimationDescription.size() != 0)
 			{
-				m_currentAnimationTime -= m_currentFrameDuration;
-				++m_currentFrame;
+				m_currentAnimationTime += delta;
 
-				if (m_currentFrame == m_activeAnimationDescription.size())
+				while (m_currentAnimationTime >= m_currentFrameDuration)
 				{
-					m_currentFrame = 0;
+					m_currentAnimationTime -= m_currentFrameDuration;
+					++m_currentFrame;
+
+					if (m_currentFrame == m_activeAnimationDescription.size())
+					{
+						if (m_currentAnimationState == EAnimationStates::Once)
+						{
+							m_currentAnimationState = EAnimationStates::None;
+							if (m_isCallback)
+							{
+								m_isCallback = false;
+								m_callback();
+							}
+							m_currentFrame--;
+						}
+						else
+						{
+							m_currentFrame = 0;
+						}
+					}
+					m_currentFrameDuration = m_activeAnimationDescription[m_currentFrame].duration;
 				}
-				m_currentFrameDuration = m_activeAnimationDescription[m_currentFrame].duration;
 			}
 		}
 	}
@@ -54,6 +71,7 @@ namespace RenderEngine {
 		auto framesDescription = m_pSprite->getAnimation(activeAnimation);
 		if (framesDescription.size() != 0)
 		{
+			m_activeAnimationDescription = framesDescription;
 			m_currentFrame = 0;
 			m_currentAnimationTime = 0;
 			m_currentFrameDuration = framesDescription[0].duration;
@@ -62,6 +80,25 @@ namespace RenderEngine {
 		}
 		return false;
 	}
+
+	bool SpriteAnimator::startAnimationOnce(const std::string& activeAnimation, std::function<void()> callback)
+	{
+		m_callback = callback;
+		m_isCallback = true;
+		m_activeAnimation = activeAnimation;
+		auto framesDescription = m_pSprite->getAnimation(activeAnimation);
+		if (framesDescription.size() != 0)
+		{
+			m_activeAnimationDescription = framesDescription;
+			m_currentFrame = 0;
+			m_currentAnimationTime = 0;
+			m_currentFrameDuration = framesDescription[0].duration;
+			m_currentAnimationState = EAnimationStates::Once;
+			return true;
+		}
+		return false;
+	}
+
 	void SpriteAnimator::stopAnimation()
 	{
 		if (m_currentAnimationState != EAnimationStates::None)

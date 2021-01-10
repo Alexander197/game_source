@@ -7,6 +7,7 @@
 #include "IGameObject.h"
 #include "../../Renderer/SpriteAnimator.h"
 #include "../../Renderer/Sprite.h"
+#include "../../System/Timer.h"
 
 namespace RenderEngine {
 	class Sprite;
@@ -34,10 +35,19 @@ public:
 
 private:
 	EOrientation m_eOrientation;
-	std::shared_ptr<RenderEngine::Sprite> m_pSprite;
-	RenderEngine::SpriteAnimator m_spriteAnimator;
+
+	std::shared_ptr<RenderEngine::Sprite> m_pTankSprite;
+	std::shared_ptr<RenderEngine::Sprite> m_pShieldSprite;
+
+	RenderEngine::SpriteAnimator m_tankSpriteAnimator;
+	RenderEngine::SpriteAnimator m_shieldSpriteAnimator;
 
 	bool m_move;
 	float m_velocity;
 	glm::vec2 m_moveOffset;
+
+	bool m_isSpawning;
+	bool m_hasShield;
+	Timer m_spawnTimer;
+	Timer m_shieldTimer;
 };

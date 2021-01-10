@@ -6,6 +6,7 @@ project(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME} 
 	src/main.cpp
+	
 	src/Renderer/ShaderProgram.cpp
 	src/Renderer/ShaderProgram.h
 	src/Renderer/Sprite.cpp
@@ -27,8 +28,12 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/Renderer.h
 	src/Renderer/SpriteAnimator.cpp
 	src/Renderer/SpriteAnimator.h
+	
 	src/Game/Game.cpp
 	src/Game/Game.h
+	src/Game/Level.cpp
+	src/Game/Level.h
+	
 	src/Game/GameObjects/Tank.cpp
 	src/Game/GameObjects/Tank.h
 	src/Game/GameObjects/IGameObject.cpp
@@ -45,8 +50,9 @@ add_executable(${PROJECT_NAME}
 	src/Game/GameObjects/Eagle.cpp
 	src/Game/GameObjects/Bush.h
 	src/Game/GameObjects/Bush.cpp
-	src/Game/Level.cpp
-	src/Game/Level.h
+	
+	src/System/Timer.h
+	src/System/Timer.cpp
  )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
