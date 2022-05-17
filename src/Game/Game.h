@@ -32,4 +32,10 @@ private:
 	EGameState m_eCurrentGameState;
 	std::unique_ptr<Tank> m_pTank;
 	std::unique_ptr<Level> m_pLevel;
+
+	void keyUp(const int action);
+	void keyDown(const int action);
+	void keyLeft(const int action);
+	void keyRight(const int action);
+	void keyLeftShift(const int action);
 };

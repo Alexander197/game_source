@@ -46,7 +46,7 @@ void Game::update(const double delta)
 
     if (m_pTank) 
     {
-        if (m_keys[GLFW_KEY_UP])
+        /*if (m_keys[GLFW_KEY_UP])
         {
             m_pTank->setOrientation(Tank::EOrientation::Up);
             m_pTank->move(true);
@@ -69,7 +69,7 @@ void Game::update(const double delta)
         else 
         {
             m_pTank->move(false);
-        }
+        }*/
 
         m_pTank->update(delta);
     }
@@ -78,6 +78,23 @@ void Game::update(const double delta)
 void Game::setKey(const int key, const int action)
 {
 	m_keys[key] = action;
+    switch (key)
+    {
+    case GLFW_KEY_UP:
+        keyUp(action);
+        break;
+    case GLFW_KEY_LEFT:
+        keyLeft(action);
+        break;
+    case GLFW_KEY_DOWN:
+        keyDown(action);
+        break;
+    case GLFW_KEY_RIGHT:
+        keyRight(action);
+        break;
+    case GLFW_KEY_LEFT_SHIFT:
+        keyLeftShift(action);
+    }
 }
 bool Game::init()
 {
@@ -100,7 +117,7 @@ bool Game::init()
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
     
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
-        0.1f, m_pLevel->getPlayerRespawn_1(), glm::vec2(Level::BLOCK_SIZE, Level::BLOCK_SIZE), 1.0f);
+        0.0f, 0.003f, 0.1f, m_pLevel->getPlayerRespawn_1(), glm::vec2(Level::BLOCK_SIZE, Level::BLOCK_SIZE), 1.0f);
 
     return true;
 }
@@ -112,4 +129,145 @@ size_t Game::getCurrentLevelWidth() const
 size_t Game::getCurrentLevelHeight() const
 {
     return m_pLevel->getLevelHeight();
+}
+
+void Game::keyUp(const int action)
+{
+    if (m_keys[GLFW_KEY_UP])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Up);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_LEFT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Left);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_DOWN])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Down);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_RIGHT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Right);
+        m_pTank->move(true);
+    }
+    else
+    {
+        m_pTank->move(false);
+    }
+    if (action)
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Up);
+        m_pTank->move(true);
+    }
+}
+void Game::keyDown(const int action)
+{
+    if (m_keys[GLFW_KEY_UP])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Up);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_LEFT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Left);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_DOWN])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Down);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_RIGHT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Right);
+        m_pTank->move(true);
+    }
+    else
+    {
+        m_pTank->move(false);
+    }
+    if (action)
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Down);
+        m_pTank->move(true);
+    }
+}
+void Game::keyLeft(const int action)
+{
+    if (m_keys[GLFW_KEY_UP])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Up);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_LEFT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Left);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_DOWN])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Down);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_RIGHT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Right);
+        m_pTank->move(true);
+    }
+    else
+    {
+        m_pTank->move(false);
+    }
+    if (action)
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Left);
+        m_pTank->move(true);
+    }
+}
+void Game::keyRight(const int action)
+{
+    if (m_keys[GLFW_KEY_UP])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Up);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_LEFT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Left);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_DOWN])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Down);
+        m_pTank->move(true);
+    }
+    else if (m_keys[GLFW_KEY_RIGHT])
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Right);
+        m_pTank->move(true);
+    }
+    else
+    {
+        m_pTank->move(false);
+    }
+    if (action)
+    {
+        m_pTank->setOrientation(Tank::EOrientation::Right);
+        m_pTank->move(true);
+    }
+}
+void Game::keyLeftShift(const int action)
+{
+    switch (action)
+    {
+        case GLFW_PRESS:
+            m_pTank->setVelocity(0.05);
+            break;
+        case GLFW_RELEASE:
+            m_pTank->setVelocity(0.1);
+            break;
+    }
 }

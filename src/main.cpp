@@ -13,7 +13,7 @@
 
 #include "Game/Game.h"
 
-glm::ivec2 g_windowSize(640, 480);
+glm::ivec2 g_windowSize(1920, 1080);
 
 std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
@@ -104,6 +104,7 @@ int main(int argc, char** argv)
 
             auto currentTime = std::chrono::high_resolution_clock::now();
             double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count(); 
+
             lastTime = currentTime;
             g_game->update(duration);
 

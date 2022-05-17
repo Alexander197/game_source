@@ -3,17 +3,17 @@
 
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	const float velocity,
+	const float aceleration,
+	const float maxVelocity,
 	const glm::vec2& position,
 	const glm::vec2& size,
 	const float layer) :
-	IGameObject(position, size, 0.0f, layer),
+	IGameObject(position, size, 0.0f, layer, velocity, aceleration, maxVelocity),
 	m_eOrientation(EOrientation::Up),
 	m_pTankSprite(std::move(pSprite)),
 	m_pShieldSprite(ResourceManager::getSprite("shield")),
 	m_tankSpriteAnimator(m_pTankSprite),
 	m_shieldSpriteAnimator(m_pShieldSprite),
-	m_move(false),
-	m_velocity(velocity),
 	m_moveOffset(glm::vec2(0.0f, 1.0f)),
 	m_isSpawning(true),
 	m_hasShield(false)
@@ -70,16 +70,13 @@ void Tank::setOrientation(const EOrientation eOrientation)
 		break;
 	}
 }
-void Tank::move(const bool move)
-{
-	m_move = move;
-}
 void Tank::update(const double delta)
 {
 	if (!m_isSpawning)
 	{
 		if (m_move)
 		{
+			m_velocity += static_cast<float>(delta) * m_aceleration * ((m_maxVelocity - m_velocity) / m_maxVelocity);
 			m_position += static_cast<float>(delta) * m_velocity * m_moveOffset;
 
 			switch (m_eOrientation)
@@ -100,6 +97,7 @@ void Tank::update(const double delta)
 		}
 		else
 		{
+			m_velocity = 0.0f;
 			m_tankSpriteAnimator.stopAnimation();
 		}
 	}
