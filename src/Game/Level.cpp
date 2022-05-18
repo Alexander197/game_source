@@ -127,6 +127,10 @@ void Level::update(const double delta)
 		}
 	}
 }
+std::vector<std::shared_ptr<IGameObject>> Level::getMapObjects()
+{
+	return m_mapObjects;
+}
 
 size_t Level::getLevelWidth() const
 {

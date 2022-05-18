@@ -46,6 +46,18 @@ void Game::update(const double delta)
 
     if (m_pTank) 
     {
+        std::vector<std::shared_ptr<IGameObject>> mapObjects = m_pLevel->getMapObjects();
+        size_t size = mapObjects.size();
+        for (size_t i = 0; i < size - 10; i++)
+        {
+            if(mapObjects[i])
+            if (BoundingBox::isColide(m_pTank->getBoundingBox(), mapObjects[i]->getBoundingBox()))
+            {
+                m_pTank->setLastPosition();
+                m_pTank->move(false);
+                break;
+            }
+        }
         /*if (m_keys[GLFW_KEY_UP])
         {
             m_pTank->setOrientation(Tank::EOrientation::Up);
@@ -117,7 +129,7 @@ bool Game::init()
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
     
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
-        0.0f, 0.003f, 0.1f, m_pLevel->getPlayerRespawn_1(), glm::vec2(Level::BLOCK_SIZE, Level::BLOCK_SIZE), 1.0f);
+        0.0f, 0.003f, 0.1f, m_pLevel->getPlayerRespawn_1(), glm::vec2(Level::BLOCK_SIZE / 1.3, Level::BLOCK_SIZE / 1.3), 1.0f);
 
     return true;
 }

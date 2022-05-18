@@ -258,7 +258,7 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 				const auto animations = animationsIt->value.GetArray();
 				for (const auto& currentAnimation : animations)
 				{
-					const std::string animationName = currentAnimation["animationName"].GetString();
+					std::string animationName = currentAnimation["animationName"].GetString();
 					const auto frames = currentAnimation["frames"].GetArray();
 
 					std::vector<RenderEngine::Sprite::FrameDescription> framesDescriptions;

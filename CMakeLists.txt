@@ -50,6 +50,8 @@ add_executable(${PROJECT_NAME}
 	src/Game/GameObjects/Eagle.cpp
 	src/Game/GameObjects/Bush.h
 	src/Game/GameObjects/Bush.cpp
+	src/Game/GameObjects/BoundingBox.h
+	src/Game/GameObjects/BoundingBox.cpp
 	
 	src/System/Timer.h
 	src/System/Timer.cpp

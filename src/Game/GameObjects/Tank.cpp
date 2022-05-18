@@ -1,5 +1,6 @@
 #include "Tank.h"
 #include "../../Resources/ResourceManager.h"
+#include <glm/glm.hpp>
 
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	const float velocity,
@@ -8,7 +9,7 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	const glm::vec2& position,
 	const glm::vec2& size,
 	const float layer) :
-	IGameObject(position, size, 0.0f, layer, velocity, aceleration, maxVelocity),
+	IGameObject(position, size, 0.0f, BoundingBox::Shape::RECTANGLE_NON_ROTATED, layer, velocity, aceleration, maxVelocity),
 	m_eOrientation(EOrientation::Up),
 	m_pTankSprite(std::move(pSprite)),
 	m_pShieldSprite(ResourceManager::getSprite("shield")),
@@ -76,8 +77,13 @@ void Tank::update(const double delta)
 	{
 		if (m_move)
 		{
+			m_lastPosition = m_position;
 			m_velocity += static_cast<float>(delta) * m_aceleration * ((m_maxVelocity - m_velocity) / m_maxVelocity);
 			m_position += static_cast<float>(delta) * m_velocity * m_moveOffset;
+
+			m_boundingBox->setBoundingBox(BoundingBox::Shape::RECTANGLE_NON_ROTATED,
+				glm::vec2(m_position.x, m_position.y),
+				glm::vec2(m_position.x + m_size.x, m_position.y + m_size.y));
 
 			switch (m_eOrientation)
 			{

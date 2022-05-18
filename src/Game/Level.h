@@ -15,6 +15,7 @@ public:
 	Level(const std::vector<std::string>& levelDescription);
 	void render() const;
 	void update(const double delta);
+	std::vector<std::shared_ptr<IGameObject>> getMapObjects();
 
 	size_t getLevelWidth() const;
 	size_t getLevelHeight() const;
