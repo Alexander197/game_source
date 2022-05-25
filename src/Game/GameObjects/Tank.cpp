@@ -1,10 +1,11 @@
 #include "Tank.h"
 #include "../../Resources/ResourceManager.h"
 #include <glm/glm.hpp>
+#include <iostream>
 
 Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
-	const float velocity,
-	const float aceleration,
+	const glm::vec3 velocity,
+	const glm::vec3 aceleration,
 	const float maxVelocity,
 	const glm::vec2& position,
 	const glm::vec2& size,
@@ -78,12 +79,10 @@ void Tank::update(const double delta)
 		if (m_move)
 		{
 			m_lastPosition = m_position;
-			m_velocity += static_cast<float>(delta) * m_aceleration * ((m_maxVelocity - m_velocity) / m_maxVelocity);
-			m_position += static_cast<float>(delta) * m_velocity * m_moveOffset;
+			m_velocity += static_cast<float>(delta) * m_acceleration * ((glm::vec3(m_maxVelocity) - m_velocity) / m_maxVelocity);
+			m_position += (glm::vec3((static_cast<float>(delta) * m_velocity * glm::vec3(m_moveOffset, 0.0f))));
 
-			m_boundingBox->setBoundingBox(BoundingBox::Shape::RECTANGLE_NON_ROTATED,
-				glm::vec2(m_position.x, m_position.y),
-				glm::vec2(m_position.x + m_size.x, m_position.y + m_size.y));
+			m_boundingBox->setBoundingBox(m_position + glm::vec3(m_size / 12.0f, 0.0f), m_size / 1.2f);
 
 			switch (m_eOrientation)
 			{
@@ -103,7 +102,7 @@ void Tank::update(const double delta)
 		}
 		else
 		{
-			m_velocity = 0.0f;
+			m_velocity = glm::vec3(0.0f);
 			m_tankSpriteAnimator.stopAnimation();
 		}
 	}

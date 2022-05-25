@@ -11,49 +11,50 @@
 
 std::shared_ptr<IGameObject> createGameObjectFromDescription(const char description, const glm::vec2 position, const glm::vec2 size, const float rotation = 0) 
 {
+	const float offset = 0.0f;
 	switch (description)
 	{
 	case '0':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right"), position, size, rotation, 0.0f + offset);
 		break;
 	case '1':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_bottom"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_bottom"), position, size, rotation, 0.0f + offset);
 		break;
 	case '2':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_left"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_left"), position, size, rotation, 0.0f + offset);
 		break;
 	case '3':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_top"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_top"), position, size, rotation, 0.0f + offset);
 		break;
 	case '4':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_full"), position, size, rotation, -1.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_full"), position, size, rotation, -1.0f + offset);
 		break;
 	case 'A':
-		return std::make_shared<Eagle>(ResourceManager::getSprite("eagle"), position, size, rotation, 1.0f);
+		return std::make_shared<Eagle>(ResourceManager::getSprite("eagle"), position, size, rotation, 1.0f + offset);
 		break;
 	case 'C':
-		return std::make_shared<BetonWall>(ResourceManager::getSprite("beton_full"), position, size, rotation, 0.0f);
+		return std::make_shared<BetonWall>(ResourceManager::getSprite("beton_full"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'E':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("steel"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("steel"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'F':
-		return std::make_shared<Water>(ResourceManager::getSprite("water"), position, size, rotation, 0.0f);
+		return std::make_shared<Water>(ResourceManager::getSprite("water"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'G':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_left_bottom"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_left_bottom"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'H':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right_bottom"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right_bottom"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'I':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_left_top"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_left_top"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'J':
-		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right_top"), position, size, rotation, 0.0f);
+		return std::make_shared<BrickWall>(ResourceManager::getSprite("brick_right_top"), position, size, rotation, 0.0f + offset);
 		break;
 	case 'K':
-		return std::make_shared<Bush>(ResourceManager::getSprite("bush"), position, size, rotation, 1.0f);
+		return std::make_shared<Bush>(ResourceManager::getSprite("bush"), position, size, rotation, 2.0f + offset);
 		break;
 	case 'D':
 		return nullptr;
@@ -75,6 +76,8 @@ Level::Level(const std::vector<std::string>& levelDescription)
 	m_width = levelDescription[0].length();
 	m_height = levelDescription.size();
 
+	glm::vec2 center = glm::vec2(getLevelWidth() / 2.0f, getLevelHeight() / 2.0f);
+
 	m_playerRespawn_1 = {32.0f, 16.0f};
 
 	m_mapObjects.reserve(m_width * m_height + 4);
@@ -88,10 +91,10 @@ Level::Level(const std::vector<std::string>& levelDescription)
 			switch (currentElement)
 			{
 			case 'V':
-				m_playerRespawn_1 = { currentLeftOffset, currentBottomOffset };
+				m_playerRespawn_1 = glm::vec2(currentLeftOffset, currentBottomOffset) - center;
 				break;
 			default:
-				m_mapObjects.emplace_back(createGameObjectFromDescription(currentElement, glm::vec2(currentLeftOffset, currentBottomOffset), glm::vec2(BLOCK_SIZE, BLOCK_SIZE)));
+				m_mapObjects.emplace_back(createGameObjectFromDescription(currentElement, glm::vec2(currentLeftOffset, currentBottomOffset) - center, glm::vec2(BLOCK_SIZE, BLOCK_SIZE)));
 				break;
 			}
 			currentLeftOffset += BLOCK_SIZE;
@@ -99,13 +102,13 @@ Level::Level(const std::vector<std::string>& levelDescription)
 		currentBottomOffset -= BLOCK_SIZE;
 	}
 
-	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(BLOCK_SIZE,0.0f), glm::vec2(m_width * BLOCK_SIZE, BLOCK_SIZE / 2.0f), 0.0f, 0.0f)); //Bottom
+	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(BLOCK_SIZE,0.0f) - center, glm::vec2(m_width * BLOCK_SIZE, BLOCK_SIZE / 2.0f), 0.0f, 0.0f)); //Bottom
 
-	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(BLOCK_SIZE, BLOCK_SIZE * (m_height + 0.5f)), glm::vec2(m_width * BLOCK_SIZE, BLOCK_SIZE / 2.0f), 0.0f, 0.0f)); //Top
+	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(BLOCK_SIZE, BLOCK_SIZE * (m_height + 0.5f)) - center, glm::vec2(m_width * BLOCK_SIZE, BLOCK_SIZE / 2.0f), 0.0f, 0.0f)); //Top
 
-	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(0.0f, 0.0f), glm::vec2(BLOCK_SIZE, BLOCK_SIZE * (m_height + 1)), 0.0f, 0.0f)); //Left
+	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(0.0f, 0.0f) - center, glm::vec2(BLOCK_SIZE, BLOCK_SIZE * (m_height + 1)), 0.0f, 0.0f)); //Left
 
-	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(BLOCK_SIZE * (m_width + 1), 0.0f), glm::vec2(BLOCK_SIZE * 2.0f, BLOCK_SIZE * (m_height + 1)), 0.0f, 0.0f)); //Right
+	m_mapObjects.emplace_back(std::make_shared<Border>(ResourceManager::getSprite("border"), glm::vec2(BLOCK_SIZE * (m_width + 1), 0.0f) - center, glm::vec2(BLOCK_SIZE * 2.0f, BLOCK_SIZE * (m_height + 1)), 0.0f, 0.0f)); //Right
 }
 void Level::render() const
 {

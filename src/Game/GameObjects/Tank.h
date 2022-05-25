@@ -23,8 +23,8 @@ public:
 	};
 
 	Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
-		const float velocity,
-		const float aceleration,
+		const glm::vec3 velocity,
+		const glm::vec3 aceleration,
 		const float maxVelocity,
 		const glm::vec2& position,
 		const glm::vec2& size,

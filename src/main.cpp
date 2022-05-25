@@ -52,6 +52,19 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
     }
     g_game->setKey(key, action);
 }
+void glfwMouseButtonCallback(GLFWwindow* pWindow, int button, int action, int mods)
+{
+    g_game->setMouseButton(button, action);
+}
+void glfwCursorPosCallback(GLFWwindow* pWindow, double xpos, double ypos)
+{
+    g_game->setCursorPos(xpos, ypos);
+}
+void glfwScrollCallback(GLFWwindow*, double xoffset, double yoffset)
+{
+    g_game->setScrollOffset(xoffset, yoffset);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -74,6 +87,9 @@ int main(int argc, char** argv)
    
     glfwSetWindowSizeCallback(pWindow, glfwWindowSizeCallback);
     glfwSetKeyCallback(pWindow, glfwKeyCallback);
+    glfwSetMouseButtonCallback(pWindow, glfwMouseButtonCallback);
+    glfwSetCursorPosCallback(pWindow, glfwCursorPosCallback);
+    glfwSetScrollCallback(pWindow, glfwScrollCallback);
 
     glfwMakeContextCurrent(pWindow);
 	

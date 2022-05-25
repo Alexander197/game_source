@@ -1,5 +1,7 @@
 #include "BoundingBox.h"
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 BoundingBox::BoundingBox(Shape shape, glm::vec2 center, float radius) : m_shape(shape),
 																		m_circleBox(std::make_pair(center, radius))
@@ -17,10 +19,23 @@ void BoundingBox::setBoundingBox(Shape shape, glm::vec2 center, float radius)
 	m_shape = shape;
 	m_circleBox = std::make_pair(center, radius);
 }
+
 void BoundingBox::setBoundingBox(Shape shape, glm::vec2 leftBottomUV, glm::vec2 rightTopUV)
 {
 	m_shape = shape;
 	m_rectagleBox = std::make_pair(leftBottomUV, rightTopUV);
+}
+void BoundingBox::setBoundingBox(glm::vec2 position, glm::vec2 size)
+{
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(position, 0.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(size, 1.0f));
+
+	glm::vec4 leftBottom = modelMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 rightTop = modelMatrix * glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+
+	m_rectagleBox = std::make_pair(leftBottom, rightTop);
 }
 
 bool BoundingBox::isColide(std::shared_ptr<BoundingBox> boundingBox1, std::shared_ptr<BoundingBox> boundingBox2)
