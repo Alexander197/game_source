@@ -34,7 +34,6 @@ namespace RenderEngine {
 			0, 1, 2,
 			2, 3, 0
 		};
-
 		m_vertexCoordsBuffer.init(vertexCoords, sizeof(vertexCoords));
 		VertexBufferLayout vertexCoordsLayout;
 		vertexCoordsLayout.addElementLayoutFloat(2, GL_FALSE);
@@ -54,7 +53,8 @@ namespace RenderEngine {
 	}
 	Sprite::~Sprite()	{}
 
-	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer, const size_t frame_id, const std::string& animationName) const
+	void Sprite::render(const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer,
+		const size_t frame_id, const std::string& animationName) const
 	{
 		if (!animationName.empty())
 		{
@@ -85,12 +85,14 @@ namespace RenderEngine {
 		model = glm::scale(model, glm::vec3(size, 1.0f));
 
 		m_pShaderProgram->setMatrix4("modelMat", model);
+
 		m_pShaderProgram->setFloat("layer", layer);
 		
 		glActiveTexture(GL_TEXTURE0);
 		m_pTexture->bind();
 
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+		m_pTexture->unbind();
 	}
 
 	void Sprite::insertAnimation(const std::string& animationName, const std::vector<FrameDescription> framesDescriptions)

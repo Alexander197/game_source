@@ -94,7 +94,9 @@ Level::Level(const std::vector<std::string>& levelDescription)
 				m_playerRespawn_1 = glm::vec2(currentLeftOffset, currentBottomOffset) - center;
 				break;
 			default:
-				m_mapObjects.emplace_back(createGameObjectFromDescription(currentElement, glm::vec2(currentLeftOffset, currentBottomOffset) - center, glm::vec2(BLOCK_SIZE, BLOCK_SIZE)));
+				std::shared_ptr gameObject = createGameObjectFromDescription(currentElement, glm::vec2(currentLeftOffset, currentBottomOffset) - center, glm::vec2(BLOCK_SIZE, BLOCK_SIZE));
+				if(gameObject)
+					m_mapObjects.emplace_back(gameObject);
 				break;
 			}
 			currentLeftOffset += BLOCK_SIZE;

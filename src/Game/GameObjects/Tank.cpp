@@ -10,7 +10,7 @@ Tank::Tank(std::shared_ptr<RenderEngine::Sprite> pSprite,
 	const glm::vec2& position,
 	const glm::vec2& size,
 	const float layer) :
-	IGameObject(position, size, 0.0f, BoundingBox::Shape::RECTANGLE_NON_ROTATED, layer, velocity, aceleration, maxVelocity),
+	IGameObject(position, size, 0.0f, layer, 0.8f, false, velocity, aceleration, maxVelocity),
 	m_eOrientation(EOrientation::Up),
 	m_pTankSprite(std::move(pSprite)),
 	m_pShieldSprite(ResourceManager::getSprite("shield")),
@@ -79,10 +79,10 @@ void Tank::update(const double delta)
 		if (m_move)
 		{
 			m_lastPosition = m_position;
-			m_velocity += static_cast<float>(delta) * m_acceleration * ((glm::vec3(m_maxVelocity) - m_velocity) / m_maxVelocity);
-			m_position += (glm::vec3((static_cast<float>(delta) * m_velocity * glm::vec3(m_moveOffset, 0.0f))));
+			m_velocity += static_cast<float>(delta) * m_acceleration * ((glm::vec2(m_maxVelocity) - m_velocity) / m_maxVelocity);
+			m_position += static_cast<float>(delta) * m_velocity * m_moveOffset;
 
-			m_boundingBox->setBoundingBox(m_position + glm::vec3(m_size / 12.0f, 0.0f), m_size / 1.2f);
+			m_pBoundingBox->setBoundingBox(m_position, m_size);
 
 			switch (m_eOrientation)
 			{

@@ -1,7 +1,7 @@
 #include "Bush.h"
 
 Bush::Bush(std::shared_ptr<RenderEngine::Sprite> pSprite, const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer) :
-	IGameObject(position, size, rotation, BoundingBox::Shape::NONE, layer),
+	IGameObject(position, size, rotation, layer, 1.0f, true),
 	m_pSprite(std::move(pSprite))
 {
 

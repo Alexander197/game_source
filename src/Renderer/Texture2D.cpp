@@ -59,7 +59,12 @@ namespace RenderEngine {
 
 	void Texture2D::bind() const
 	{
-		glBindTexture(GL_TEXTURE_2D, m_ID); 
+		glBindTexture(GL_TEXTURE_2D, m_ID);
+	}
+
+	void Texture2D::unbind() const
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void Texture2D::addSubTexture(std::string name, const glm::vec2& leftBottomUV, const glm::vec2& rightTopUV)

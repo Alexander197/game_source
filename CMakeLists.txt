@@ -28,6 +28,8 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/Renderer.h
 	src/Renderer/SpriteAnimator.cpp
 	src/Renderer/SpriteAnimator.h
+	src/Renderer/Model3D.cpp
+	src/Renderer/Model3D.h
 	
 	src/Game/Game.cpp
 	src/Game/Game.h
@@ -50,8 +52,8 @@ add_executable(${PROJECT_NAME}
 	src/Game/GameObjects/Eagle.cpp
 	src/Game/GameObjects/Bush.h
 	src/Game/GameObjects/Bush.cpp
-	src/Game/GameObjects/BoundingBox.h
-	src/Game/GameObjects/BoundingBox.cpp
+	src/Game/GameObjects/AxisAlignedBoundingBox.h
+	src/Game/GameObjects/AxisAlignedBoundingBox.cpp
 	
 	src/System/Timer.h
 	src/System/Timer.cpp

@@ -17,7 +17,7 @@ namespace RenderEngine {
 			glDeleteShader(vertexShaderID);
 			return;
 		}
-		m_ID= glCreateProgram();
+		m_ID = glCreateProgram();
 		glAttachShader(m_ID, vertexShaderID);
 		glAttachShader(m_ID, fragmentShaderID);
 		glLinkProgram(m_ID);
@@ -94,6 +94,7 @@ namespace RenderEngine {
 	}
 	void ShaderProgram::setMatrix4(const std::string& name, const glm::mat4 matrix)
 	{
+		//glUseProgram(m_ID);
 		glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 }

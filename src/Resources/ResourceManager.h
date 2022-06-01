@@ -10,6 +10,7 @@ namespace RenderEngine
 	class ShaderProgram;
 	class Texture2D;
 	class Sprite;
+	class Model3D;
 }
 
 class ResourceManager {
@@ -34,6 +35,10 @@ public:
 															const std::string& shaderName,
 															const std::string& subTextureName = "default");
 	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
+	
+	static std::shared_ptr<RenderEngine::Model3D> load3DModel(const std::string& modelName, const std::string& modelPath,
+		const std::string& textureName, const std::string& shaderName);
+	static std::shared_ptr<RenderEngine::Model3D> get3DModel(const std::string& modelName);
 
 	static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(std::string textureName,
 																	 std::string texturePath,
@@ -55,6 +60,9 @@ private:
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> SpritesMap_t;
 	static SpritesMap_t m_sprites;
+
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Model3D>> Models3DMap_t;
+	static Models3DMap_t m_models3D;
 
 	static std::vector<std::vector<std::string>> m_levels;
 

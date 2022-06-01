@@ -1,9 +1,14 @@
 {
 	"shaders" : [
 		{
-			"name"       : "spriteShader",
-			"filePath_v" : "res/shaders/vSprite.txt",
-			"filePath_f" : "res/shaders/fSprite.txt"
+			"name"      : "spriteShader",
+			"filePath_v": "res/shaders/vSprite.txt",
+			"filePath_f": "res/shaders/fSprite.txt"
+		},
+		{
+			"name"		: "3DModelShader",
+			"filePath_v": "res/shaders/v3Dmodel.txt",
+			"filePath_f": "res/shaders/f3Dmodel.txt"
 		}
 	],
 	
@@ -344,6 +349,28 @@
 				"brick_right_bottom",
 				"border"
 			]
+		},
+		{
+			"name"             : "body",
+			"filePath"         : "res/models/naruto/Body.bmp",
+			"width"            : 512,
+			"height"           : 512,
+			"subTextureWidth"  : 32,
+			"subTextureHeigth" : 32,
+			"subTextures"      : [
+			
+			]
+		},
+		{
+			"name"             : "cube",
+			"filePath"         : "res/models/cube/cube.png",
+			"width"            : 64,
+			"height"           : 64,
+			"subTextureWidth"  : 32,
+			"subTextureHeigth" : 32,
+			"subTextures"      : [
+			
+			]
 		}
 	],
 	"sprites" : [
@@ -616,6 +643,20 @@
 		}
 	],
 	
+	"models" : [
+		{
+			"name" 			: "naruto",
+			"filePath" 		: "res/models/naruto/D0401253.obj",
+			"textureName"   : "body",
+			"shader" 		: "3DModelShader"
+		},
+		{
+			"name" 			: "cube",
+			"filePath" 		: "res/models/cube/cube.obj",
+			"textureName"   : "cube",
+			"shader" 		: "3DModelShader"
+		}
+	],
 	"levels" : [
 		{
 			"description" : [

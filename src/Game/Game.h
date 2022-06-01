@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <glm/vec2.hpp>
 
+#include "../Renderer/Model3D.h"
+
 class Tank;
 class Level;
 
@@ -42,7 +44,10 @@ private:
 	glm::ivec2 m_windowSize;
 	EGameState m_eCurrentGameState;
 	std::unique_ptr<Tank> m_pTank;
+
 	std::unique_ptr<Level> m_pLevel;
+
+	std::shared_ptr<RenderEngine::Model3D> m_pModel;
 
 	glm::vec3 m_cameraPosition;
 	glm::vec3 m_cameraRotation;

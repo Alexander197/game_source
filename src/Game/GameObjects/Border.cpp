@@ -3,7 +3,7 @@
 #include "../../Renderer/Sprite.h"
 
 Border::Border(std::shared_ptr<RenderEngine::Sprite> pSprite, const glm::vec2 position, const glm::vec2 size, const float rotation, const float layer) :
-	IGameObject(position, size, rotation, BoundingBox::Shape::RECTANGLE_NON_ROTATED, layer),
+	IGameObject(position, size, rotation, layer),
 	m_pSprite(std::move(pSprite))
 {
 

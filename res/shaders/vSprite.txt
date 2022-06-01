@@ -6,6 +6,7 @@ out vec2 texCoords;
 uniform mat4 modelMat;
 uniform mat4 projectionMat;
 uniform mat4 viewMat;
+
 uniform float layer;
 
 void main() {

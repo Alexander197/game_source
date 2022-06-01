@@ -2,6 +2,7 @@
 #include "../Renderer/ShaderProgram.h"
 #include "../Renderer/Texture2D.h"
 #include "../Renderer/Sprite.h"
+#include "../Renderer/Model3D.h"
 
 #include <sstream>
 #include <fstream>
@@ -13,11 +14,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_JPEG
 #define STBI_ONLY_PNG
+#define STBI_ONLY_BMP
+
 #include "stb_image.h"
 
 ResourceManager::ShaderProgramsMap_t ResourceManager::m_shaderProgramsMap;
 ResourceManager::TexturesMap_t ResourceManager::m_textures;
 ResourceManager::SpritesMap_t ResourceManager::m_sprites;
+ResourceManager::Models3DMap_t ResourceManager::m_models3D;
+
 std::string ResourceManager::m_path;
 std::vector<std::vector<std::string>> ResourceManager::m_levels;
 
@@ -142,6 +147,145 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::stri
 		return it->second;
 	}
 	std::cerr << "Can't find the sprite: " << spriteName << std::endl;
+	return nullptr;
+}
+
+std::shared_ptr<RenderEngine::Model3D> ResourceManager::load3DModel(const std::string& modelName, 
+																	const std::string& modelPath,
+																	const std::string& textureName, 
+																	const std::string& shaderName)
+{
+	auto pTexture = getTexture(textureName);
+	if (!pTexture)
+	{
+		std::cerr << "Can't find the texture: " << textureName << " for the sprite" << std::endl;
+		return nullptr;
+	}
+	auto pShader = getShaderProgram(shaderName);
+	if (!pShader)
+	{
+		std::cerr << "Can't find the shader program: " << shaderName << " for the 3D model" << std::endl;
+		return nullptr;
+	}
+
+	std::vector<GLfloat> vertexCoords;
+	std::vector<GLfloat> texCoords;
+	std::vector<GLfloat> normalsCoords;
+
+	std::vector<GLuint> vertexIndices;
+	std::vector<GLuint> texCoordsIndices;
+	std::vector<GLuint> normalsIndices;
+
+	std::vector<GLfloat> tcI;
+
+	std::string path = std::string(m_path + "/" + modelPath);
+	std::ifstream in(std::string(m_path + "/" + modelPath).c_str());
+
+	if (!in.is_open())
+	{
+		std::cerr << "Can't load model: " << modelPath << std::endl;
+		return nullptr;
+	}
+	std::string line;
+	double counter = 0;
+	double sum = 0.0f;
+	while (!in.eof())
+	{
+		std::getline(in, line);
+		if (!line.empty())
+		{
+			if (line[0] == 'v' && line[1] == ' ')
+			{
+				float x = 0.0f, y = 0.0f, z = 0.0f;
+				sscanf(line.c_str(), "v %f %f %f", &x, &y, &z);
+				vertexCoords.push_back(x);
+				vertexCoords.push_back(y);
+				vertexCoords.push_back(z);
+			}
+			else if (line[0] == 'v' && line[1] =='t')
+			{
+					float u = 0.0f, v = 0.0f;
+					sscanf(line.c_str(), "vt %f %f", &u, &v);
+					texCoords.push_back(u);
+					texCoords.push_back(v);
+			}
+			else if (line[0] == 'v' && line[1] == 'n')
+			{
+				float x = 0.0f, y = 0.0f, z = 0.0f;
+				sscanf(line.c_str(), "vn %f %f %f", &x, &y, &z);
+				normalsCoords.push_back(x);
+				normalsCoords.push_back(y);
+				normalsCoords.push_back(z);
+			}
+			else if (line[0] == 'f' && line[1] == ' ')
+			{
+				
+				int v1 = 0, v2 = 0, v3 = 0, t1 = 0, t2 = 0, t3 = 0, n1 = 0, n2 = 0, n3 = 0;
+				sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
+				
+				vertexIndices.push_back(v1 - 1);
+				vertexIndices.push_back(v2 - 1);
+				vertexIndices.push_back(v3 - 1);
+
+				texCoordsIndices.push_back(t1 - 1);
+				texCoordsIndices.push_back(t2 - 1);
+				texCoordsIndices.push_back(t3 - 1);
+
+				normalsIndices.push_back(n1 - 1);
+				normalsIndices.push_back(n2 - 1);
+				normalsIndices.push_back(n3 - 1);
+			}
+		}
+	}
+	std::vector<GLfloat> newVertices;
+	std::vector<GLfloat> newTexCoords;
+	std::vector<GLfloat> newNormalsCoords;
+	std::vector<GLuint> newIndices;
+
+	// 0 1 2 
+	// 2 1 3
+	// 1 4 3
+	// 3 4 5
+
+	size_t size = vertexIndices.size();
+
+	for (size_t i = 0; i < size; i ++)
+	{
+		GLuint inV = vertexIndices[i];
+		GLuint inT = texCoordsIndices[i];
+		GLuint inN = normalsIndices[i];
+
+		newVertices.push_back(vertexCoords[inV * 3]);
+		newTexCoords.push_back(texCoords[inT * 2]);
+		newNormalsCoords.push_back(normalsCoords[inN * 3]);
+
+		newVertices.push_back(vertexCoords[inV * 3 + 1]);
+		newTexCoords.push_back(texCoords[inT * 2 + 1]);
+		newNormalsCoords.push_back(normalsCoords[inN * 3 + 1]);
+
+		newVertices.push_back(vertexCoords[inV * 3 + 2]);
+		//newTexCoords.push_back(texCoords[inT * 2 + 2]);
+		newNormalsCoords.push_back(normalsCoords[inN * 3 + 2]);
+
+		newIndices.push_back(i);
+	}
+
+	in.close();
+
+
+	std::shared_ptr<RenderEngine::Model3D> newModel = m_models3D.emplace(modelName,
+		std::make_shared<RenderEngine::Model3D>(pTexture, pShader, newVertices, newTexCoords, newNormalsCoords, newIndices)).first->second;
+
+	return newModel;
+}
+std::shared_ptr<RenderEngine::Model3D> ResourceManager::get3DModel(const std::string& modelName)
+{
+	Models3DMap_t::const_iterator it = m_models3D.find(modelName);
+	if (it != m_models3D.end())
+	{
+		return it->second;
+	}
+	std::cerr << "Can't find the 3D model: " << modelName << std::endl;
 	return nullptr;
 }
 
@@ -278,6 +422,20 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 			}
 		}
 	}
+
+	/*auto modelsIt = document.FindMember("models");
+	if (modelsIt != document.MemberEnd())
+	{
+		const auto models = modelsIt->value.GetArray();
+		for (const auto& currentModel : models)
+		{
+			const std::string name = currentModel["name"].GetString();
+			const std::string filePath = currentModel["filePath"].GetString();
+			const std::string texture = currentModel["textureName"].GetString();
+			const std::string shader = currentModel["shader"].GetString();
+			auto model = load3DModel(name, filePath, texture, shader );
+		}
+	}*/
 
 	auto levelsIt = document.FindMember("levels");
 	if (levelsIt != document.MemberEnd())

@@ -19,6 +19,7 @@ std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
 void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height) 
 {
+    
     g_windowSize.x = width;  
     g_windowSize.y = height;
 
@@ -102,9 +103,14 @@ int main(int argc, char** argv)
     std::cout<<"OpenGL version: "<<RenderEngine::Renderer::getVersionStr()<<std::endl;
 	
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
-    RenderEngine::Renderer::setDepthTest(true);
+    RenderEngine::Renderer::setDepthTest(false);
 
     {
+        /*glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        GLfloat light_pos[] = { 0.0f, 0.0f, 500.0f, 1.0f };
+        glLightfv(GL_LIGHT0, GL_POSITION, light_pos);*/
+
         ResourceManager::setExecutablePath(argv[0]);
         g_game->init();
         g_windowSize.x = static_cast<int>(g_game->getCurrentLevelWidth());
@@ -112,7 +118,9 @@ int main(int argc, char** argv)
         glfwSetWindowSize(pWindow, g_windowSize.x, g_windowSize.y);
 
         auto lastTime = std::chrono::high_resolution_clock::now();
-
+ 
+        float fps = 0.0f;
+        int counter = 0;
         while (!glfwWindowShouldClose(pWindow))
         {
             /* Poll for and process events */
@@ -121,6 +129,14 @@ int main(int argc, char** argv)
             auto currentTime = std::chrono::high_resolution_clock::now();
             double duration = std::chrono::duration<double, std::milli>(currentTime - lastTime).count(); 
 
+            fps += duration;
+            counter++;
+            if (counter == 100)
+            {
+                std::cout << 1 / (fps / counter) * 1000.0 << std::endl;
+                fps = 0.0f;
+                counter = 0;
+            }
             lastTime = currentTime;
             g_game->update(duration);
 

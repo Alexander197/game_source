@@ -34,6 +34,8 @@ void Game::render()
     //ResourceManager::getAnimatedSprite("anim1")->render();
     //ResourceManager::getSprite("Tex1Sprite")->render();
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
+    //auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+
     glm::mat4 viewMatrix = glm::mat4(1.0f);
     viewMatrix = glm::translate(viewMatrix, m_cameraPosition);
 
@@ -43,18 +45,23 @@ void Game::render()
     viewMatrix = glm::rotate(viewMatrix, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
     viewMatrix = glm::rotate(viewMatrix, angleY, glm::vec3(0.0f, 1.0f, 0.0f));
     viewMatrix = glm::rotate(viewMatrix, angleZ, glm::vec3(0.0f, 0.0f, 1.0f));
-    
+
     viewMatrix = glm::scale(viewMatrix, m_cameraScale);
 
+    pSpriteShaderProgram->use();
     pSpriteShaderProgram->setMatrix4("viewMat", viewMatrix);
-
-
+    //p3DModelShaderProgram->setMatrix4("viewMat", viewMatrix);
+ 
     if (m_pLevel) {
         m_pLevel->render();
     }
     if (m_pTank) {
         m_pTank->render();
     }
+    //if (m_pModel)
+    //{
+        //m_pModel->render(glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(5.0f, 5.0f, 5.0f), 0.0f);
+    //}
     
 }
 
@@ -67,11 +74,11 @@ void Game::update(const double delta)
     if (m_pTank) 
     {
         std::vector<std::shared_ptr<IGameObject>> mapObjects = m_pLevel->getMapObjects();
-        size_t size = mapObjects.size(); 
+        size_t size = mapObjects.size();
         for (size_t i = 0; i < size; i++)
         {
             if(mapObjects[i])
-            if (BoundingBox::isColide(m_pTank->getBoundingBox(), mapObjects[i]->getBoundingBox()))
+            if (AxisAlignedBoundingBox::isCollide(m_pTank->getBoundingBox(), mapObjects[i]->getBoundingBox()) == 1)
             {
                 m_pTank->setLastPosition();
                 m_pTank->move(false);
@@ -138,7 +145,7 @@ void Game::update(const double delta)
         if (m_mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
         {
             glm::vec2 cursorPosSubtract = m_firstPos - m_cursorPos;
-            m_cameraRotation = glm::vec3( cursorPosSubtract.y, cursorPosSubtract.x, 0.0f);
+            m_cameraRotation = glm::vec3( -cursorPosSubtract.y, -cursorPosSubtract.x, 0.0f);
         }
 
         m_pTank->update(delta);
@@ -217,6 +224,7 @@ bool Game::init()
     ResourceManager::loadJSONResources("res/resources.json");
 
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
+    //auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
     if (!pSpriteShaderProgram)
     {
         std::cerr << "Can't find shader program: " << "spriteShader" << std::endl;
@@ -229,9 +237,7 @@ bool Game::init()
 
     //m_cameraPosition = glm::vec3(static_cast<float>(m_windowSize.x) / 2.0f, static_cast<float>(m_windowSize.y) / 2.0f, 0.0f);
 
-    glm::mat4 viewMatrix = glm::mat4(1.0);
-
-    //glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -1000.0f, 1000.0f);
+    //glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
     
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
    
@@ -239,10 +245,15 @@ bool Game::init()
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
     
+    //p3DModelShaderProgram->use();
+    //p3DModelShaderProgram->setInt("tex", 0);
+    //p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
         glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(), 
-        glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 1.0f);
+        glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
+
+    //m_pModel = ResourceManager::get3DModel("naruto");
 
     return true;
 }
