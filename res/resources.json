@@ -2,13 +2,18 @@
 	"shaders" : [
 		{
 			"name"      : "spriteShader",
-			"filePath_v": "res/shaders/vSprite.txt",
-			"filePath_f": "res/shaders/fSprite.txt"
+			"filePath_v": "res/shaders/SpriteShader/vSprite.txt",
+			"filePath_f": "res/shaders/SpriteShader/fSprite.txt"
 		},
 		{
 			"name"		: "3DModelShader",
-			"filePath_v": "res/shaders/v3Dmodel.txt",
-			"filePath_f": "res/shaders/f3Dmodel.txt"
+			"filePath_v": "res/shaders/3DmodelShader/v3Dmodel.txt",
+			"filePath_f": "res/shaders/3DmodelShader/f3Dmodel.txt"
+		},
+		{
+			"name"		: "lightShader",
+			"filePath_v": "res/shaders/LightShader/vLightShader.txt",
+			"filePath_f": "res/shaders/LightShader/fLightShader.txt"
 		}
 	],
 	

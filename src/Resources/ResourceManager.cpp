@@ -423,7 +423,7 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 		}
 	}
 
-	/*auto modelsIt = document.FindMember("models");
+	auto modelsIt = document.FindMember("models");
 	if (modelsIt != document.MemberEnd())
 	{
 		const auto models = modelsIt->value.GetArray();
@@ -435,7 +435,7 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 			const std::string shader = currentModel["shader"].GetString();
 			auto model = load3DModel(name, filePath, texture, shader );
 		}
-	}*/
+	}
 
 	auto levelsIt = document.FindMember("levels");
 	if (levelsIt != document.MemberEnd())

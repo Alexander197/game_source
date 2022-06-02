@@ -5,6 +5,7 @@
 #include <glm/vec2.hpp>
 
 #include "../Renderer/Model3D.h"
+#include "../Renderer/Light.h"
 
 class Tank;
 class Level;
@@ -48,6 +49,9 @@ private:
 	std::unique_ptr<Level> m_pLevel;
 
 	std::shared_ptr<RenderEngine::Model3D> m_pModel;
+	std::shared_ptr<RenderEngine::Light> m_pLight;
+
+	double m_time;
 
 	glm::vec3 m_cameraPosition;
 	glm::vec3 m_cameraRotation;

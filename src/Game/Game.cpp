@@ -10,12 +10,13 @@
 #include "../Renderer/Texture2D.h"
 #include "../Renderer/Sprite.h"
 
+
 #include <iostream>
 #include <GLFW\glfw3.h>
 #include <thread>
 
 Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize),
-            m_cameraPosition(glm::vec3(0.0f, 0.0f, -550.0f)), m_cameraRotation(glm::vec3(0.0f, 0.0f, 0.0f)),
+            m_cameraPosition(glm::vec3(0.0f, 0.0f, 550.0f)), m_cameraRotation(glm::vec3(0.0f, 0.0f, 0.0f)),
             m_cameraScale(glm::vec3(1.0f, 1.0f, 1.0f))
 {
 	m_keys.fill(false);
@@ -23,6 +24,8 @@ Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active
     m_cursorPos = glm::dvec2(0.0, 0.0);
     m_firstPos = glm::dvec2(0.0, 0.0);
     m_scrollOffset = glm::dvec2(0.0, 0.0);
+    m_time = 0.0;
+
 }
 Game::~Game()
 {
@@ -34,34 +37,48 @@ void Game::render()
     //ResourceManager::getAnimatedSprite("anim1")->render();
     //ResourceManager::getSprite("Tex1Sprite")->render();
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
-    //auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+    auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+    auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
 
-    glm::mat4 viewMatrix = glm::mat4(1.0f);
-    viewMatrix = glm::translate(viewMatrix, m_cameraPosition);
+    //glm::mat4 viewMatrix = glm::mat4(1.0f);
+    //viewMatrix = glm::translate(viewMatrix, m_cameraPosition);
 
-    float angleX = glm::radians(m_cameraRotation.x);
-    float angleY = glm::radians(m_cameraRotation.y);
-    float angleZ = glm::radians(m_cameraRotation.z);
-    viewMatrix = glm::rotate(viewMatrix, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
-    viewMatrix = glm::rotate(viewMatrix, angleY, glm::vec3(0.0f, 1.0f, 0.0f));
-    viewMatrix = glm::rotate(viewMatrix, angleZ, glm::vec3(0.0f, 0.0f, 1.0f));
+    //float angleX = glm::radians(m_cameraRotation.x);
+    //float angleY = glm::radians(m_cameraRotation.y);
+    //float angleZ = glm::radians(m_cameraRotation.z);
+    //viewMatrix = glm::rotate(viewMatrix, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
+    //viewMatrix = glm::rotate(viewMatrix, angleY, glm::vec3(0.0f, 1.0f, 0.0f));
+    //viewMatrix = glm::rotate(viewMatrix, angleZ, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    viewMatrix = glm::scale(viewMatrix, m_cameraScale);
+    //viewMatrix = glm::scale(viewMatrix, m_cameraScale);
+
+    glm::mat4 viewMatrix = glm::lookAt(m_cameraPosition, m_cameraPosition + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setMatrix4("viewMat", viewMatrix);
-    //p3DModelShaderProgram->setMatrix4("viewMat", viewMatrix);
- 
+
+    p3DModelShaderProgram->use();
+    p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
+    p3DModelShaderProgram->setVec3("viewPos", m_cameraPosition);
+    p3DModelShaderProgram->setMatrix4("viewMat", viewMatrix);
+
+    pLightShaderProgram->use();
+    pLightShaderProgram->setMatrix4("viewMat", viewMatrix);
+
     if (m_pLevel) {
-        m_pLevel->render();
+        //m_pLevel->render();
     }
     if (m_pTank) {
-        m_pTank->render();
+       //m_pTank->render();
     }
-    //if (m_pModel)
-    //{
-        //m_pModel->render(glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(5.0f, 5.0f, 5.0f), 0.0f);
-    //}
+    if (m_pModel)
+    {
+        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), 0.0f);
+    }
+    if (m_pModel)
+    {
+        m_pLight->render();
+    }
     
 }
 
@@ -71,6 +88,12 @@ void Game::update(const double delta)
         m_pLevel->update(delta);
     }
 
+    m_time += delta;
+    
+    if (m_pLight)
+    {
+        m_pLight->setPosition(glm::vec3(100.0 * sin(m_time / 300.0), 0.0, 100.0 * cos(m_time / 300.0)));
+    }
     if (m_pTank) 
     {
         std::vector<std::shared_ptr<IGameObject>> mapObjects = m_pLevel->getMapObjects();
@@ -111,23 +134,23 @@ void Game::update(const double delta)
         }*/
         if (m_keys[GLFW_KEY_W])
         {
-            m_cameraPosition += glm::vec3(0.0f, -1.0f, 0.0f);
+            m_cameraPosition += glm::vec3(0.0f, 1.0f, 0.0f);
             //m_cameraRotation += glm::vec3(1.0f, 0.0f, 0.0f);
         }
         else if (m_keys[GLFW_KEY_A])
         {
-            m_cameraPosition += glm::vec3(1.0f, 0.0f, 0.0f);
+            m_cameraPosition += glm::vec3(-1.0f, 0.0f, 0.0f);
             //m_cameraRotation += glm::vec3(0.0f, -1.0f, 0.0f);
         }
 
         if (m_keys[GLFW_KEY_S])
         {
-            m_cameraPosition += glm::vec3(0.0f, 1.0f, 0.0f);
+            m_cameraPosition += glm::vec3(0.0f, -1.0f, 0.0f);
             //m_cameraRotation += glm::vec3(-1.0f, 0.0f, 0.0f);
         }
         else if (m_keys[GLFW_KEY_D])
         {
-            m_cameraPosition += glm::vec3(-1.0f, 0.0f, 0.0f);
+            m_cameraPosition += glm::vec3(1.0f, 0.0f, 0.0f);
             //m_cameraRotation += glm::vec3(0.0f, 1.0f, 0.0f);
         }
 
@@ -216,7 +239,7 @@ void Game::setScrollOffset(const double xoffset, const double yoffset)
 {
     m_scrollOffset = glm::dvec2(xoffset, yoffset);
     //m_cameraScale += glm::vec3(yoffset / 10.f, yoffset / 10.f, 0.0f);
-    m_cameraPosition += glm::vec3(0.0f, 0.0f, static_cast<float>(yoffset) * 15.0f);
+    m_cameraPosition += glm::vec3(0.0f, 0.0f, static_cast<float>(-yoffset) * 15.0f);
 }
 
 bool Game::init()
@@ -224,10 +247,22 @@ bool Game::init()
     ResourceManager::loadJSONResources("res/resources.json");
 
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
-    //auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+    auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+    auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
+
     if (!pSpriteShaderProgram)
     {
         std::cerr << "Can't find shader program: " << "spriteShader" << std::endl;
+        return false;
+    }
+    if (!p3DModelShaderProgram)
+    {
+        std::cerr << "Can't find shader program: " << "3DModelShader" << std::endl;
+        return false;
+    }
+    if (!pLightShaderProgram)
+    {
+        std::cerr << "Can't find shader program: " << "lightShader" << std::endl;
         return false;
     }
 
@@ -239,21 +274,31 @@ bool Game::init()
 
     //glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
     
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
    
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
     pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
     
-    //p3DModelShaderProgram->use();
-    //p3DModelShaderProgram->setInt("tex", 0);
-    //p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+    pLightShaderProgram->use();
+    pLightShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+    m_pLight = std::make_shared<RenderEngine::Light>(pLightShaderProgram, glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(100.0f, 50.0f, 100.0f));
+
+    p3DModelShaderProgram->use();
+    p3DModelShaderProgram->setInt("tex", 0);
+    p3DModelShaderProgram->setVec3("lightColor", m_pLight->getColor());
+    p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
+    p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
         glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(), 
         glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
 
-    //m_pModel = ResourceManager::get3DModel("naruto");
+    m_pModel = ResourceManager::get3DModel("cube");
+
 
     return true;
 }

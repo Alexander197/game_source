@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     std::cout<<"OpenGL version: "<<RenderEngine::Renderer::getVersionStr()<<std::endl;
 	
     RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
-    RenderEngine::Renderer::setDepthTest(false);
+    RenderEngine::Renderer::setDepthTest(true);
 
     {
         /*glEnable(GL_LIGHTING);

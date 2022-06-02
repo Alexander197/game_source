@@ -30,6 +30,8 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/SpriteAnimator.h
 	src/Renderer/Model3D.cpp
 	src/Renderer/Model3D.h
+	src/Renderer/Light.cpp
+	src/Renderer/Light.h
 	
 	src/Game/Game.cpp
 	src/Game/Game.h

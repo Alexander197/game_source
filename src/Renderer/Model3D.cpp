@@ -1,4 +1,5 @@
 #include "Model3D.h"
+
 #include "ShaderProgram.h"
 #include "Texture2D.h"
 
@@ -41,7 +42,7 @@ namespace RenderEngine {
 
 		model = glm::translate(model, position);
 		//model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
-		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 1.0f));
 		//model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
 		model = glm::scale(model, size);
 

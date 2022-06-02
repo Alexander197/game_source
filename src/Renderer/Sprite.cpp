@@ -92,7 +92,7 @@ namespace RenderEngine {
 		m_pTexture->bind();
 
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
-		m_pTexture->unbind();
+		//m_pTexture->unbind();
 	}
 
 	void Sprite::insertAnimation(const std::string& animationName, const std::vector<FrameDescription> framesDescriptions)
