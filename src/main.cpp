@@ -106,11 +106,6 @@ int main(int argc, char** argv)
     RenderEngine::Renderer::setDepthTest(true);
 
     {
-        /*glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-        GLfloat light_pos[] = { 0.0f, 0.0f, 500.0f, 1.0f };
-        glLightfv(GL_LIGHT0, GL_POSITION, light_pos);*/
-
         ResourceManager::setExecutablePath(argv[0]);
         g_game->init();
         g_windowSize.x = static_cast<int>(g_game->getCurrentLevelWidth());
@@ -121,6 +116,9 @@ int main(int argc, char** argv)
  
         float fps = 0.0f;
         int counter = 0;
+
+        glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         while (!glfwWindowShouldClose(pWindow))
         {
             /* Poll for and process events */

@@ -7,6 +7,8 @@
 #include "../Renderer/Model3D.h"
 #include "../Renderer/Light.h"
 
+#include "Camera/Camera.h"
+
 class Tank;
 class Level;
 
@@ -17,14 +19,13 @@ public:
 
 	void render();
 	void update(const double delta);
+	bool init();
 	
 	void setKey(const int key, const int action);
 	void setMouseButton(const int button, const int action);
 	void setCursorPos(const double xpos, const double ypos);
 	void setScrollOffset(const double xoffset, const double yoffset);
 	
-	
-	bool init();
 
 	size_t getCurrentLevelWidth() const;
 	size_t getCurrentLevelHeight() const;
@@ -32,10 +33,9 @@ public:
 private:
 	std::array<bool, 349> m_keys;
 	std::array<bool, 15> m_mouseButtons;
-	glm::dvec2 m_cursorPos;
-	glm::dvec2 m_scrollOffset;
 
-	glm::dvec2 m_firstPos;
+	glm::dvec2 m_currentCursorPos;
+	glm::dvec2 m_lastCursorPos;
 
 	enum class EGameState {
 		Active,
@@ -53,9 +53,7 @@ private:
 
 	double m_time;
 
-	glm::vec3 m_cameraPosition;
-	glm::vec3 m_cameraRotation;
-	glm::vec3 m_cameraScale;
+	std::unique_ptr<Camera> m_camera;
 
 	void keyUp(const int action);
 	void keyDown(const int action);

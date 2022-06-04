@@ -15,17 +15,13 @@
 #include <GLFW\glfw3.h>
 #include <thread>
 
-Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize),
-            m_cameraPosition(glm::vec3(0.0f, 0.0f, 550.0f)), m_cameraRotation(glm::vec3(0.0f, 0.0f, 0.0f)),
-            m_cameraScale(glm::vec3(1.0f, 1.0f, 1.0f))
+Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize)
 {
 	m_keys.fill(false);
     m_mouseButtons.fill(false);
-    m_cursorPos = glm::dvec2(0.0, 0.0);
-    m_firstPos = glm::dvec2(0.0, 0.0);
-    m_scrollOffset = glm::dvec2(0.0, 0.0);
+    m_currentCursorPos = glm::dvec2(0.0, 0.0);
+    m_lastCursorPos = glm::dvec2(0.0, 0.0);
     m_time = 0.0;
-
 }
 Game::~Game()
 {
@@ -52,28 +48,36 @@ void Game::render()
 
     //viewMatrix = glm::scale(viewMatrix, m_cameraScale);
 
-    glm::mat4 viewMatrix = glm::lookAt(m_cameraPosition, m_cameraPosition + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    //glm::mat4 viewMatrix = glm::lookAt(m_cameraPosition, m_cameraPosition + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_camera->getFov()), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
+
+    glm::mat4 viewMatrix = m_camera->getLookAtMatrix();
 
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setMatrix4("viewMat", viewMatrix);
+    pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     p3DModelShaderProgram->use();
     p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
-    p3DModelShaderProgram->setVec3("viewPos", m_cameraPosition);
+    p3DModelShaderProgram->setVec3("viewPos", m_camera->getPosition());
     p3DModelShaderProgram->setMatrix4("viewMat", viewMatrix);
+    p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     pLightShaderProgram->use();
     pLightShaderProgram->setMatrix4("viewMat", viewMatrix);
+    pLightShaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     if (m_pLevel) {
-        //m_pLevel->render();
+        m_pLevel->render();
     }
     if (m_pTank) {
-       //m_pTank->render();
+       m_pTank->render();
     }
     if (m_pModel)
     {
-        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(20.0f, 20.0f, 20.0f), 0.0f);
+        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), 0.0f);
+        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1000.0f, 1000.0f, 1000.0f), 0.0f);
     }
     if (m_pModel)
     {
@@ -92,7 +96,7 @@ void Game::update(const double delta)
     
     if (m_pLight)
     {
-        m_pLight->setPosition(glm::vec3(100.0 * sin(m_time / 300.0), 0.0, 100.0 * cos(m_time / 300.0)));
+        //m_pLight->setPosition(glm::vec3(200.0 * sin(m_time / 800.0), 0.0, 200.0 * cos(m_time / 800.0)));
     }
     if (m_pTank) 
     {
@@ -108,73 +112,119 @@ void Game::update(const double delta)
                 break;
             }
         }
-        /*if (m_keys[GLFW_KEY_UP])
-        {
-            m_pTank->setOrientation(Tank::EOrientation::Up);
-            m_pTank->move(true);
-        }
-        else if (m_keys[GLFW_KEY_LEFT])
-        {
-            m_pTank->setOrientation(Tank::EOrientation::Left);
-            m_pTank->move(true);
-        }
-        else if (m_keys[GLFW_KEY_DOWN])
-        {
-            m_pTank->setOrientation(Tank::EOrientation::Down);
-            m_pTank->move(true);
-        }
-        else if (m_keys[GLFW_KEY_RIGHT])
-        {
-            m_pTank->setOrientation(Tank::EOrientation::Right);
-            m_pTank->move(true);
-        }
-        else 
-        {
-            m_pTank->move(false);
-        }*/
+        m_pTank->update(delta);
+    }
+    if (m_camera)
+    {
         if (m_keys[GLFW_KEY_W])
         {
-            m_cameraPosition += glm::vec3(0.0f, 1.0f, 0.0f);
-            //m_cameraRotation += glm::vec3(1.0f, 0.0f, 0.0f);
+            m_camera->moveForward(delta);
         }
         else if (m_keys[GLFW_KEY_A])
         {
-            m_cameraPosition += glm::vec3(-1.0f, 0.0f, 0.0f);
-            //m_cameraRotation += glm::vec3(0.0f, -1.0f, 0.0f);
+            m_camera->moveLeft(delta);
         }
 
         if (m_keys[GLFW_KEY_S])
         {
-            m_cameraPosition += glm::vec3(0.0f, -1.0f, 0.0f);
-            //m_cameraRotation += glm::vec3(-1.0f, 0.0f, 0.0f);
+            m_camera->moveBackward(delta);
         }
         else if (m_keys[GLFW_KEY_D])
         {
-            m_cameraPosition += glm::vec3(1.0f, 0.0f, 0.0f);
-            //m_cameraRotation += glm::vec3(0.0f, 1.0f, 0.0f);
+            m_camera->moveRight(delta);
         }
 
-        if (m_keys[GLFW_KEY_Q])
+        if (m_keys[GLFW_KEY_SPACE])
         {
-            //m_cameraPosition += glm::vec2(0.0f, -1.0f);
-            m_cameraRotation += glm::vec3(0.0f, 0.0f, 0.5f);
+            m_camera->moveUp(delta);
         }
-        else if (m_keys[GLFW_KEY_E])
+        else if (m_keys[GLFW_KEY_LEFT_SHIFT])
         {
-            //m_cameraPosition += glm::vec2(1.0f, 0.0f);
-            m_cameraRotation += glm::vec3(0.0f, 0.0f, -0.5f);
+            m_camera->moveDown(delta);
         }
 
-        if (m_mouseButtons[GLFW_MOUSE_BUTTON_LEFT])
+        if (m_keys[GLFW_KEY_E])
         {
-            glm::vec2 cursorPosSubtract = m_firstPos - m_cursorPos;
-            m_cameraRotation = glm::vec3( -cursorPosSubtract.y, -cursorPosSubtract.x, 0.0f);
+            m_camera->setRoll(1.0f, delta);
+        }
+        else if (m_keys[GLFW_KEY_Q])
+        {
+            m_camera->setRoll(-1.0f, delta);
         }
 
-        m_pTank->update(delta);
+        if (true)
+        {
+            glm::vec2 cursorPosSubtract = m_lastCursorPos - m_currentCursorPos;
+            m_camera->setPitch(cursorPosSubtract.y, delta);
+            m_camera->setYaw(-cursorPosSubtract.x, delta);
+            m_lastCursorPos = m_currentCursorPos;
+        }
     }
    
 }
+
+bool Game::init()
+{
+    ResourceManager::loadJSONResources("res/resources.json");
+
+    auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
+    auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+    auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
+
+    if (!pSpriteShaderProgram)
+    {
+        std::cerr << "Can't find shader program: " << "spriteShader" << std::endl;
+        return false;
+    }
+    if (!p3DModelShaderProgram)
+    {
+        std::cerr << "Can't find shader program: " << "3DModelShader" << std::endl;
+        return false;
+    }
+    if (!pLightShaderProgram)
+    {
+        std::cerr << "Can't find shader program: " << "lightShader" << std::endl;
+        return false;
+    }
+
+    m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[1]);
+    m_windowSize.x = static_cast<int>(m_pLevel->getLevelWidth());
+    m_windowSize.y = static_cast<int>(m_pLevel->getLevelHeight());
+
+    //m_cameraPosition = glm::vec3(static_cast<float>(m_windowSize.x) / 2.0f, static_cast<float>(m_windowSize.y) / 2.0f, 0.0f);
+
+    //glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
+
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
+
+    pSpriteShaderProgram->use();
+    pSpriteShaderProgram->setInt("tex", 0);
+    pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+
+    pLightShaderProgram->use();
+    pLightShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+    m_pLight = std::make_shared<RenderEngine::Light>(pLightShaderProgram, glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(100.0f, 50.0f, 100.0f));
+
+    p3DModelShaderProgram->use();
+    p3DModelShaderProgram->setInt("tex", 0);
+    p3DModelShaderProgram->setVec3("lightColor", m_pLight->getColor());
+    p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
+    p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
+        glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(),
+        glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
+
+    m_pModel = ResourceManager::get3DModel("cube");
+    m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 20.0f));
+
+
+    return true;
+}
+
 void Game::setKey(const int key, const int action)
 {
 	m_keys[key] = action;
@@ -233,74 +283,11 @@ void Game::setMouseButton(const int button, const int action)
 }
 void Game::setCursorPos(const double xpos, const double ypos)
 {
-    m_cursorPos = glm::dvec2(xpos, ypos);
+    m_currentCursorPos = glm::dvec2(xpos, ypos);
 }
 void Game::setScrollOffset(const double xoffset, const double yoffset)
 {
-    m_scrollOffset = glm::dvec2(xoffset, yoffset);
-    //m_cameraScale += glm::vec3(yoffset / 10.f, yoffset / 10.f, 0.0f);
-    m_cameraPosition += glm::vec3(0.0f, 0.0f, static_cast<float>(-yoffset) * 15.0f);
-}
-
-bool Game::init()
-{
-    ResourceManager::loadJSONResources("res/resources.json");
-
-    auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
-    auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
-    auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
-
-    if (!pSpriteShaderProgram)
-    {
-        std::cerr << "Can't find shader program: " << "spriteShader" << std::endl;
-        return false;
-    }
-    if (!p3DModelShaderProgram)
-    {
-        std::cerr << "Can't find shader program: " << "3DModelShader" << std::endl;
-        return false;
-    }
-    if (!pLightShaderProgram)
-    {
-        std::cerr << "Can't find shader program: " << "lightShader" << std::endl;
-        return false;
-    }
-
-    m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[1]);
-    m_windowSize.x = static_cast<int>(m_pLevel->getLevelWidth());
-    m_windowSize.y = static_cast<int>(m_pLevel->getLevelHeight());
-
-    //m_cameraPosition = glm::vec3(static_cast<float>(m_windowSize.x) / 2.0f, static_cast<float>(m_windowSize.y) / 2.0f, 0.0f);
-
-    //glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
-    
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
-   
-    pSpriteShaderProgram->use();
-    pSpriteShaderProgram->setInt("tex", 0);
-    pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
-    
-
-    pLightShaderProgram->use();
-    pLightShaderProgram->setMatrix4("projectionMat", projectionMatrix);
-
-    m_pLight = std::make_shared<RenderEngine::Light>(pLightShaderProgram, glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(100.0f, 50.0f, 100.0f));
-
-    p3DModelShaderProgram->use();
-    p3DModelShaderProgram->setInt("tex", 0);
-    p3DModelShaderProgram->setVec3("lightColor", m_pLight->getColor());
-    p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
-    p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
-
-    m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
-        glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(), 
-        glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
-
-    m_pModel = ResourceManager::get3DModel("cube");
-
-
-    return true;
+    m_camera->setFov(-static_cast<float>(yoffset), 1.0f);
 }
 
 size_t Game::getCurrentLevelWidth() const
@@ -490,10 +477,9 @@ void Game::keyMouseLeft(const int action)
     switch (action)
     {
     case GLFW_PRESS:
-       m_firstPos = m_cursorPos;
+       m_lastCursorPos = m_currentCursorPos;
         break;
     case GLFW_RELEASE:
-        m_firstPos = m_cursorPos;
         break;
     }
 }

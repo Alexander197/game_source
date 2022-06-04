@@ -57,6 +57,9 @@ add_executable(${PROJECT_NAME}
 	src/Game/GameObjects/AxisAlignedBoundingBox.h
 	src/Game/GameObjects/AxisAlignedBoundingBox.cpp
 	
+	src/Game/Camera/Camera.cpp
+	src/Game/Camera/Camera.h
+	
 	src/System/Timer.h
 	src/System/Timer.cpp
  )

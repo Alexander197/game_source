@@ -12,10 +12,12 @@ uniform mat4 projectionMat;
 uniform mat4 viewMat;
 uniform mat4 modelMat;
 
+uniform mat3 nModelMat;
+
 void main() {
    texCoords = texture_coords;
    
-   Normal = normals_coords;
+   Normal = nModelMat * normals_coords;
    FragPos = vec3(modelMat * vec4(vertex_position, 1.0));
    
    gl_Position = projectionMat * viewMat * modelMat * vec4(vertex_position, 1.0);

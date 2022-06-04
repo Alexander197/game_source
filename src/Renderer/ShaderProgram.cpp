@@ -96,6 +96,10 @@ namespace RenderEngine {
 	{
 		glUniform3f(glGetUniformLocation(m_ID, name.c_str()), value.x, value.y, value.z);
 	}
+	void ShaderProgram::setMatrix3(const std::string& name, const glm::mat3 matrix)
+	{
+		glUniformMatrix3fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
 	void ShaderProgram::setMatrix4(const std::string& name, const glm::mat4 matrix)
 	{
 		//glUseProgram(m_ID);

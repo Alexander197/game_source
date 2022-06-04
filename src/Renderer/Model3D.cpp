@@ -46,8 +46,11 @@ namespace RenderEngine {
 		//model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
 		model = glm::scale(model, size);
 
-		m_pShaderProgram->setMatrix4("modelMat", model);
+		glm::mat3 nModel = glm::mat3(glm::transpose(glm::inverse(model)));
 
+		m_pShaderProgram->setMatrix3("nModelMat", nModel);
+		m_pShaderProgram->setMatrix4("modelMat", model);
+		
 		glActiveTexture(GL_TEXTURE0);
 		m_pTexture->bind();
 
