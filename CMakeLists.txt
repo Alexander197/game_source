@@ -32,6 +32,8 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/Model3D.h
 	src/Renderer/Light.cpp
 	src/Renderer/Light.h
+	src/Renderer/Text.cpp
+	src/Renderer/Text.h
 	
 	src/Game/Game.cpp
 	src/Game/Game.h
@@ -54,11 +56,14 @@ add_executable(${PROJECT_NAME}
 	src/Game/GameObjects/Eagle.cpp
 	src/Game/GameObjects/Bush.h
 	src/Game/GameObjects/Bush.cpp
-	src/Game/GameObjects/AxisAlignedBoundingBox.h
 	src/Game/GameObjects/AxisAlignedBoundingBox.cpp
+	src/Game/GameObjects/AxisAlignedBoundingBox.h
 	
 	src/Game/Camera/Camera.cpp
 	src/Game/Camera/Camera.h
+	
+	src/Physics/Materials/Materials.cpp
+	src/Physics/Materials/Materials.h
 	
 	src/System/Timer.h
 	src/System/Timer.cpp
@@ -81,6 +86,9 @@ target_link_libraries(${PROJECT_NAME} glad)
 
 include_directories(external/glm)
 include_directories(external/rapidjson/include)
+
+add_subdirectory(external/freetype-2.12.1)
+target_link_libraries(${PROJECT_NAME} freetype)
 
 #add_subdirectory(external/glm)
 #target_link_libraries(${PROJECT_NAME} glm)

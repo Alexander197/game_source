@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace RenderEngine {
-	Light::Light(std::shared_ptr<ShaderProgram> pShaderProgram, glm::vec3 lightColor, glm::vec3 lightPosition) :
+	Light::Light(std::shared_ptr<ShaderProgram> pShaderProgram, Color lightColor, glm::vec3 lightPosition) :
 		m_pShaderProgram(std::move(pShaderProgram)), m_lightColor(lightColor), m_lightPosition(lightPosition)
 	{
 		const GLfloat vertexCoords[] = {
@@ -42,8 +42,8 @@ namespace RenderEngine {
 		model = glm::translate(model, m_lightPosition);
 		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 
-		m_pShaderProgram->setMatrix4("modelMat", model);
-		m_pShaderProgram->setVec3("lightColor", m_lightColor);
+		m_pShaderProgram->setMat4("modelMat", model);
+		m_pShaderProgram->setVec3("lightColor", m_lightColor.ambient);
 
 		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	}

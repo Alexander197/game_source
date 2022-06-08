@@ -6,8 +6,11 @@
 
 #include "../Renderer/Model3D.h"
 #include "../Renderer/Light.h"
+#include "../Renderer/Text.h"
 
 #include "Camera/Camera.h"
+
+#include <iostream>
 
 class Tank;
 class Level;
@@ -25,6 +28,8 @@ public:
 	void setMouseButton(const int button, const int action);
 	void setCursorPos(const double xpos, const double ypos);
 	void setScrollOffset(const double xoffset, const double yoffset);
+
+	void setFPS(float fps) { m_fps = fps; }
 	
 
 	size_t getCurrentLevelWidth() const;
@@ -51,7 +56,10 @@ private:
 	std::shared_ptr<RenderEngine::Model3D> m_pModel;
 	std::shared_ptr<RenderEngine::Light> m_pLight;
 
+	std::unique_ptr<RenderEngine::Text> m_pFps;
+
 	double m_time;
+	float m_fps;
 
 	std::unique_ptr<Camera> m_camera;
 

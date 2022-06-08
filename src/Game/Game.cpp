@@ -35,6 +35,7 @@ void Game::render()
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
     auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
+    auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
 
     //glm::mat4 viewMatrix = glm::mat4(1.0f);
     //viewMatrix = glm::translate(viewMatrix, m_cameraPosition);
@@ -55,35 +56,41 @@ void Game::render()
     glm::mat4 viewMatrix = m_camera->getLookAtMatrix();
 
     pSpriteShaderProgram->use();
-    pSpriteShaderProgram->setMatrix4("viewMat", viewMatrix);
-    pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+    pSpriteShaderProgram->setMat4("viewMat", viewMatrix);
+    pSpriteShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     p3DModelShaderProgram->use();
     p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
     p3DModelShaderProgram->setVec3("viewPos", m_camera->getPosition());
-    p3DModelShaderProgram->setMatrix4("viewMat", viewMatrix);
-    p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+    p3DModelShaderProgram->setMat4("viewMat", viewMatrix);
+    p3DModelShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     pLightShaderProgram->use();
-    pLightShaderProgram->setMatrix4("viewMat", viewMatrix);
-    pLightShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+    pLightShaderProgram->setMat4("viewMat", viewMatrix);
+    pLightShaderProgram->setMat4("projectionMat", projectionMatrix);
+
+    pTextShaderProgram->use();
 
     if (m_pLevel) {
-        m_pLevel->render();
+       //m_pLevel->render();
     }
     if (m_pTank) {
-       m_pTank->render();
+       //m_pTank->render();
     }
     if (m_pModel)
     {
-        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), 0.0f);
-        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1000.0f, 1000.0f, 1000.0f), 0.0f);
+        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 10.0f, 10.0f), 0.0f);
+        //m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1000.0f, 1000.0f, 1000.0f), 0.0f);
     }
-    if (m_pModel)
+    if (m_pLight)
     {
         m_pLight->render();
     }
-    
+    if (m_pFps)
+    {
+        std::string fps = std::to_string(static_cast<int>(m_fps));
+        m_pFps->render("FPS " + fps, glm::vec2(0.0f, 0.0f), glm::vec2(30.0f,30.0f), 10.0f);
+    }
 }
 
 void Game::update(const double delta)
@@ -170,6 +177,7 @@ bool Game::init()
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
     auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
+    auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
 
     if (!pSpriteShaderProgram)
     {
@@ -191,36 +199,47 @@ bool Game::init()
     m_windowSize.x = static_cast<int>(m_pLevel->getLevelWidth());
     m_windowSize.y = static_cast<int>(m_pLevel->getLevelHeight());
 
-    //m_cameraPosition = glm::vec3(static_cast<float>(m_windowSize.x) / 2.0f, static_cast<float>(m_windowSize.y) / 2.0f, 0.0f);
+    glm::mat4 projectionMatrixO = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
 
-    //glm::mat4 projectionMatrix = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
-
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
+    glm::mat4 projectionMatrixP = glm::perspective(glm::radians(60.0f), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
 
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setInt("tex", 0);
-    pSpriteShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+    pSpriteShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
 
     pLightShaderProgram->use();
-    pLightShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+    pLightShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
-    m_pLight = std::make_shared<RenderEngine::Light>(pLightShaderProgram, glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(100.0f, 50.0f, 100.0f));
+    RenderEngine::Color lightColor = RenderEngine::Color(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
+    m_pLight = std::make_shared<RenderEngine::Light>(pLightShaderProgram, lightColor,
+        glm::vec3(50.0f, 50.0f, 100.0f));
 
     p3DModelShaderProgram->use();
     p3DModelShaderProgram->setInt("tex", 0);
-    p3DModelShaderProgram->setVec3("lightColor", m_pLight->getColor());
-    p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
-    p3DModelShaderProgram->setMatrix4("projectionMat", projectionMatrix);
+
+    glm::vec3 a = m_pLight->getColor().ambient;
+    glm::vec3 d = m_pLight->getColor().diffuse;
+    glm::vec3 s = m_pLight->getColor().specular;
+
+    p3DModelShaderProgram->setVec3("light.ambient", m_pLight->getColor().ambient);
+    p3DModelShaderProgram->setVec3("light.diffuse", m_pLight->getColor().diffuse);
+    p3DModelShaderProgram->setVec3("light.specular", m_pLight->getColor().specular);
+
+    p3DModelShaderProgram->setVec3("light.position", m_pLight->getPosition());
+    p3DModelShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
         glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(),
         glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
 
     m_pModel = ResourceManager::get3DModel("cube");
-    m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 20.0f));
+    m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f));
 
+    pTextShaderProgram->use();
+    pTextShaderProgram->setMat4("projectionMat", projectionMatrixO);
+
+    m_pFps = std::make_unique<RenderEngine::Text>(ResourceManager::getTexture("textArial256"), ResourceManager::getShaderProgram("textShader"));
 
     return true;
 }

@@ -84,7 +84,7 @@ namespace RenderEngine {
 		//model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
 		model = glm::scale(model, glm::vec3(size, 1.0f));
 
-		m_pShaderProgram->setMatrix4("modelMat", model);
+		m_pShaderProgram->setMat4("modelMat", model);
 
 		m_pShaderProgram->setFloat("layer", layer);
 		

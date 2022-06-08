@@ -81,7 +81,7 @@ int main(int argc, char** argv)
     GLFWwindow* pWindow = glfwCreateWindow(g_windowSize.x, g_windowSize.y, "Hello World", nullptr, nullptr);
     if (!pWindow)
     {
-        std::cout<<"gldwCreateWindow failed!"<<std::endl;
+        std::cout<<"glfwCreateWindow failed!"<<std::endl;
         glfwTerminate();
         return -1;
     }
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
     std::cout<<"Renderer: "<<RenderEngine::Renderer::getRendererStr()<<std::endl;
     std::cout<<"OpenGL version: "<<RenderEngine::Renderer::getVersionStr()<<std::endl;
 	
-    RenderEngine::Renderer::setClearColor(0, 0, 0, 1);
+    RenderEngine::Renderer::setClearColor(1.0, 1.0, 1.0, 1);
     RenderEngine::Renderer::setDepthTest(true);
 
     {
@@ -118,6 +118,8 @@ int main(int argc, char** argv)
         int counter = 0;
 
         glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         while (!glfwWindowShouldClose(pWindow))
         {
@@ -129,9 +131,11 @@ int main(int argc, char** argv)
 
             fps += duration;
             counter++;
-            if (counter == 100)
+            if (counter == 20)
             {
-                std::cout << 1 / (fps / counter) * 1000.0 << std::endl;
+                float f = 1 / (fps / counter) * 1000.0;
+                std::cout << f << std::endl;      
+                g_game->setFPS(f);
                 fps = 0.0f;
                 counter = 0;
             }

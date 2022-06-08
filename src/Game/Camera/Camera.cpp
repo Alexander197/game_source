@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 position) : m_cameraPosition(position)
 
 	m_fov = 60.0f;
 
-	m_speed = 0.05;
+	m_speed = 0.01;
 	m_sensitivity = glm::vec3(0.02, 0.02, 0.05);
 }
 
@@ -24,14 +24,15 @@ glm::mat4 Camera::getLookAtMatrix()
 	m_front = glm::vec3(x, y, z);
 	glm::vec3 lookAtPos = m_cameraPosition + m_front;
 
-	m_up = glm::vec3(-sin(glm::radians(m_roll)), cos(glm::radians(m_roll)), 0.0f);
+	//m_up = glm::vec3(-sin(glm::radians(m_roll)), cos(glm::radians(m_roll)), 0.0f);
 	return glm::lookAt(m_cameraPosition, lookAtPos, m_up);
 }
 
 void Camera::setPitch(float offset, float delta)
 {
-	m_pitch += offset * cos(glm::radians(m_roll)) * m_sensitivity.y * delta;
-	m_yaw -= offset * sin(glm::radians(m_roll)) * m_sensitivity.x * delta;
+	m_pitch += offset * m_sensitivity.y * delta;
+	//m_pitch += offset * cos(glm::radians(m_roll)) * m_sensitivity.y * delta;
+	//m_yaw -= offset * sin(glm::radians(m_roll)) * m_sensitivity.x * delta;
 	if (m_pitch > 89.0f)
 		m_pitch = 89.0f;
 	else if (m_pitch < -89.0f)
@@ -39,8 +40,9 @@ void Camera::setPitch(float offset, float delta)
 }
 void Camera::setYaw(float offset, float delta)
 {
-	m_yaw += offset * cos(glm::radians(m_roll)) * m_sensitivity.x * delta;
-	m_pitch += offset * sin(glm::radians(m_roll)) * m_sensitivity.y * delta;
+	m_yaw += offset * m_sensitivity.x * delta;
+	//m_yaw += offset * cos(glm::radians(m_roll)) * m_sensitivity.x * delta;
+	//m_pitch += offset * sin(glm::radians(m_roll)) * m_sensitivity.y * delta;
 }
 void Camera::setRoll(float offset, float delta)
 {

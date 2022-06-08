@@ -48,8 +48,13 @@ namespace RenderEngine {
 
 		glm::mat3 nModel = glm::mat3(glm::transpose(glm::inverse(model)));
 
-		m_pShaderProgram->setMatrix3("nModelMat", nModel);
-		m_pShaderProgram->setMatrix4("modelMat", model);
+		m_pShaderProgram->setMat3("nModelMat", nModel);
+		m_pShaderProgram->setMat4("modelMat", model);
+
+		m_pShaderProgram->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		m_pShaderProgram->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		m_pShaderProgram->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		m_pShaderProgram->setFloat("material.shininess", 32.0f);
 		
 		glActiveTexture(GL_TEXTURE0);
 		m_pTexture->bind();

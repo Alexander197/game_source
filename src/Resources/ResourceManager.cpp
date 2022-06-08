@@ -309,10 +309,10 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::loadTextureAtlas(std::
 			glm::vec2 leftBottomUV(static_cast<float>(currentTextureOffsetX + 0.01f) / textureWidth, 
 								   static_cast<float>(currentTextureOffsetY - subTextureHeight + 0.01f) / textureHeight);
 
-			glm::vec2 rightBottomUV(static_cast<float>(currentTextureOffsetX + subTextureWidth - 0.01f) / textureWidth,
+			glm::vec2 rightTopUV(static_cast<float>(currentTextureOffsetX + subTextureWidth - 0.01f) / textureWidth,
 									static_cast<float>(currentTextureOffsetY - 0.01f) / textureHeight);
 
-			pTexture->addSubTexture(std::move(currentSubTextureName), leftBottomUV, rightBottomUV);
+			pTexture->addSubTexture(std::move(currentSubTextureName), leftBottomUV, rightTopUV);
 
 			currentTextureOffsetX += subTextureWidth;
 			if (currentTextureOffsetX >= textureWidth)
@@ -370,7 +370,6 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 			const auto subTexturesArray = currentTexureAtlas["subTextures"].GetArray();
 			std::vector<std::string> subTextures;
 			subTextures.reserve(subTexturesArray.Size());
-			
 			for (const auto& currentsubTextures : subTexturesArray)
 			{
 				subTextures.emplace_back(currentsubTextures.GetString());

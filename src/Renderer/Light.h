@@ -11,27 +11,40 @@
 
 namespace RenderEngine {
 
+	struct Color
+	{
+		Color(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+		{
+			this->ambient = ambient;
+			this->diffuse = diffuse;
+			this->specular = specular;
+		}
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+	};
+
 	class ShaderProgram;
 
 	class Light
 	{
 	public:
-		Light(std::shared_ptr<ShaderProgram> pShaderProgram, glm::vec3 lightColor, glm::vec3 lightPosition);
-
+		Light(std::shared_ptr<ShaderProgram> pShaderProgram, Color lightColor, glm::vec3 lightPosition);
 		void render() const;
 
-		void setColor(glm::vec3 lightColor) { m_lightColor = lightColor; }
+		void setColor(Color color) { m_lightColor = color; }
 		void setPosition(glm::vec3 lightPosition) { m_lightPosition = lightPosition; }
 
-		glm::vec3 getColor() { return m_lightColor; }
+		Color getColor() { return m_lightColor; }
 		glm::vec3 getPosition() { return m_lightPosition; }
 
 		Light(const Light&) = delete;
 		Light& operator = (const Light&) = delete;
 
 	private:
-		glm::vec3 m_lightColor;
 		glm::vec3 m_lightPosition;
+
+		Color m_lightColor;
 
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;
 

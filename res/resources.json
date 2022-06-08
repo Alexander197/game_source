@@ -14,6 +14,11 @@
 			"name"		: "lightShader",
 			"filePath_v": "res/shaders/LightShader/vLightShader.txt",
 			"filePath_f": "res/shaders/LightShader/fLightShader.txt"
+		},
+		{
+			"name"		: "textShader",
+			"filePath_v": "res/shaders/TextShader/vTextShader.txt",
+			"filePath_f": "res/shaders/TextShader/fTextShader.txt"
 		}
 	],
 	
@@ -356,25 +361,51 @@
 			]
 		},
 		{
-			"name"             : "body",
-			"filePath"         : "res/models/naruto/Body.bmp",
-			"width"            : 512,
-			"height"           : 512,
-			"subTextureWidth"  : 32,
-			"subTextureHeigth" : 32,
-			"subTextures"      : [
+			"name"             	: "body",
+			"filePath"         	: "res/models/naruto/Body.bmp",
+			"width"            	: 512,
+			"height"           	: 512,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
 			
 			]
 		},
 		{
-			"name"             : "cube",
-			"filePath"         : "res/models/cube/cube.png",
-			"width"            : 64,
-			"height"           : 64,
-			"subTextureWidth"  : 32,
-			"subTextureHeigth" : 32,
-			"subTextures"      : [
+			"name"             	: "cube",
+			"filePath"         	: "res/models/cube/cube.png",
+			"width"            	: 64,
+			"height"           	: 64,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
 			
+			]
+		},
+		{
+			"name"				: "textArial32",
+			"filePath" 			: "res/textures/text_arial_512x512x32.png",
+			"width"            	: 512,
+			"height"           	: 512,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
+				"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",  "O", "P", "Q",  "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+				"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",  "o", "p", "q",  "r", "s", "t", "u", "v", "w", "x", "y", "z",
+				"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "!", " ", "/", "\\", "+", "-", "=",  ";", "?", ",", "@", "#", "$", "%", "^", "&",
+				".", "\"", "'", "|", "*"
+			]
+		},
+		{
+			"name"				: "textArial256",
+			"filePath" 			: "res/textures/text_arial_2048x2048x256.png",
+			"width"            	: 2048,
+			"height"           	: 2048,
+			"subTextureWidth"  	: 256,
+			"subTextureHeigth" 	: 256,
+			"subTextures"      	: [
+				"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",  "O", "P", "Q",  "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+				"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", ",", " " 
 			]
 		}
 	],

@@ -22,7 +22,7 @@ namespace RenderEngine {
 		vertexBuffer.m_id = 0;
 	}
 
-	void VertexBuffer::init(const void* data, const unsigned int size)
+	void VertexBuffer::init(const void* data, const unsigned int size, const GLenum usage)
 	{
 		glGenBuffers(1, &m_id);
 		glBindBuffer(GL_ARRAY_BUFFER, m_id);
