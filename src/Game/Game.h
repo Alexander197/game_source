@@ -5,7 +5,7 @@
 #include <glm/vec2.hpp>
 
 #include "../Renderer/Model3D.h"
-#include "../Renderer/Light.h"
+#include "../Renderer/LightSource.h"
 #include "../Renderer/Text.h"
 
 #include "Camera/Camera.h"
@@ -54,14 +54,16 @@ private:
 	std::unique_ptr<Level> m_pLevel;
 
 	std::shared_ptr<RenderEngine::Model3D> m_pModel;
-	std::shared_ptr<RenderEngine::Light> m_pLight;
+	std::shared_ptr<RenderEngine::LightSource> m_pLightSource;
+
+	float m_isFlashLightOn;
 
 	std::unique_ptr<RenderEngine::Text> m_pFps;
 
 	double m_time;
 	float m_fps;
 
-	std::unique_ptr<Camera> m_camera;
+	std::unique_ptr<Camera> m_pCamera;
 
 	void keyUp(const int action);
 	void keyDown(const int action);
@@ -75,5 +77,8 @@ private:
 	void keyD(const int action);
 	void keyQ(const int action);
 	void keyE(const int action);
+	void keyP(const int action);
+	void keyF(const int action);
+
 	void keyMouseLeft(const int action);
 };

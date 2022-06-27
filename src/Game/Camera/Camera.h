@@ -8,6 +8,8 @@ public:
 	Camera(glm::vec3 position);
 
 	glm::vec3 getPosition() { return m_cameraPosition; }
+	glm::vec3 getFront() { return m_front; }
+
 	glm::mat4 getLookAtMatrix();
 	float getFov() { return m_fov; }
 

@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 position) : m_cameraPosition(position)
 
 	m_fov = 60.0f;
 
-	m_speed = 0.01;
+	m_speed = 0.02;
 	m_sensitivity = glm::vec3(0.02, 0.02, 0.05);
 }
 
@@ -68,7 +68,7 @@ void Camera::moveForward(const float delta)
 }
 void Camera::moveLeft(const float delta)
 {
-	m_cameraPosition += glm::cross(m_up, m_front) * m_speed * delta;
+	m_cameraPosition += glm::normalize(glm::cross(m_up, m_front)) * m_speed * delta;
 }
 void Camera::moveBackward(const float delta)
 {
@@ -76,7 +76,7 @@ void Camera::moveBackward(const float delta)
 }
 void Camera::moveRight(const float delta)
 {
-	m_cameraPosition -= glm::cross(m_up, m_front) * m_speed * delta;
+	m_cameraPosition -= glm::normalize(glm::cross(m_up, m_front)) * m_speed * delta;
 }
 void Camera::moveUp(const float delta)
 {

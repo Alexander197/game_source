@@ -383,6 +383,61 @@
 			]
 		},
 		{
+			"name"             	: "cube_diff",
+			"filePath"         	: "res/models/cube/cube_diff.png",
+			"width"            	: 649,
+			"height"           	: 649,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
+			
+			]
+		},
+		{
+			"name"             	: "cube_spec",
+			"filePath"         	: "res/models/cube/cube_spec.png",
+			"width"            	: 649,
+			"height"           	: 649,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
+			
+			]
+		},
+		{
+			"name"             	: "brick_diff",
+			"filePath"         	: "res/models/cube/brick_diff.png",
+			"width"            	: 649,
+			"height"           	: 649,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
+			
+			]
+		},
+		{
+			"name"             	: "brick_spec",
+			"filePath"         	: "res/models/cube/brick_spec.png",
+			"width"            	: 649,
+			"height"           	: 649,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
+			
+			]
+		},
+		{
+			"name"             	: "normalMap",
+			"filePath"         	: "res/models/cube/normalMap.png",
+			"width"            	: 649,
+			"height"           	: 649,
+			"subTextureWidth"  	: 32,
+			"subTextureHeigth" 	: 32,
+			"subTextures"      	: [
+			
+			]
+		},
+		{
 			"name"				: "textArial32",
 			"filePath" 			: "res/textures/text_arial_512x512x32.png",
 			"width"            	: 512,

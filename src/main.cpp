@@ -4,6 +4,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <glm/matrix.hpp>
+
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -17,9 +19,8 @@ glm::ivec2 g_windowSize(1920, 1080);
 
 std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
-void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height) 
+void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
-    
     g_windowSize.x = width;  
     g_windowSize.y = height;
 
@@ -102,7 +103,7 @@ int main(int argc, char** argv)
     std::cout<<"Renderer: "<<RenderEngine::Renderer::getRendererStr()<<std::endl;
     std::cout<<"OpenGL version: "<<RenderEngine::Renderer::getVersionStr()<<std::endl;
 	
-    RenderEngine::Renderer::setClearColor(1.0, 1.0, 1.0, 1);
+    RenderEngine::Renderer::setClearColor(0.0, 0.0, 0.0, 1);
     RenderEngine::Renderer::setDepthTest(true);
 
     {

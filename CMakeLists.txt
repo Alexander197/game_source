@@ -30,10 +30,12 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/SpriteAnimator.h
 	src/Renderer/Model3D.cpp
 	src/Renderer/Model3D.h
-	src/Renderer/Light.cpp
-	src/Renderer/Light.h
+	src/Renderer/LightSource.cpp
+	src/Renderer/LightSource.h
 	src/Renderer/Text.cpp
 	src/Renderer/Text.h
+	src/Renderer/Mesh.cpp
+	src/Renderer/Mesh.h
 	
 	src/Game/Game.cpp
 	src/Game/Game.h
@@ -85,15 +87,28 @@ add_subdirectory(external/glad)
 target_link_libraries(${PROJECT_NAME} glad)
 
 include_directories(external/glm)
-include_directories(external/rapidjson/include)
+#include_directories(external/rapidjson/include)
 
 add_subdirectory(external/freetype-2.12.1)
 target_link_libraries(${PROJECT_NAME} freetype)
 
-#add_subdirectory(external/glm)
-#target_link_libraries(${PROJECT_NAME} glm)
+#include_directories(external/assimp-5.2.4/include)
+#target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/external/assimp-5.2.4/build/lib/Debug/*.lib)
+
+include_directories(include)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/libs/*.lib)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_directory
 					${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res)
+					
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#					COMMAND ${CMAKE_COMMAND} -E copy
+#					${CMAKE_SOURCE_DIR}/assimp-vc142-mtd.dll $<TARGET_FILE_DIR:${PROJECT_NAME}>/assimp-vc142-mtd.dll)
+					
+file(GLOB MY_PUBLIC_HEADERS "*.dll")
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_BINARY_DIR}/bin/Debug/)
+#install(DIRECTORY ""
+#		DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>
+#		FILES_MATCHING PATTERN "*.dll")

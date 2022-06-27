@@ -46,7 +46,6 @@ namespace RenderEngine {
 	void Text::render(std::string text, glm::vec2 position, glm::vec2 size, float layer)
 	{
 		m_pShaderProgram->use();
-		m_pShaderProgram->setVec3("discardColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		m_pShaderProgram->setFloat("layer", layer);
 
 		glActiveTexture(GL_TEXTURE0);

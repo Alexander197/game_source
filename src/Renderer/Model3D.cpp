@@ -5,13 +5,18 @@
 
 #include "Renderer.h"
 
+#include "../Resources/ResourceManager.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <iostream>
+
 namespace RenderEngine {
-	Model3D::Model3D(std::shared_ptr<Texture2D> pTexture, std::shared_ptr<ShaderProgram> pShaderProgram, std::vector<GLfloat> vertexCoords, 
-		std::vector<GLfloat> texCoords, std::vector<GLfloat> normCoords, std::vector<GLuint> indices) :
+	/*Model3D::Model3D(std::shared_ptr<Texture2D> pTexture, std::shared_ptr<ShaderProgram> pShaderProgram, std::vector<GLfloat> vertexCoords,
+		std::vector<GLfloat> texCoords, std::vector<GLfloat> normals, std::vector<GLfloat> tangents, std::vector<GLuint> indices) :
 		m_pTexture(std::move(pTexture)),
-		m_pShaderProgram(std::move(pShaderProgram))
+		m_pShaderProgram(std::move(pShaderProgram)),
+		m_ligth(glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f))
 	{
 		m_vertexCoordsBuffer.init(vertexCoords.data(), sizeof(GLfloat) * vertexCoords.size());
 		VertexBufferLayout vertexCoordsLayout;
@@ -23,27 +28,44 @@ namespace RenderEngine {
 		texCoordsLayout.addElementLayoutFloat(2, GL_FALSE);
 		m_vertexArray.addBuffer(m_texCoordsBuffer, texCoordsLayout);
 
-		m_normCoordsBuffer.init(normCoords.data(), sizeof(GLfloat) * normCoords.size());
-		VertexBufferLayout normCoordsLayout;
-		normCoordsLayout.addElementLayoutFloat(3, GL_FALSE);
-		m_vertexArray.addBuffer(m_normCoordsBuffer, normCoordsLayout);
+		m_normBuffer.init(normals.data(), sizeof(GLfloat) * normals.size());
+		VertexBufferLayout normLayout;
+		normLayout.addElementLayoutFloat(3, GL_FALSE);
+		m_vertexArray.addBuffer(m_normBuffer, normLayout);
+
+		m_tanBuffer.init(tangents.data(), sizeof(GLfloat) * tangents.size());
+		VertexBufferLayout tanLayout;
+		tanLayout.addElementLayoutFloat(3, GL_FALSE);
+		m_vertexArray.addBuffer(m_tanBuffer, tanLayout);
 
 		m_indexBuffer.init(indices.data(), sizeof(GLuint) * indices.size());
 
 		m_texCoordsBuffer.unbind();
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
+	}*/
+	Model3D::Model3D(std::shared_ptr<ShaderProgram> pShaderProgram, std::vector<std::shared_ptr<Mesh>> pMeshes) :
+		m_pShaderProgram(std::move(pShaderProgram)),
+		m_pMeshes(pMeshes),
+		m_ligth(glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f))
+	{
+
 	}
-	void Model3D::render(const glm::vec3 position, const glm::vec3 size, const float rotation) const
+	void Model3D::render(const glm::vec3 position, const glm::vec3 size, const glm::vec3 rotation) const
 	{
 		m_pShaderProgram->use();
 
 		glm::mat4 model(1.0f);
-
+		
 		model = glm::translate(model, position);
-		//model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
-		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 1.0f));
-		//model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
+
+		float pitch = glm::radians(rotation.x);
+		float yaw = glm::radians(rotation.y);
+		float roll = glm::radians(rotation.z);
+
+		model = glm::rotate(model, pitch, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, yaw, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, roll, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, size);
 
 		glm::mat3 nModel = glm::mat3(glm::transpose(glm::inverse(model)));
@@ -51,14 +73,173 @@ namespace RenderEngine {
 		m_pShaderProgram->setMat3("nModelMat", nModel);
 		m_pShaderProgram->setMat4("modelMat", model);
 
-		m_pShaderProgram->setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-		m_pShaderProgram->setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-		m_pShaderProgram->setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-		m_pShaderProgram->setFloat("material.shininess", 32.0f);
-		
-		glActiveTexture(GL_TEXTURE0);
-		m_pTexture->bind();
+		//m_pShaderProgram->setVec3("dirLight[0].ambient", m_ligth.ambient);
+		//m_pShaderProgram->setVec3("dirLight[0].diffuse", m_ligth.diffuse);
+		//m_pShaderProgram->setVec3("dirLight[0].specular", m_ligth.specular);
 
-		Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+		//m_pShaderProgram->setVec3("dirLight[1].ambient", m_ligth.ambient);
+		//m_pShaderProgram->setVec3("dirLight[1].diffuse", m_ligth.diffuse);
+		//m_pShaderProgram->setVec3("dirLight[1].specular", m_ligth.specular);
+
+		m_pShaderProgram->setVec3("pointLight[0].ambient", m_ligth.ambient);
+		m_pShaderProgram->setVec3("pointLight[0].diffuse", m_ligth.diffuse);
+		m_pShaderProgram->setVec3("pointLight[0].specular", m_ligth.specular);
+
+		m_pShaderProgram->setFloat("pointLight[0].constant", 1.0);
+		m_pShaderProgram->setFloat("pointLight[0].linear", 0.0);
+		m_pShaderProgram->setFloat("pointLight[0].quadratic", 0.0);
+
+		m_pShaderProgram->setVec3("spotLight[0].ambient", m_ligth.ambient * 1.0f);
+		m_pShaderProgram->setVec3("spotLight[0].diffuse", m_ligth.diffuse * 1.0f);
+		m_pShaderProgram->setVec3("spotLight[0].specular", m_ligth.specular * 1.0f);
+
+		m_pShaderProgram->setFloat("spotLight[0].constant", 1.0);
+		m_pShaderProgram->setFloat("spotLight[0].linear", 0.014);
+		m_pShaderProgram->setFloat("spotLight[0].quadratic", 0.0007);
+
+		m_pShaderProgram->setFloat("material.shininess", 32.0f);
+
+		for (size_t i = 0; i < m_pMeshes.size(); i++)
+		{
+			m_pMeshes[i]->render(m_pShaderProgram);
+		}
+
+		//auto pDiffTex = ResourceManager::getTexture("brick_diff");
+		//auto pSpecTex = ResourceManager::getTexture("brick_spec");
+		//auto pNormalMap = ResourceManager::getTexture("normalMap");
+		//
+		//m_pShaderProgram->setInt("material.texture_diffuse_0", 0);
+
+		//glActiveTexture(GL_TEXTURE0);
+		//pDiffTex->bind();
+
+		//m_pShaderProgram->setInt("material.texture_specular_0", 1);
+
+		//glActiveTexture(GL_TEXTURE1);
+		//pSpecTex->bind();
+
+		//m_pShaderProgram->setInt("normalMap", 2);
+
+		//glActiveTexture(GL_TEXTURE2);
+		//pNormalMap->bind();
+
+		////glActiveTexture(GL_TEXTURE0);
+		////m_pTexture->bind();
+
+		//Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
+	}
+
+	std::vector<std::shared_ptr<Mesh>> Model3D::loadMeshes(std::string path)
+	{
+		Assimp::Importer importer;
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+
+		std::vector<std::shared_ptr<Mesh>> meshes;
+
+		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+		{
+			std::cerr << "ERROR ASSIMP: " << importer.GetErrorString() << std::endl;
+			return meshes;
+		}
+
+		processNode(scene->mRootNode, scene, meshes, path);
+		return meshes;
+	}
+
+	void Model3D::processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<Mesh>> &meshes, std::string path)
+	{
+		for (size_t i = 0; i < node->mNumMeshes; i++)
+		{
+			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+			meshes.push_back(std::move(processMesh(mesh, scene, path)));
+		}
+
+		for (size_t i = 0; i < node->mNumChildren; i++)
+		{
+			processNode(node->mChildren[i], scene, meshes, path);
+		}
+	}
+
+	std::vector<std::shared_ptr<Texture2D>> loadMaterialTexture(aiMaterial* material, aiTextureType type, std::string path);
+	std::shared_ptr<Mesh> Model3D::processMesh(aiMesh* mesh, const aiScene* scene, std::string path)
+	{
+		std::vector<GLfloat> vertexCoords;
+		std::vector<GLfloat> texCoords;
+		std::vector<GLfloat> normals;
+		std::vector<GLfloat> tangents;
+		std::vector<GLuint> indices;
+		std::vector<std::shared_ptr<Texture2D>> dTextures;
+		std::vector<std::shared_ptr<Texture2D>> sTextures;
+		
+		for (size_t i = 0; i < mesh->mNumVertices; i++)
+		{
+			vertexCoords.push_back(mesh->mVertices[i].x);
+			vertexCoords.push_back(mesh->mVertices[i].y);
+			vertexCoords.push_back(mesh->mVertices[i].z);
+
+			if (mesh->mTextureCoords[0])
+			{
+				texCoords.push_back(mesh->mTextureCoords[0][i].x);
+				texCoords.push_back(mesh->mTextureCoords[0][i].y);
+			}
+			else
+			{
+				texCoords.push_back(0.0f);
+				texCoords.push_back(0.0f);
+			}
+
+			normals.push_back(mesh->mNormals[i].x);
+			normals.push_back(mesh->mNormals[i].y);
+			normals.push_back(mesh->mNormals[i].z);
+			
+			tangents.push_back(mesh->mTangents[i].x);
+			tangents.push_back(mesh->mTangents[i].y);
+			tangents.push_back(mesh->mTangents[i].z);
+		}
+
+		for (size_t i = 0; i < mesh->mNumFaces; i++)
+		{
+			aiFace face = mesh->mFaces[i];
+			for (size_t j = 0; j < face.mNumIndices; j++)
+			{
+				indices.push_back(face.mIndices[j]);
+			}
+		}
+
+		if (mesh->mMaterialIndex >= 0)
+		{
+			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+			
+			dTextures = loadMaterialTexture(material, aiTextureType_DIFFUSE, path);
+			sTextures = loadMaterialTexture(material, aiTextureType_SPECULAR, path);
+		}
+		return std::make_shared<Mesh>(dTextures, sTextures, vertexCoords, texCoords, normals, tangents, indices);
+	}
+
+	std::vector<std::shared_ptr<Texture2D>> loadMaterialTexture(aiMaterial* material, aiTextureType type, std::string path)
+	{
+		std::vector<std::shared_ptr<Texture2D>> textures;
+		for (size_t i = 0; i < material->GetTextureCount(type); i++)
+		{
+			aiString str;
+			material->GetTexture(type, i, &str);
+
+			path = std::string(path.substr(0, path.find_last_of('/')) + '/' + str.C_Str());
+			std::string textureName = path.substr(path.find_last_of('/', path.find_last_of('/') - 1) + 1, path.length());
+
+			std::shared_ptr<Texture2D> pTexture = ResourceManager::getTexture(textureName);
+
+			if (!pTexture) 
+			{
+				pTexture = ResourceManager::loadTexture(textureName, path, true);
+				if (pTexture)
+				{
+					std::cout << "---------->Load texture " << textureName << " successefully" << std::endl << std::endl;
+				}
+			}
+			
+			textures.push_back(pTexture);
+		}
+		return textures;
 	}
 }

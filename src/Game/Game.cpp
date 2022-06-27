@@ -22,12 +22,14 @@ Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active
     m_currentCursorPos = glm::dvec2(0.0, 0.0);
     m_lastCursorPos = glm::dvec2(0.0, 0.0);
     m_time = 0.0;
+    m_fps = 0.0;
+
+    m_isFlashLightOn = -1;
 }
 Game::~Game()
 {
 
 }
-
 void Game::render()
 {
     //ResourceManager::getAnimatedSprite("anim1")->render();
@@ -37,32 +39,35 @@ void Game::render()
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
     auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
 
-    //glm::mat4 viewMatrix = glm::mat4(1.0f);
-    //viewMatrix = glm::translate(viewMatrix, m_cameraPosition);
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_pCamera->getFov()), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
 
-    //float angleX = glm::radians(m_cameraRotation.x);
-    //float angleY = glm::radians(m_cameraRotation.y);
-    //float angleZ = glm::radians(m_cameraRotation.z);
-    //viewMatrix = glm::rotate(viewMatrix, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
-    //viewMatrix = glm::rotate(viewMatrix, angleY, glm::vec3(0.0f, 1.0f, 0.0f));
-    //viewMatrix = glm::rotate(viewMatrix, angleZ, glm::vec3(0.0f, 0.0f, 1.0f));
-
-    //viewMatrix = glm::scale(viewMatrix, m_cameraScale);
-
-    //glm::mat4 viewMatrix = glm::lookAt(m_cameraPosition, m_cameraPosition + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_camera->getFov()), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
-
-    glm::mat4 viewMatrix = m_camera->getLookAtMatrix();
+    glm::mat4 viewMatrix = m_pCamera->getLookAtMatrix();
 
     pSpriteShaderProgram->use();
     pSpriteShaderProgram->setMat4("viewMat", viewMatrix);
     pSpriteShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     p3DModelShaderProgram->use();
-    p3DModelShaderProgram->setVec3("lightPos", m_pLight->getPosition());
-    p3DModelShaderProgram->setVec3("viewPos", m_camera->getPosition());
+    //p3DModelShaderProgram->setVec3("dirLight[0].position", m_pLightSource->getPosition());
+    
+    //p3DModelShaderProgram->setVec3("light.direction", m_isFlashLightOn * m_pCamera->getFront());
+    //p3DModelShaderProgram->setFloat("light.cutOff", glm::cos(glm::radians(5.0f)));
+    //p3DModelShaderProgram->setFloat("light.outerCutOff", glm::cos(glm::radians(30.0f)));
+
+    //p3DModelShaderProgram->setVec3("dirLight[0].direction", glm::vec3(20.0f, 20.0f, 20.0f));
+    //p3DModelShaderProgram->setVec3("dirLight[1].direction", glm::vec3(-20.0f, -20.0f, -20.0f));
+
+    p3DModelShaderProgram->setVec3("pointLight[0].position", m_pLightSource->getPosition());
+
+    p3DModelShaderProgram->setVec3("spotLight[0].position", m_isFlashLightOn * m_pCamera->getPosition());
+    p3DModelShaderProgram->setVec3("spotLight[0].direction", m_pCamera->getFront());
+
+    p3DModelShaderProgram->setFloat("spotLight[0].cutOff", glm::cos(glm::radians(5.0)));
+    p3DModelShaderProgram->setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(20.0)));
+
+    p3DModelShaderProgram->setVec3("viewPos", m_pCamera->getPosition());
     p3DModelShaderProgram->setMat4("viewMat", viewMatrix);
+    
     p3DModelShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     pLightShaderProgram->use();
@@ -79,95 +84,103 @@ void Game::render()
     }
     if (m_pModel)
     {
-        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 10.0f, 10.0f), 0.0f);
-        //m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1000.0f, 1000.0f, 1000.0f), 0.0f);
+        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        //m_pModel->render(glm::vec3(-9.0f, 8.0f, 10.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(11.0f, 59.0f, 12.0f));
+        //m_pModel->render(glm::vec3(12.0f, -10.0f, 14.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(60.0f, 30.0f, 0.0f));
+        //m_pModel->render(glm::vec3(15.0f, 8.0f, 8.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(43.0f, 55.0f, 53.0f));
+        //m_pModel->render(glm::vec3(11.0f, 5.0f, -7.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(23.0f, 12.0f, 80.0f));
+        //m_pModel->render(glm::vec3(-7.0f, 9.0f, 1.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(65.0f, 23.0f, 43.0f));
+        //m_pModel->render(glm::vec3(15.0f, -12.0f, 10.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(78.0f, 63.0f, 12.0f));
+        //m_pModel->render(glm::vec3(12.0f, 9.0f, -12.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(15.0f, 4.0f, 56.0f));
     }
-    if (m_pLight)
+    if (m_pLightSource)
     {
-        m_pLight->render();
+        m_pLightSource->render();
     }
     if (m_pFps)
     {
         std::string fps = std::to_string(static_cast<int>(m_fps));
-        m_pFps->render("FPS " + fps, glm::vec2(0.0f, 0.0f), glm::vec2(30.0f,30.0f), 10.0f);
+        m_pFps->render("FPS " + fps, glm::vec2(0.0, m_windowSize.y - 30.0f), glm::vec2(30.0f,30.0f), 10.0f);
     }
 }
 
 void Game::update(const double delta)
 {
-    if (m_pLevel) {
-        m_pLevel->update(delta);
-    }
+    if (m_eCurrentGameState == EGameState::Active)
+    {
+        if (m_pLevel) {
+            m_pLevel->update(delta);
+        }
 
-    m_time += delta;
-    
-    if (m_pLight)
-    {
-        //m_pLight->setPosition(glm::vec3(200.0 * sin(m_time / 800.0), 0.0, 200.0 * cos(m_time / 800.0)));
-    }
-    if (m_pTank) 
-    {
-        std::vector<std::shared_ptr<IGameObject>> mapObjects = m_pLevel->getMapObjects();
-        size_t size = mapObjects.size();
-        for (size_t i = 0; i < size; i++)
+        m_time += delta;
+
+        if (m_pLightSource)
         {
-            if(mapObjects[i])
-            if (AxisAlignedBoundingBox::isCollide(m_pTank->getBoundingBox(), mapObjects[i]->getBoundingBox()) == 1)
+            //m_pLightSource->setPosition(glm::vec3(50.0 * sin(m_time / 800.0), 0.0, 50.0 * sin(m_time / 3200.0)));
+        }
+        if (m_pTank)
+        {
+            std::vector<std::shared_ptr<IGameObject>> mapObjects = m_pLevel->getMapObjects();
+            size_t size = mapObjects.size();
+            for (size_t i = 0; i < size; i++)
             {
-                m_pTank->setLastPosition();
-                m_pTank->move(false);
-                break;
+                if (mapObjects[i])
+                    if (AxisAlignedBoundingBox::isCollide(m_pTank->getBoundingBox(), mapObjects[i]->getBoundingBox()) == 1)
+                    {
+                        m_pTank->setLastPosition();
+                        m_pTank->move(false);
+                        break;
+                    }
+            }
+            m_pTank->update(delta);
+        }
+        if (m_pCamera)
+        {
+            if (m_keys[GLFW_KEY_W])
+            {
+                m_pCamera->moveForward(delta);
+            }
+            else if (m_keys[GLFW_KEY_A])
+            {
+                m_pCamera->moveLeft(delta);
+            }
+
+            if (m_keys[GLFW_KEY_S])
+            {
+                m_pCamera->moveBackward(delta);
+            }
+            else if (m_keys[GLFW_KEY_D])
+            {
+                m_pCamera->moveRight(delta);
+            }
+
+            if (m_keys[GLFW_KEY_SPACE])
+            {
+                m_pCamera->moveUp(delta);
+            }
+            else if (m_keys[GLFW_KEY_LEFT_SHIFT])
+            {
+                m_pCamera->moveDown(delta);
+            }
+
+            if (m_keys[GLFW_KEY_E])
+            {
+                m_pCamera->setRoll(1.0f, delta);
+            }
+            else if (m_keys[GLFW_KEY_Q])
+            {
+                m_pCamera->setRoll(-1.0f, delta);
+            }
+
+            if (true)
+            {
+                glm::vec2 cursorPosSubtract = m_lastCursorPos - m_currentCursorPos;
+                m_pCamera->setPitch(cursorPosSubtract.y, delta);
+                m_pCamera->setYaw(-cursorPosSubtract.x, delta);
+                m_lastCursorPos = m_currentCursorPos;
             }
         }
-        m_pTank->update(delta);
     }
-    if (m_camera)
-    {
-        if (m_keys[GLFW_KEY_W])
-        {
-            m_camera->moveForward(delta);
-        }
-        else if (m_keys[GLFW_KEY_A])
-        {
-            m_camera->moveLeft(delta);
-        }
-
-        if (m_keys[GLFW_KEY_S])
-        {
-            m_camera->moveBackward(delta);
-        }
-        else if (m_keys[GLFW_KEY_D])
-        {
-            m_camera->moveRight(delta);
-        }
-
-        if (m_keys[GLFW_KEY_SPACE])
-        {
-            m_camera->moveUp(delta);
-        }
-        else if (m_keys[GLFW_KEY_LEFT_SHIFT])
-        {
-            m_camera->moveDown(delta);
-        }
-
-        if (m_keys[GLFW_KEY_E])
-        {
-            m_camera->setRoll(1.0f, delta);
-        }
-        else if (m_keys[GLFW_KEY_Q])
-        {
-            m_camera->setRoll(-1.0f, delta);
-        }
-
-        if (true)
-        {
-            glm::vec2 cursorPosSubtract = m_lastCursorPos - m_currentCursorPos;
-            m_camera->setPitch(cursorPosSubtract.y, delta);
-            m_camera->setYaw(-cursorPosSubtract.x, delta);
-            m_lastCursorPos = m_currentCursorPos;
-        }
-    }
-   
 }
 
 bool Game::init()
@@ -211,22 +224,10 @@ bool Game::init()
     pLightShaderProgram->use();
     pLightShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
-    RenderEngine::Color lightColor = RenderEngine::Color(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
-    m_pLight = std::make_shared<RenderEngine::Light>(pLightShaderProgram, lightColor,
-        glm::vec3(50.0f, 50.0f, 100.0f));
+    m_pLightSource = std::make_shared<RenderEngine::LightSource>(pLightShaderProgram, glm::vec3(20.0f, 20.0f, 20.0f));
 
     p3DModelShaderProgram->use();
-    p3DModelShaderProgram->setInt("tex", 0);
 
-    glm::vec3 a = m_pLight->getColor().ambient;
-    glm::vec3 d = m_pLight->getColor().diffuse;
-    glm::vec3 s = m_pLight->getColor().specular;
-
-    p3DModelShaderProgram->setVec3("light.ambient", m_pLight->getColor().ambient);
-    p3DModelShaderProgram->setVec3("light.diffuse", m_pLight->getColor().diffuse);
-    p3DModelShaderProgram->setVec3("light.specular", m_pLight->getColor().specular);
-
-    p3DModelShaderProgram->setVec3("light.position", m_pLight->getPosition());
     p3DModelShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
@@ -234,7 +235,7 @@ bool Game::init()
         glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
 
     m_pModel = ResourceManager::get3DModel("cube");
-    m_camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f));
+    m_pCamera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f));
 
     pTextShaderProgram->use();
     pTextShaderProgram->setMat4("projectionMat", projectionMatrixO);
@@ -285,6 +286,12 @@ void Game::setKey(const int key, const int action)
     case GLFW_KEY_E:
         keyE(action);
         break;
+    case GLFW_KEY_P:
+        keyP(action);
+        break;
+    case GLFW_KEY_F:
+        keyF(action);
+        break;
     
     }
 }
@@ -306,7 +313,7 @@ void Game::setCursorPos(const double xpos, const double ypos)
 }
 void Game::setScrollOffset(const double xoffset, const double yoffset)
 {
-    m_camera->setFov(-static_cast<float>(yoffset), 1.0f);
+    m_pCamera->setFov(-static_cast<float>(yoffset), 1.0f);
 }
 
 size_t Game::getCurrentLevelWidth() const
@@ -490,6 +497,27 @@ void Game::keyE(const int action)
 {
     //if (action)
         //m_cameraPosition += glm::vec2(1.0f, 0.0f);
+}
+void Game::keyP(const int action)
+{
+    if (action == GLFW_PRESS)
+    {
+        if (m_eCurrentGameState == EGameState::Active)
+        {
+            m_eCurrentGameState = EGameState::Pause;
+        }
+        else
+        {
+            m_eCurrentGameState = EGameState::Active;
+        }
+    }
+}
+void Game::keyF(const int action)
+{
+    if (action == GLFW_PRESS)
+    {
+        m_isFlashLightOn *= -1;
+    }
 }
 void Game::keyMouseLeft(const int action)
 {
