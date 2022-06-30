@@ -25,6 +25,7 @@ Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active
     m_fps = 0.0;
 
     m_isFlashLightOn = -1;
+    m_blinn = 1;
 }
 Game::~Game()
 {
@@ -38,6 +39,8 @@ void Game::render()
     auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
     auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
+    auto pStencilShader = ResourceManager::getShaderProgram("stencilShader");
+    auto pSkyBoxShaderProgram = ResourceManager::getShaderProgram("skyBoxShader");
 
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_pCamera->getFov()), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
 
@@ -48,20 +51,10 @@ void Game::render()
     pSpriteShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     p3DModelShaderProgram->use();
-    //p3DModelShaderProgram->setVec3("dirLight[0].position", m_pLightSource->getPosition());
-    
-    //p3DModelShaderProgram->setVec3("light.direction", m_isFlashLightOn * m_pCamera->getFront());
-    //p3DModelShaderProgram->setFloat("light.cutOff", glm::cos(glm::radians(5.0f)));
-    //p3DModelShaderProgram->setFloat("light.outerCutOff", glm::cos(glm::radians(30.0f)));
-
-    //p3DModelShaderProgram->setVec3("dirLight[0].direction", glm::vec3(20.0f, 20.0f, 20.0f));
-    //p3DModelShaderProgram->setVec3("dirLight[1].direction", glm::vec3(-20.0f, -20.0f, -20.0f));
-
     p3DModelShaderProgram->setVec3("pointLight[0].position", m_pLightSource->getPosition());
 
     p3DModelShaderProgram->setVec3("spotLight[0].position", m_isFlashLightOn * m_pCamera->getPosition());
     p3DModelShaderProgram->setVec3("spotLight[0].direction", m_pCamera->getFront());
-
     p3DModelShaderProgram->setFloat("spotLight[0].cutOff", glm::cos(glm::radians(5.0)));
     p3DModelShaderProgram->setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(20.0)));
 
@@ -70,11 +63,22 @@ void Game::render()
     
     p3DModelShaderProgram->setMat4("projectionMat", projectionMatrix);
 
+    p3DModelShaderProgram->setInt("blinn", m_blinn);
+
     pLightShaderProgram->use();
     pLightShaderProgram->setMat4("viewMat", viewMatrix);
     pLightShaderProgram->setMat4("projectionMat", projectionMatrix);
 
-    pTextShaderProgram->use();
+    pStencilShader->use();
+    pStencilShader->setMat4("viewMat", viewMatrix);
+    pStencilShader->setMat4("projectionMat", projectionMatrix);
+
+    pSkyBoxShaderProgram->use();
+    pSkyBoxShaderProgram->setMat4("viewMat", glm::mat4(glm::mat3(viewMatrix)));
+    //pSkyBoxShaderProgram->setMat4("viewMat", viewMatrix);
+    pSkyBoxShaderProgram->setMat4("projectionMat", projectionMatrix);
+
+    //pTextShaderProgram->use();
 
     if (m_pLevel) {
        //m_pLevel->render();
@@ -84,9 +88,10 @@ void Game::render()
     }
     if (m_pModel)
     {
+     
         m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //m_pModel->render(glm::vec3(-9.0f, 8.0f, 10.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(11.0f, 59.0f, 12.0f));
-        //m_pModel->render(glm::vec3(12.0f, -10.0f, 14.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(60.0f, 30.0f, 0.0f));
+        //m_pModel->render(glm::vec3(0.0f, 0.0f, 4.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        //m_pModel->render(glm::vec3(0.0f, -8.4f, 0.0f), glm::vec3(6.2f, 6.2f, 6.2f), glm::vec3(0.0f, 0.0f, 0.0f));
         //m_pModel->render(glm::vec3(15.0f, 8.0f, 8.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(43.0f, 55.0f, 53.0f));
         //m_pModel->render(glm::vec3(11.0f, 5.0f, -7.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(23.0f, 12.0f, 80.0f));
         //m_pModel->render(glm::vec3(-7.0f, 9.0f, 1.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(65.0f, 23.0f, 43.0f));
@@ -95,12 +100,26 @@ void Game::render()
     }
     if (m_pLightSource)
     {
+        m_pLightSource->setPosition(glm::vec3(0.0f, 30.0f, 0.0f));
         m_pLightSource->render();
     }
-    if (m_pFps)
+    if (m_pLog)
     {
         std::string fps = std::to_string(static_cast<int>(m_fps));
-        m_pFps->render("FPS " + fps, glm::vec2(0.0, m_windowSize.y - 30.0f), glm::vec2(30.0f,30.0f), 10.0f);
+        m_pLog->render("FPS " + fps, glm::vec2(0.0, m_windowSize.y - 30.0f), glm::vec2(30.0f,30.0f), 10.0f);
+
+        if (m_blinn)
+        {
+            m_pLog->render("SPEC PHONG", glm::vec2(0.0, m_windowSize.y - 60.0f), glm::vec2(30.0f, 30.0f), 10.0f);
+        }
+        else
+        {
+            m_pLog->render("SPEC BLINN", glm::vec2(0.0, m_windowSize.y - 60.0f), glm::vec2(30.0f, 30.0f), 10.0f);
+        }
+    }
+    if (m_pSkyBox)
+    {
+        m_pSkyBox->render();
     }
 }
 
@@ -191,6 +210,7 @@ bool Game::init()
     auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
     auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
+    auto pSkyBoxShaderProgram = ResourceManager::getShaderProgram("skyBoxShader");
 
     if (!pSpriteShaderProgram)
     {
@@ -224,7 +244,7 @@ bool Game::init()
     pLightShaderProgram->use();
     pLightShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
-    m_pLightSource = std::make_shared<RenderEngine::LightSource>(pLightShaderProgram, glm::vec3(20.0f, 20.0f, 20.0f));
+    m_pLightSource = std::make_shared<RenderEngine::LightSource>(pLightShaderProgram, glm::vec3(0.0f, 40.0f, 0.0f));
 
     p3DModelShaderProgram->use();
 
@@ -234,13 +254,16 @@ bool Game::init()
         glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(),
         glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
 
-    m_pModel = ResourceManager::get3DModel("cube");
+    m_pModel = ResourceManager::get3DModel("naruto");
     m_pCamera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f));
+
+    auto cubeMap = ResourceManager::getCubeMap("cubeMap1");
+    m_pSkyBox = std::make_unique<RenderEngine::SkyBox>(cubeMap, pSkyBoxShaderProgram);
 
     pTextShaderProgram->use();
     pTextShaderProgram->setMat4("projectionMat", projectionMatrixO);
 
-    m_pFps = std::make_unique<RenderEngine::Text>(ResourceManager::getTexture("textArial256"), ResourceManager::getShaderProgram("textShader"));
+    m_pLog = std::make_unique<RenderEngine::Text>(ResourceManager::getTexture("textArial256"), ResourceManager::getShaderProgram("textShader"));
 
     return true;
 }
@@ -490,8 +513,12 @@ void Game::keyD(const int action)
 }
 void Game::keyQ(const int action)
 {
-    //if (action)
-        //m_cameraPosition += glm::vec2(0.0f, -1.0f);
+    if (action == GLFW_PRESS)
+    {
+        auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
+        if (m_blinn) m_blinn = 0;
+        else m_blinn = 1;
+    }
 }
 void Game::keyE(const int action)
 {

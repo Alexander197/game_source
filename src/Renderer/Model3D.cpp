@@ -12,46 +12,15 @@
 #include <iostream>
 
 namespace RenderEngine {
-	/*Model3D::Model3D(std::shared_ptr<Texture2D> pTexture, std::shared_ptr<ShaderProgram> pShaderProgram, std::vector<GLfloat> vertexCoords,
-		std::vector<GLfloat> texCoords, std::vector<GLfloat> normals, std::vector<GLfloat> tangents, std::vector<GLuint> indices) :
-		m_pTexture(std::move(pTexture)),
-		m_pShaderProgram(std::move(pShaderProgram)),
-		m_ligth(glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f))
-	{
-		m_vertexCoordsBuffer.init(vertexCoords.data(), sizeof(GLfloat) * vertexCoords.size());
-		VertexBufferLayout vertexCoordsLayout;
-		vertexCoordsLayout.addElementLayoutFloat(3, GL_FALSE);
-		m_vertexArray.addBuffer(m_vertexCoordsBuffer, vertexCoordsLayout);
-
-		m_texCoordsBuffer.init(texCoords.data(), sizeof(GLfloat) * texCoords.size());
-		VertexBufferLayout texCoordsLayout;
-		texCoordsLayout.addElementLayoutFloat(2, GL_FALSE);
-		m_vertexArray.addBuffer(m_texCoordsBuffer, texCoordsLayout);
-
-		m_normBuffer.init(normals.data(), sizeof(GLfloat) * normals.size());
-		VertexBufferLayout normLayout;
-		normLayout.addElementLayoutFloat(3, GL_FALSE);
-		m_vertexArray.addBuffer(m_normBuffer, normLayout);
-
-		m_tanBuffer.init(tangents.data(), sizeof(GLfloat) * tangents.size());
-		VertexBufferLayout tanLayout;
-		tanLayout.addElementLayoutFloat(3, GL_FALSE);
-		m_vertexArray.addBuffer(m_tanBuffer, tanLayout);
-
-		m_indexBuffer.init(indices.data(), sizeof(GLuint) * indices.size());
-
-		m_texCoordsBuffer.unbind();
-		m_vertexArray.unbind();
-		m_indexBuffer.unbind();
-	}*/
 	Model3D::Model3D(std::shared_ptr<ShaderProgram> pShaderProgram, std::vector<std::shared_ptr<Mesh>> pMeshes) :
 		m_pShaderProgram(std::move(pShaderProgram)),
 		m_pMeshes(pMeshes),
-		m_ligth(glm::vec3(0.01f, 0.01f, 0.01f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.5f, 0.5f, 0.5f))
+		m_ligth(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.9f, 0.9f, 0.9f)),
+		m_stencilColor(glm::vec3(1.0f, 1.0f, 1.0f)), m_stencilExpantion(1.1f)
 	{
 
 	}
-	void Model3D::render(const glm::vec3 position, const glm::vec3 size, const glm::vec3 rotation) const
+	void Model3D::render(const glm::vec3 position, const glm::vec3 size, const glm::vec3 rotation, const bool withStencil) const
 	{
 		m_pShaderProgram->use();
 
@@ -86,47 +55,23 @@ namespace RenderEngine {
 		m_pShaderProgram->setVec3("pointLight[0].specular", m_ligth.specular);
 
 		m_pShaderProgram->setFloat("pointLight[0].constant", 1.0);
-		m_pShaderProgram->setFloat("pointLight[0].linear", 0.0);
-		m_pShaderProgram->setFloat("pointLight[0].quadratic", 0.0);
+		m_pShaderProgram->setFloat("pointLight[0].linear", 0.014);
+		m_pShaderProgram->setFloat("pointLight[0].quadratic", 0.0007);
 
 		m_pShaderProgram->setVec3("spotLight[0].ambient", m_ligth.ambient * 1.0f);
 		m_pShaderProgram->setVec3("spotLight[0].diffuse", m_ligth.diffuse * 1.0f);
 		m_pShaderProgram->setVec3("spotLight[0].specular", m_ligth.specular * 1.0f);
 
 		m_pShaderProgram->setFloat("spotLight[0].constant", 1.0);
-		m_pShaderProgram->setFloat("spotLight[0].linear", 0.014);
-		m_pShaderProgram->setFloat("spotLight[0].quadratic", 0.0007);
+		m_pShaderProgram->setFloat("spotLight[0].linear", 0.0014);
+		m_pShaderProgram->setFloat("spotLight[0].quadratic", 0.00007);
 
 		m_pShaderProgram->setFloat("material.shininess", 32.0f);
-
+		
 		for (size_t i = 0; i < m_pMeshes.size(); i++)
 		{
 			m_pMeshes[i]->render(m_pShaderProgram);
 		}
-
-		//auto pDiffTex = ResourceManager::getTexture("brick_diff");
-		//auto pSpecTex = ResourceManager::getTexture("brick_spec");
-		//auto pNormalMap = ResourceManager::getTexture("normalMap");
-		//
-		//m_pShaderProgram->setInt("material.texture_diffuse_0", 0);
-
-		//glActiveTexture(GL_TEXTURE0);
-		//pDiffTex->bind();
-
-		//m_pShaderProgram->setInt("material.texture_specular_0", 1);
-
-		//glActiveTexture(GL_TEXTURE1);
-		//pSpecTex->bind();
-
-		//m_pShaderProgram->setInt("normalMap", 2);
-
-		//glActiveTexture(GL_TEXTURE2);
-		//pNormalMap->bind();
-
-		////glActiveTexture(GL_TEXTURE0);
-		////m_pTexture->bind();
-
-		//Renderer::draw(m_vertexArray, m_indexBuffer, *m_pShaderProgram);
 	}
 
 	std::vector<std::shared_ptr<Mesh>> Model3D::loadMeshes(std::string path)

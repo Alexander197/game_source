@@ -11,6 +11,7 @@ namespace RenderEngine
 	class Texture2D;
 	class Sprite;
 	class Model3D;
+	class CubeMap;
 }
 
 class ResourceManager {
@@ -30,21 +31,25 @@ public:
 	static std::shared_ptr<RenderEngine::Texture2D> loadTexture(const std::string& textureName, const std::string& texturePath, const bool isAbsPath = false);
 	static std::shared_ptr<RenderEngine::Texture2D> getTexture(const std::string& textureName);
 
+	static std::shared_ptr<RenderEngine::CubeMap> loadCubeMap(const std::string& cubeMapName, const std::vector<std::string>& faces);
+	static std::shared_ptr<RenderEngine::CubeMap> getCubeMap(const std::string& cubeMapName);
+
 	static std::shared_ptr<RenderEngine::Sprite> loadSprite(const std::string& spriteName,
-															const std::string& textureName,
-															const std::string& shaderName,
-															const std::string& subTextureName = "default");
+		const std::string& textureName,
+		const std::string& shaderName,
+		const std::string& subTextureName = "default");
+	
 	static std::shared_ptr<RenderEngine::Sprite> getSprite(const std::string& spriteName);
 	
 	static std::shared_ptr<RenderEngine::Model3D> load3DModel(const std::string& modelName, const std::string& modelPath,
-		const std::string& textureName, const std::string& shaderName);
+		const std::string& shaderName);
 	static std::shared_ptr<RenderEngine::Model3D> get3DModel(const std::string& modelName);
 
 	static std::shared_ptr<RenderEngine::Texture2D> loadTextureAtlas(std::string textureName,
-																	 std::string texturePath,
-																 	 std::vector<std::string> subTextures,
-																	 const unsigned int subTextureWidth,
-																	 const unsigned int subTextureHeight);
+		std::string texturePath,
+		std::vector<std::string> subTextures,
+		const unsigned int subTextureWidth,
+		const unsigned int subTextureHeight);
 	static bool loadJSONResources(const std::string& JSONpath);
 
 	static const std::vector<std::vector<std::string>>& getLevels() { return m_levels; }
@@ -53,10 +58,13 @@ private:
 	static std::string getFileString(const std::string& relativeFilePath);
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::ShaderProgram>> ShaderProgramsMap_t;
-	static ShaderProgramsMap_t m_shaderProgramsMap;
+	static ShaderProgramsMap_t m_shaderPrograms;
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Texture2D>> TexturesMap_t;
 	static TexturesMap_t m_textures;
+
+	typedef std::map<const std::string, std::shared_ptr<RenderEngine::CubeMap>> CubeMapsMap_t;
+	static CubeMapsMap_t m_cubeMaps;
 
 	typedef std::map<const std::string, std::shared_ptr<RenderEngine::Sprite>> SpritesMap_t;
 	static SpritesMap_t m_sprites;

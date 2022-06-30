@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 position) : m_cameraPosition(position)
 
 	m_fov = 60.0f;
 
-	m_speed = 0.02;
+	m_speed = 0.01;
 	m_sensitivity = glm::vec3(0.02, 0.02, 0.05);
 }
 

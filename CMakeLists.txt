@@ -36,6 +36,10 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/Text.h
 	src/Renderer/Mesh.cpp
 	src/Renderer/Mesh.h
+	src/Renderer/CubeMap.cpp
+	src/Renderer/CubeMap.h
+	src/Renderer/SkyBox.cpp
+	src/Renderer/SkyBox.h
 	
 	src/Game/Game.cpp
 	src/Game/Game.h

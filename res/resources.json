@@ -19,6 +19,16 @@
 			"name"		: "textShader",
 			"filePath_v": "res/shaders/TextShader/vTextShader.txt",
 			"filePath_f": "res/shaders/TextShader/fTextShader.txt"
+		},
+		{
+			"name"		: "stencilShader",
+			"filePath_v": "res/shaders/StencilShader/vStencilShader.txt",
+			"filePath_f": "res/shaders/StencilShader/fStencilShader.txt"
+		},
+		{
+			"name"		: "skyBoxShader",
+			"filePath_v": "res/shaders/SkyBoxShader/vSkyBox.txt",
+			"filePath_f": "res/shaders/SkyBoxShader/fSkyBox.txt"
 		}
 	],
 	
@@ -461,6 +471,19 @@
 			"subTextures"      	: [
 				"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",  "O", "P", "Q",  "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 				"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", ",", " " 
+			]
+		}
+	],
+	"cubeMaps" : [
+		{
+			"name"	: "cubeMap1",
+			"faces" : [
+				"res/cubemaps/right.png",
+				"res/cubemaps/left.png",
+				"res/cubemaps/top.png",
+				"res/cubemaps/bottom.png",
+				"res/cubemaps/front.png",
+				"res/cubemaps/back.png"
 			]
 		}
 	],

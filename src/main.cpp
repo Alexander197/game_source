@@ -79,6 +79,8 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
     GLFWwindow* pWindow = glfwCreateWindow(g_windowSize.x, g_windowSize.y, "Hello World", nullptr, nullptr);
     if (!pWindow)
     {
@@ -105,7 +107,14 @@ int main(int argc, char** argv)
 	
     RenderEngine::Renderer::setClearColor(0.0, 0.0, 0.0, 1);
     RenderEngine::Renderer::setDepthTest(true);
-
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_STENCIL_TEST);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
     {
         ResourceManager::setExecutablePath(argv[0]);
         g_game->init();
@@ -119,8 +128,8 @@ int main(int argc, char** argv)
         int counter = 0;
 
         glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        //glEnable(GL_FRAMEBUFFER_SRGB);
 
         while (!glfwWindowShouldClose(pWindow))
         {

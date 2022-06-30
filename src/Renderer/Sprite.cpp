@@ -47,6 +47,7 @@ namespace RenderEngine {
 
 		m_indexBuffer.init(indices, sizeof(indices));
 
+		m_vertexCoordsBuffer.unbind();
 		m_texCoordsBuffer.unbind();
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
@@ -79,9 +80,7 @@ namespace RenderEngine {
 		glm::mat4 model(1.0f);
 
 		model = glm::translate(model, glm::vec3(position, 0.0f));
-		//model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
 		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-		//model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
 		model = glm::scale(model, glm::vec3(size, 1.0f));
 
 		m_pShaderProgram->setMat4("modelMat", model);

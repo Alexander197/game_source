@@ -7,6 +7,7 @@
 #include "../Renderer/Model3D.h"
 #include "../Renderer/LightSource.h"
 #include "../Renderer/Text.h"
+#include "../Renderer/SkyBox.h"
 
 #include "Camera/Camera.h"
 
@@ -56,9 +57,9 @@ private:
 	std::shared_ptr<RenderEngine::Model3D> m_pModel;
 	std::shared_ptr<RenderEngine::LightSource> m_pLightSource;
 
-	float m_isFlashLightOn;
+	std::unique_ptr<RenderEngine::SkyBox> m_pSkyBox;
 
-	std::unique_ptr<RenderEngine::Text> m_pFps;
+	std::unique_ptr<RenderEngine::Text> m_pLog;
 
 	double m_time;
 	float m_fps;
@@ -81,4 +82,7 @@ private:
 	void keyF(const int action);
 
 	void keyMouseLeft(const int action);
+
+	float m_isFlashLightOn;
+	int m_blinn;
 };

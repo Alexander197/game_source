@@ -4,6 +4,7 @@
 #include "../Renderer/Sprite.h"
 #include "../Renderer/Model3D.h"
 #include "../Renderer/Mesh.h"
+#include "../Renderer/CubeMap.h"
 
 #include <sstream>
 #include <fstream>
@@ -19,17 +20,18 @@
 
 #include "stb_image.h"
 
-ResourceManager::ShaderProgramsMap_t ResourceManager::m_shaderProgramsMap;
+ResourceManager::ShaderProgramsMap_t ResourceManager::m_shaderPrograms;
 ResourceManager::TexturesMap_t ResourceManager::m_textures;
 ResourceManager::SpritesMap_t ResourceManager::m_sprites;
 ResourceManager::Models3DMap_t ResourceManager::m_models3D;
+ResourceManager::CubeMapsMap_t ResourceManager::m_cubeMaps;
 
 std::string ResourceManager::m_path;
 std::vector<std::vector<std::string>> ResourceManager::m_levels;
 
 void ResourceManager::unloadAllResources()
 {
-	m_shaderProgramsMap.clear();
+	m_shaderPrograms.clear();
 	m_textures.clear();
 	m_sprites.clear();
 }
@@ -69,7 +71,7 @@ std::shared_ptr<RenderEngine::ShaderProgram>ResourceManager::loadShaders(const s
 		return nullptr;
 	}
 
-	std::shared_ptr<RenderEngine::ShaderProgram>& newShader = m_shaderProgramsMap.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString)).first->second;
+	std::shared_ptr<RenderEngine::ShaderProgram>& newShader = m_shaderPrograms.emplace(shaderName, std::make_shared<RenderEngine::ShaderProgram>(vertexString, fragmentString)).first->second;
 	if (newShader->isCompiled())
 	{
 		return newShader;
@@ -81,19 +83,18 @@ std::shared_ptr<RenderEngine::ShaderProgram>ResourceManager::loadShaders(const s
 }
 std::shared_ptr<RenderEngine::ShaderProgram>ResourceManager::getShaderProgram(const std::string& shaderName)
 {
-	ShaderProgramsMap_t::const_iterator it = m_shaderProgramsMap.find(shaderName);
-	if (it != m_shaderProgramsMap.end())
+	ShaderProgramsMap_t::const_iterator it = m_shaderPrograms.find(shaderName);
+	if (it != m_shaderPrograms.end())
 	{
 		return it->second;
 	}
 	std::cerr << "ERROR: Can't find the shader program: " << shaderName << std::endl;
 	return nullptr;
 }
-std::shared_ptr<RenderEngine::Texture2D>  ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath, const bool isAbsPath)
+std::shared_ptr<RenderEngine::Texture2D>  ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath,
+																	   const bool isAbsPath)
 {
-	int channels = 0;
-	int width = 0;
-	int height = 0;
+	int channels = 0, width = 0, height = 0;
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* pixels;
 	if (!isAbsPath)
@@ -106,12 +107,12 @@ std::shared_ptr<RenderEngine::Texture2D>  ResourceManager::loadTexture(const std
 	}
 	if (!pixels) 
 	{
-		std::cerr<<"ERROR: Can't load image: "<< texturePath<<std::endl;
+		std::cerr << "ERROR: Can't load image: " << texturePath << std::endl;
 		return nullptr;
 	}
 	
-	std::shared_ptr<RenderEngine::Texture2D> newTexture = 
-		m_textures.emplace(textureName, std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
+	std::shared_ptr<RenderEngine::Texture2D> newTexture = m_textures.emplace(textureName, 
+		std::make_shared<RenderEngine::Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
 	
 	stbi_image_free(pixels);
 	return newTexture;
@@ -126,6 +127,46 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 	std::cerr << "ERROR: Can't find the texture: " << textureName << std::endl;
 	return nullptr;
 }
+
+std::shared_ptr<RenderEngine::CubeMap> ResourceManager::loadCubeMap(const std::string& cubeMapName, const std::vector<std::string>& faces)
+{
+	int channels = 0, width = 0, height = 0;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* pixels;
+	std::vector<unsigned char*> data;
+	for (size_t i = 0; i < faces.size(); i++)
+	{
+
+		pixels = stbi_load(std::string(m_path + "/" + faces[i]).c_str(), &width, &height, &channels, 0);
+		if (pixels)
+		{
+			data.push_back(pixels);
+		}
+		else
+		{
+			std::cerr << "ERROR: Can't load image: " << faces[i] << std::endl;
+			return nullptr;
+		}
+	}
+	std::shared_ptr<RenderEngine::CubeMap> newCubeMap = m_cubeMaps.emplace(cubeMapName,
+		std::make_shared<RenderEngine::CubeMap>(width, height, data, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
+	for (size_t i = 0; i < data.size(); i++)
+	{
+		stbi_image_free(data[i]);
+	}
+	return nullptr;
+}
+std::shared_ptr<RenderEngine::CubeMap> ResourceManager::getCubeMap(const std::string& cubeMapName)
+{
+	CubeMapsMap_t::const_iterator it = m_cubeMaps.find(cubeMapName);
+	if (it != m_cubeMaps.end())
+	{
+		return it->second;
+	}
+	std::cerr << "ERROR: Can't find the texture: " << cubeMapName << std::endl;
+	return nullptr;
+}
+
 std::shared_ptr<RenderEngine::Sprite> ResourceManager::loadSprite(const std::string& spriteName,
 																  const std::string& textureName,
 																  const std::string& shaderName,
@@ -160,16 +201,9 @@ std::shared_ptr<RenderEngine::Sprite> ResourceManager::getSprite(const std::stri
 }
 
 std::shared_ptr<RenderEngine::Model3D> ResourceManager::load3DModel(const std::string& modelName, 
-																	const std::string& modelPath,
-																	const std::string& textureName, 
-																	const std::string& shaderName)
+	const std::string& modelPath,
+	const std::string& shaderName)
 {
-	/*auto pTexture = getTexture(textureName);
-	if (!pTexture)
-	{
-		std::cerr << "ERROR: Can't find the texture: " << textureName << " for the sprite" << std::endl;
-		return nullptr;
-	}*/
 	auto pShader = getShaderProgram(shaderName);
 	if (!pShader)
 	{
@@ -177,157 +211,7 @@ std::shared_ptr<RenderEngine::Model3D> ResourceManager::load3DModel(const std::s
 		return nullptr;
 	}
 
-	//std::vector<GLfloat> vertexCoords;
-	//std::vector<GLfloat> texCoords;
-	//std::vector<GLfloat> normalsCoords;
-
-	//std::vector<GLuint> vertexIndices;
-	//std::vector<GLuint> texCoordsIndices;
-	//std::vector<GLuint> normalsIndices;
-
-	//std::vector<GLfloat> tcI;
-
 	std::string path = std::string(m_path + "/" + modelPath);
-	//std::ifstream in(std::string(m_path + "/" + modelPath).c_str());
-
-	//if (!in.is_open())
-	//{
-	//	std::cerr << "ERROR: Can't load model: " << modelPath << std::endl;
-	//	return nullptr;
-	//}
-	//std::string line;
-	//double counter = 0;
-	//double sum = 0.0f;
-	//while (!in.eof())
-	//{
-	//	std::getline(in, line);
-	//	if (!line.empty())
-	//	{
-	//		if (line[0] == 'v' && line[1] == ' ')
-	//		{
-	//			float x = 0.0f, y = 0.0f, z = 0.0f;
-	//			sscanf(line.c_str(), "v %f %f %f", &x, &y, &z);
-	//			vertexCoords.push_back(x);
-	//			vertexCoords.push_back(y);
-	//			vertexCoords.push_back(z);
-	//		}
-	//		else if (line[0] == 'v' && line[1] =='t')
-	//		{
-	//				float u = 0.0f, v = 0.0f;
-	//				sscanf(line.c_str(), "vt %f %f", &u, &v);
-	//				texCoords.push_back(u);
-	//				texCoords.push_back(v);
-	//		}
-	//		else if (line[0] == 'v' && line[1] == 'n')
-	//		{
-	//			float x = 0.0f, y = 0.0f, z = 0.0f;
-	//			sscanf(line.c_str(), "vn %f %f %f", &x, &y, &z);
-	//			normalsCoords.push_back(x);
-	//			normalsCoords.push_back(y);
-	//			normalsCoords.push_back(z);
-	//		}
-	//		else if (line[0] == 'f' && line[1] == ' ')
-	//		{
-	//			
-	//			int v1 = 0, v2 = 0, v3 = 0, t1 = 0, t2 = 0, t3 = 0, n1 = 0, n2 = 0, n3 = 0;
-	//			sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
-	//			
-	//			vertexIndices.push_back(v1 - 1);
-	//			vertexIndices.push_back(v2 - 1);
-	//			vertexIndices.push_back(v3 - 1);
-
-	//			texCoordsIndices.push_back(t1 - 1);
-	//			texCoordsIndices.push_back(t2 - 1);
-	//			texCoordsIndices.push_back(t3 - 1);
-
-	//			normalsIndices.push_back(n1 - 1);
-	//			normalsIndices.push_back(n2 - 1);
-	//			normalsIndices.push_back(n3 - 1);
-	//		}
-	//	}
-	//}
-	//std::vector<GLfloat> newVertices;
-	//std::vector<GLfloat> newTexCoords;
-	//std::vector<GLfloat> newNormalsCoords;
-	//
-	//std::vector<GLfloat> tangents;
-
-	//std::vector<GLuint> newIndices;
-
-	//// 0 1 2 
-	//// 2 1 3
-	//// 1 4 3
-	//// 3 4 5
-
-	//size_t size = vertexIndices.size();
-
-	//for (size_t i = 0; i < size; i ++)
-	//{
-	//	GLuint inV = vertexIndices[i];
-	//	GLuint inT = texCoordsIndices[i];
-	//	GLuint inN = normalsIndices[i];
-
-	//	newVertices.push_back(vertexCoords[inV * 3]);
-	//	newTexCoords.push_back(texCoords[inT * 2]);
-	//	newNormalsCoords.push_back(normalsCoords[inN * 3]);
-
-	//	newVertices.push_back(vertexCoords[inV * 3 + 1]);
-	//	newTexCoords.push_back(texCoords[inT * 2 + 1]);
-	//	newNormalsCoords.push_back(normalsCoords[inN * 3 + 1]);
-
-	//	newVertices.push_back(vertexCoords[inV * 3 + 2]);
-	//	//newTexCoords.push_back(texCoords[inT * 2 + 2]);
-	//	newNormalsCoords.push_back(normalsCoords[inN * 3 + 2]);
-
-	//	newIndices.push_back(i);
-	//}
-	//size = newIndices.size();
-	//for (size_t i = 0; i < size; i += 3)
-	//{
-	//	float x1 = newVertices[i * 3];
-	//	float y1 = newVertices[i * 3 + 1];
-	//	float z1 = newVertices[i * 3 + 2];
-
-	//	float x2 = newVertices[i * 3 + 3];
-	//	float y2 = newVertices[i * 3 + 4];
-	//	float z2 = newVertices[i * 3 + 5];
-
-	//	float x3 = newVertices[i * 3 + 6];
-	//	float y3 = newVertices[i * 3 + 7];
-	//	float z3 = newVertices[i * 3 + 8];
-	//	
-	//	glm::vec3 pos1 = glm::vec3(x1, y1, z1);
-	//	glm::vec3 pos2 = glm::vec3(x2, y2, z2);
-	//	glm::vec3 pos3 = glm::vec3(x3, y3, z3);
-
-	//	//glm::vec2 uv1 = glm::vec2(newTexCoords[i * 2], newTexCoords[i * 2 + 1]);
-	//	//glm::vec2 uv2 = glm::vec2(newTexCoords[i * 2 + 2], newTexCoords[i * 2 + 3]);
-	//	//glm::vec2 uv3 = glm::vec2(newTexCoords[i * 2 + 4], newTexCoords[i * 2 + 5]);
-
-	//	//glm::vec3 edge1 = pos2 - pos1;
-	//	//glm::vec3 edge2 = pos3 - pos1;
-	//	//glm::vec2 deltaUV1 = uv2 - uv1;
-	//	//glm::vec2 deltaUV2 = uv3 - uv1;
-
-	//	//float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-	//	glm::vec3 p = glm::normalize(pos2 - pos1);
-	//	p *= 0.5;
-	//	p += 0.5;
-
-	//	tangents.push_back(p.x);
-	//	tangents.push_back(p.y);
-	//	tangents.push_back(p.z);
-	//	//tangents.push_back(f* (deltaUV2.y* edge1.x - deltaUV1.y * edge2.x));
-	//	//tangents.push_back(f* (deltaUV2.y* edge1.y - deltaUV1.y * edge2.y));
-	//	//tangents.push_back(f* (deltaUV2.y* edge1.z - deltaUV1.y * edge2.z));
-	//}
-
-	//in.close();
-
-
-	//std::shared_ptr<RenderEngine::Model3D> newModel = m_models3D.emplace(modelName,
-	//	std::make_shared<RenderEngine::Model3D>(pTexture, pShader, newVertices, newTexCoords, newNormalsCoords, tangents, newIndices)).first->second;
 
 	std::vector<std::shared_ptr<RenderEngine::Mesh>> pMeshes = RenderEngine::Model3D::loadMeshes(path);
 	std::shared_ptr<RenderEngine::Model3D> newModel = m_models3D.emplace(modelName, 
@@ -434,6 +318,25 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 		}
 	}
 
+	auto cubeMapsIt = document.FindMember("cubeMaps");
+	if (textureAtlasesIt != document.MemberEnd())
+	{
+		const auto cubeMaps = cubeMapsIt->value.GetArray();
+		for (const auto& currentCubeMap : cubeMaps)
+		{
+			const std::string name = currentCubeMap["name"].GetString();
+			const auto facesArray = currentCubeMap["faces"].GetArray();
+
+			std::vector<std::string> faces;
+			faces.reserve(facesArray.Size());
+			for (const auto& currentFace : facesArray)
+			{
+				faces.emplace_back(currentFace.GetString());
+			}
+			loadCubeMap(name, faces);
+		}
+	}
+
 	auto spritesIt = document.FindMember("sprites");
 	if (spritesIt != document.MemberEnd())
 	{
@@ -488,7 +391,7 @@ bool ResourceManager::loadJSONResources(const std::string& JSONpath)
 			const std::string filePath = currentModel["filePath"].GetString();
 			const std::string texture = currentModel["textureName"].GetString();
 			const std::string shader = currentModel["shader"].GetString();
-			auto model = load3DModel(name, filePath, texture, shader);
+			auto model = load3DModel(name, filePath, shader);
 		}
 	}
 

@@ -63,6 +63,11 @@ namespace RenderEngine {
 			m_SpecTextures[i]->bind();
 		}
 
+		//std::shared_ptr<Texture2D> normalMap = ResourceManager::getTexture("normalMap");
+		//glActiveTexture(GL_TEXTURE2);
+		//pShader->setInt("normalMap", 2);
+		//normalMap->bind();
+
 		Renderer::draw(m_vertexArray, m_indexBuffer, *pShader);
 	}
 }
