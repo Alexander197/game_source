@@ -3,23 +3,23 @@
 namespace RenderEngine {
 	VertexArray::VertexArray()
 	{
-		glGenVertexArrays(1, &m_id);
+		glGenVertexArrays(1, &m_ID);
 	}
 	VertexArray::~VertexArray()
 	{
-		glDeleteVertexArrays(1, &m_id);
+		glDeleteVertexArrays(1, &m_ID);
 	}
 
 	VertexArray& VertexArray::operator = (VertexArray&& vertexArray) noexcept
 	{
-		m_id = vertexArray.m_id;
-		vertexArray.m_id = 0;
+		m_ID = vertexArray.m_ID;
+		vertexArray.m_ID = 0;
 		return *this;
 	}
 	VertexArray::VertexArray(VertexArray&& vertexArray) noexcept
 	{
-		m_id = vertexArray.m_id;
-		vertexArray.m_id = 0;
+		m_ID = vertexArray.m_ID;
+		vertexArray.m_ID = 0;
 	}
 
 	void VertexArray::addBuffer(const VertexBuffer& vertexBuffer, const VertexBufferLayout& layout)
@@ -47,7 +47,7 @@ namespace RenderEngine {
 
 	void VertexArray::bind() const
 	{
-		glBindVertexArray(m_id);
+		glBindVertexArray(m_ID);
 	}
 	void VertexArray::unbind() const
 	{

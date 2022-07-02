@@ -22,7 +22,7 @@ namespace RenderEngine {
 		void bind() const;
 		void unbind() const;
 	private:
-		GLuint m_id = 0;
+		GLuint m_ID = 0;
 		unsigned int m_elementsCount = 0;
 	};
 

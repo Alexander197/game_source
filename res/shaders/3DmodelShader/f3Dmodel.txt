@@ -11,6 +11,7 @@ uniform vec3 viewPos;
 uniform int blinn;
 
 uniform sampler2D normalMap;
+uniform samplerCube skybox;
 
 struct Material {
 	sampler2D texture_diffuse_0;
@@ -169,7 +170,7 @@ void main() {
 	
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
-	
+
 	vec4 diffTex = texture(material.texture_diffuse_0, texCoords);
 	vec4 specTex = texture(material.texture_specular_0, texCoords);
 	
@@ -191,8 +192,13 @@ void main() {
 		result += CalcSpotLight(spotLight[i], norm, FragPos, viewDir, diffTex, specTex);
 	}
 
+
+	float ratio = 1.00 / 1.52;
+	vec3 I = - viewDir;
+	vec3 R = refract(I, norm, ratio);
 	
 	frag_color = vec4(result.rgb, diffTex.a);
 	//frag_color = vec4(vec3(gl_FragCoord.z), 1.0);
 	//frag_color = vec4(vec3(0.5), 1.0);
+	//frag_color = vec4(texture(skybox, R).rgb, 1.0);
 }

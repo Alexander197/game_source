@@ -15,6 +15,8 @@
 #include <GLFW\glfw3.h>
 #include <thread>
 
+
+
 Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize)
 {
 	m_keys.fill(false);
@@ -41,8 +43,10 @@ void Game::render()
     auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
     auto pStencilShader = ResourceManager::getShaderProgram("stencilShader");
     auto pSkyBoxShaderProgram = ResourceManager::getShaderProgram("skyBoxShader");
+    auto pPostProcessShaderProgram = ResourceManager::getShaderProgram("postProcessShader");
 
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_pCamera->getFov()), static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_pCamera->getFov()), 
+        static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
 
     glm::mat4 viewMatrix = m_pCamera->getLookAtMatrix();
 
@@ -51,7 +55,7 @@ void Game::render()
     pSpriteShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     p3DModelShaderProgram->use();
-    p3DModelShaderProgram->setVec3("pointLight[0].position", m_pLightSource->getPosition());
+    p3DModelShaderProgram->setVec3("dirLight[0].direction", m_pLightSource->getPosition());
 
     p3DModelShaderProgram->setVec3("spotLight[0].position", m_isFlashLightOn * m_pCamera->getPosition());
     p3DModelShaderProgram->setVec3("spotLight[0].direction", m_pCamera->getFront());
@@ -80,46 +84,63 @@ void Game::render()
 
     //pTextShaderProgram->use();
 
-    if (m_pLevel) {
-       //m_pLevel->render();
-    }
-    if (m_pTank) {
-       //m_pTank->render();
-    }
-    if (m_pModel)
+    if (m_pPostProcess)
     {
+        m_pPostProcess->capture();
+    }
+        if (m_pLevel) {
+           m_pLevel->render();
+        }
+        if (m_pTank) {
+           m_pTank->render();
+        }
+        if (m_pModel)
+        {
      
-        m_pModel->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //m_pModel->render(glm::vec3(0.0f, 0.0f, 4.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //m_pModel->render(glm::vec3(0.0f, -8.4f, 0.0f), glm::vec3(6.2f, 6.2f, 6.2f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //m_pModel->render(glm::vec3(15.0f, 8.0f, 8.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(43.0f, 55.0f, 53.0f));
-        //m_pModel->render(glm::vec3(11.0f, 5.0f, -7.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(23.0f, 12.0f, 80.0f));
-        //m_pModel->render(glm::vec3(-7.0f, 9.0f, 1.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(65.0f, 23.0f, 43.0f));
-        //m_pModel->render(glm::vec3(15.0f, -12.0f, 10.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(78.0f, 63.0f, 12.0f));
-        //m_pModel->render(glm::vec3(12.0f, 9.0f, -12.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(15.0f, 4.0f, 56.0f));
-    }
-    if (m_pLightSource)
+            m_pModel->render(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+            m_pModel->render(glm::vec3(0.0f, 2.0f, 4.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+            m_pModel->render(glm::vec3(0.0f, -60.0f, 0.0f), glm::vec3(60.0f, 60.0f, 60.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        }
+        if (m_pLightSource)
+        {
+            m_pLightSource->setPosition(glm::vec3(-30.0f, 30.0f, -50.0f));
+            //m_pLightSource->render();
+        }
+    
+        if (m_pSkyBox)
+        {
+            m_pSkyBox->render();
+        }
+    if (m_pPostProcess)
     {
-        m_pLightSource->setPosition(glm::vec3(0.0f, 30.0f, 0.0f));
-        m_pLightSource->render();
+        pPostProcessShaderProgram->use();
+        pPostProcessShaderProgram->setFloat("offset", 1 / 100.0f);
+
+        pPostProcessShaderProgram->setFloat("kernel[0]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[1]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[2]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[3]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[4]",  0.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[5]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[6]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[7]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[8]",  2.0f / coff);
+        m_pPostProcess->render();
     }
     if (m_pLog)
     {
         std::string fps = std::to_string(static_cast<int>(m_fps));
-        m_pLog->render("FPS " + fps, glm::vec2(0.0, m_windowSize.y - 30.0f), glm::vec2(30.0f,30.0f), 10.0f);
+        float size = 30.0f;
+        m_pLog->render("FPS " + fps, glm::vec2(0.0, m_windowSize.y - size), glm::vec2(size, size), 10.0f);
 
         if (m_blinn)
         {
-            m_pLog->render("SPEC PHONG", glm::vec2(0.0, m_windowSize.y - 60.0f), glm::vec2(30.0f, 30.0f), 10.0f);
+            m_pLog->render("SPEC PHONG", glm::vec2(0.0, m_windowSize.y - 2 * size), glm::vec2(size, size), 10.0f);
         }
         else
         {
-            m_pLog->render("SPEC BLINN", glm::vec2(0.0, m_windowSize.y - 60.0f), glm::vec2(30.0f, 30.0f), 10.0f);
+            m_pLog->render("SPEC BLINN", glm::vec2(0.0, m_windowSize.y - 2 * size), glm::vec2(size, size), 10.0f);
         }
-    }
-    if (m_pSkyBox)
-    {
-        m_pSkyBox->render();
     }
 }
 
@@ -211,6 +232,7 @@ bool Game::init()
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
     auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
     auto pSkyBoxShaderProgram = ResourceManager::getShaderProgram("skyBoxShader");
+    auto pPostProcessShaderProgram = ResourceManager::getShaderProgram("postProcessShader");
 
     if (!pSpriteShaderProgram)
     {
@@ -229,8 +251,8 @@ bool Game::init()
     }
 
     m_pLevel = std::make_unique<Level>(ResourceManager::getLevels()[1]);
-    m_windowSize.x = static_cast<int>(m_pLevel->getLevelWidth());
-    m_windowSize.y = static_cast<int>(m_pLevel->getLevelHeight());
+    //m_windowSize.x = static_cast<int>(m_pLevel->getLevelWidth());
+    //m_windowSize.y = static_cast<int>(m_pLevel->getLevelHeight());
 
     glm::mat4 projectionMatrixO = glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
 
@@ -246,9 +268,15 @@ bool Game::init()
 
     m_pLightSource = std::make_shared<RenderEngine::LightSource>(pLightShaderProgram, glm::vec3(0.0f, 40.0f, 0.0f));
 
+    auto cubeMap = ResourceManager::getCubeMap("cubeMap2");
+    m_pSkyBox = std::make_unique<RenderEngine::SkyBox>(cubeMap, pSkyBoxShaderProgram);
+
     p3DModelShaderProgram->use();
 
     p3DModelShaderProgram->setMat4("projectionMat", projectionMatrixP);
+    p3DModelShaderProgram->setInt("skybox", 8);
+    glActiveTexture(GL_TEXTURE8);
+    cubeMap->bind();
 
     m_pTank = std::make_unique<Tank>(ResourceManager::getSprite("yellowTank_1"),
         glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.003f, 0.003f, 0.0f }, 0.1f, m_pLevel->getPlayerRespawn_1(),
@@ -257,15 +285,27 @@ bool Game::init()
     m_pModel = ResourceManager::get3DModel("naruto");
     m_pCamera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f));
 
-    auto cubeMap = ResourceManager::getCubeMap("cubeMap1");
-    m_pSkyBox = std::make_unique<RenderEngine::SkyBox>(cubeMap, pSkyBoxShaderProgram);
 
     pTextShaderProgram->use();
     pTextShaderProgram->setMat4("projectionMat", projectionMatrixO);
 
     m_pLog = std::make_unique<RenderEngine::Text>(ResourceManager::getTexture("textArial256"), ResourceManager::getShaderProgram("textShader"));
 
+    m_pPostProcess = std::make_unique<RenderEngine::PostProcess>(pPostProcessShaderProgram, m_windowSize);
+
     return true;
+}
+
+void Game::setWindowSize(const glm::ivec2 windowSize)
+{
+    m_windowSize = windowSize;
+    m_pPostProcess->setWindowSize(m_windowSize);
+
+    auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
+    glm::mat4 projectionMatrixO = 
+        glm::ortho(0.0f, static_cast<float>(m_windowSize.x), 0.0f, static_cast<float>(m_windowSize.y), -100.0f, 100.0f);
+    pTextShaderProgram->use();
+    pTextShaderProgram->setMat4("projectionMat", projectionMatrixO);
 }
 
 void Game::setKey(const int key, const int action)

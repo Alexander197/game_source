@@ -40,6 +40,11 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/CubeMap.h
 	src/Renderer/SkyBox.cpp
 	src/Renderer/SkyBox.h
+	src/Renderer/FrameBuffer.cpp
+	src/Renderer/FrameBuffer.h
+	src/Renderer/PostProcess.cpp
+	src/Renderer/PostProcess.h
+	
 	
 	src/Game/Game.cpp
 	src/Game/Game.h

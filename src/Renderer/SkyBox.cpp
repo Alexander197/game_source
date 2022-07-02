@@ -38,12 +38,14 @@ namespace RenderEngine {
 	}
 	void SkyBox::render() const
 	{
-		glDepthMask(GL_FALSE);
+		//glDepthMask(GL_FALSE);
 		m_pShaderProgram->use();
+		m_pShaderProgram->setInt("skybox", 0);
+		glActiveTexture(GL_TEXTURE0);
 		m_pCubeMap->bind();
 		m_vertexArray.bind();
 
 		glDrawArrays(GL_TRIANGLES, 0 , 36);
-		glDepthMask(GL_TRUE);
+		//glDepthMask(GL_TRUE);
 	}
 }

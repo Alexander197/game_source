@@ -50,13 +50,13 @@ namespace RenderEngine {
 		//m_pShaderProgram->setVec3("dirLight[1].diffuse", m_ligth.diffuse);
 		//m_pShaderProgram->setVec3("dirLight[1].specular", m_ligth.specular);
 
-		m_pShaderProgram->setVec3("pointLight[0].ambient", m_ligth.ambient);
-		m_pShaderProgram->setVec3("pointLight[0].diffuse", m_ligth.diffuse);
-		m_pShaderProgram->setVec3("pointLight[0].specular", m_ligth.specular);
+		m_pShaderProgram->setVec3("dirLight[0].ambient", m_ligth.ambient);
+		m_pShaderProgram->setVec3("dirLight[0].diffuse", m_ligth.diffuse);
+		m_pShaderProgram->setVec3("dirLight[0].specular", m_ligth.specular);
 
-		m_pShaderProgram->setFloat("pointLight[0].constant", 1.0);
-		m_pShaderProgram->setFloat("pointLight[0].linear", 0.014);
-		m_pShaderProgram->setFloat("pointLight[0].quadratic", 0.0007);
+		//m_pShaderProgram->setFloat("pointLight[0].constant", 1.0);
+		//m_pShaderProgram->setFloat("pointLight[0].linear", 0.014);
+		//m_pShaderProgram->setFloat("pointLight[0].quadratic", 0.0007);
 
 		m_pShaderProgram->setVec3("spotLight[0].ambient", m_ligth.ambient * 1.0f);
 		m_pShaderProgram->setVec3("spotLight[0].diffuse", m_ligth.diffuse * 1.0f);

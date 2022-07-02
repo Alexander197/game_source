@@ -20,7 +20,7 @@ namespace RenderEngine {
 		unsigned int getCount() const { return m_count; }
 
 	private:
-		GLuint m_id;
+		GLuint m_ID;
 		unsigned int m_count;
 	};
 

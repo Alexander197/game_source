@@ -19,6 +19,6 @@ namespace RenderEngine {
 		void bind() const;
 		void unbind() const;
 	private:
-		GLuint m_id;
+		GLuint m_ID;
 	};
 }

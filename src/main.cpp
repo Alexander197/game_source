@@ -15,7 +15,7 @@
 
 #include "Game/Game.h"
 
-glm::ivec2 g_windowSize(1920, 1080);
+glm::ivec2 g_windowSize(1920, 1000);
 
 std::unique_ptr<Game> g_game = std::make_unique<Game>(g_windowSize);
 
@@ -43,7 +43,11 @@ void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
         viewPortBottomOffset = (height - viewPortHeight) / 2;
     }
 
-    RenderEngine::Renderer::setViewport(viewPortWidth, viewPortHeight, viewPortLeftOffset, viewPortBottomOffset);
+    g_game->setWindowSize(glm::ivec2(width, height));
+    RenderEngine::Renderer::setViewport(width, height, 0.0f, 0.0f);
+    //g_game->setWindowSize(glm::ivec2(viewPortWidth, viewPortHeight));
+    //RenderEngine::Renderer::setViewport(viewPortWidth, viewPortHeight, viewPortLeftOffset, viewPortBottomOffset);
+
 }
 
 void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int mode)
@@ -118,9 +122,9 @@ int main(int argc, char** argv)
     {
         ResourceManager::setExecutablePath(argv[0]);
         g_game->init();
-        g_windowSize.x = static_cast<int>(g_game->getCurrentLevelWidth());
-        g_windowSize.y = static_cast<int>(g_game->getCurrentLevelHeight());
-        glfwSetWindowSize(pWindow, g_windowSize.x, g_windowSize.y);
+        //g_windowSize.x = static_cast<int>(g_game->getCurrentLevelWidth());
+        //g_windowSize.y = static_cast<int>(g_game->getCurrentLevelHeight());
+        //glfwSetWindowSize(pWindow, g_windowSize.x, g_windowSize.y);
 
         auto lastTime = std::chrono::high_resolution_clock::now();
  
@@ -144,7 +148,7 @@ int main(int argc, char** argv)
             if (counter == 20)
             {
                 float f = 1 / (fps / counter) * 1000.0;
-                std::cout << f << std::endl;      
+                //std::cout << f << std::endl;      
                 g_game->setFPS(f);
                 fps = 0.0f;
                 counter = 0;

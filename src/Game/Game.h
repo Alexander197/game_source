@@ -8,6 +8,7 @@
 #include "../Renderer/LightSource.h"
 #include "../Renderer/Text.h"
 #include "../Renderer/SkyBox.h"
+#include "../Renderer/PostProcess.h"
 
 #include "Camera/Camera.h"
 
@@ -24,6 +25,8 @@ public:
 	void render();
 	void update(const double delta);
 	bool init();
+
+	void setWindowSize(const glm::ivec2 windowSize);
 	
 	void setKey(const int key, const int action);
 	void setMouseButton(const int button, const int action);
@@ -85,4 +88,7 @@ private:
 
 	float m_isFlashLightOn;
 	int m_blinn;
+
+	float coff = 16;
+	std::unique_ptr<RenderEngine::PostProcess> m_pPostProcess;
 };

@@ -12,23 +12,28 @@
 		},
 		{
 			"name"		: "lightShader",
-			"filePath_v": "res/shaders/LightShader/vLightShader.txt",
-			"filePath_f": "res/shaders/LightShader/fLightShader.txt"
+			"filePath_v": "res/shaders/LightShader/vLight.txt",
+			"filePath_f": "res/shaders/LightShader/fLight.txt"
 		},
 		{
 			"name"		: "textShader",
-			"filePath_v": "res/shaders/TextShader/vTextShader.txt",
-			"filePath_f": "res/shaders/TextShader/fTextShader.txt"
+			"filePath_v": "res/shaders/TextShader/vText.txt",
+			"filePath_f": "res/shaders/TextShader/fText.txt"
 		},
 		{
 			"name"		: "stencilShader",
-			"filePath_v": "res/shaders/StencilShader/vStencilShader.txt",
-			"filePath_f": "res/shaders/StencilShader/fStencilShader.txt"
+			"filePath_v": "res/shaders/StencilShader/vStencil.txt",
+			"filePath_f": "res/shaders/StencilShader/fStencil.txt"
 		},
 		{
 			"name"		: "skyBoxShader",
 			"filePath_v": "res/shaders/SkyBoxShader/vSkyBox.txt",
 			"filePath_f": "res/shaders/SkyBoxShader/fSkyBox.txt"
+		},
+		{
+			"name"		: "postProcessShader",
+			"filePath_v": "res/shaders/PostProcessShader/vPostProcess.txt",
+			"filePath_f": "res/shaders/PostProcessShader/fPostProcess.txt"
 		}
 	],
 	
@@ -484,6 +489,17 @@
 				"res/cubemaps/bottom.png",
 				"res/cubemaps/front.png",
 				"res/cubemaps/back.png"
+			]
+		},
+		{
+			"name"	: "cubeMap2",
+			"faces" : [
+				"res/cubemaps/skybox/right.jpg",
+				"res/cubemaps/skybox/left.jpg",
+				"res/cubemaps/skybox/top.jpg",
+				"res/cubemaps/skybox/bottom.jpg",
+				"res/cubemaps/skybox/front.jpg",
+				"res/cubemaps/skybox/back.jpg"
 			]
 		}
 	],

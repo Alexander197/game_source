@@ -56,7 +56,7 @@ namespace RenderEngine {
 		int currentOffsetX = 0;
 		int currentOffsetY = 0;
 
-		RenderEngine::Renderer::setDepthTest(false);
+		glDepthMask(GL_FALSE);
 		for (size_t i = 0; i < length; i++)
 		{
 			char c = text[i];
@@ -90,6 +90,6 @@ namespace RenderEngine {
 				currentOffsetX = 0;
 			}
 		}
-		RenderEngine::Renderer::setDepthTest(true);
+		glDepthMask(GL_TRUE);
 	}
 }

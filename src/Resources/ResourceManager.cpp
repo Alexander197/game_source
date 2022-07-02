@@ -131,7 +131,7 @@ std::shared_ptr<RenderEngine::Texture2D> ResourceManager::getTexture(const std::
 std::shared_ptr<RenderEngine::CubeMap> ResourceManager::loadCubeMap(const std::string& cubeMapName, const std::vector<std::string>& faces)
 {
 	int channels = 0, width = 0, height = 0;
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 	unsigned char* pixels;
 	std::vector<unsigned char*> data;
 	for (size_t i = 0; i < faces.size(); i++)
