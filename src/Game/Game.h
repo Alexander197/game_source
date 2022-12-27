@@ -10,9 +10,13 @@
 #include "../Renderer/SkyBox.h"
 #include "../Renderer/PostProcess.h"
 
+#include "../Renderer/generation/plainMesh.h"
+
 #include "Camera/Camera.h"
 
 #include <iostream>
+
+#include "../Renderer/Light.h"
 
 class Tank;
 class Level;
@@ -23,6 +27,7 @@ public:
 	~Game();
 
 	void render();
+	void depthRender();
 	void update(const double delta);
 	bool init();
 
@@ -58,9 +63,18 @@ private:
 	std::unique_ptr<Level> m_pLevel;
 
 	std::shared_ptr<RenderEngine::Model3D> m_pModel;
+	std::shared_ptr<RenderEngine::Model3D> m_pModel1;
+
 	std::shared_ptr<RenderEngine::LightSource> m_pLightSource;
 
+	std::shared_ptr<RenderEngine::DirLigth> m_pDirLight0;
+	std::shared_ptr<RenderEngine::DirLigth> m_pDirLight1;
+
+	std::shared_ptr<RenderEngine::Light> m_pLight;
+
 	std::unique_ptr<RenderEngine::SkyBox> m_pSkyBox;
+
+	std::unique_ptr<RenderEngine::PlainMesh> m_pPlainMesh;
 
 	std::unique_ptr<RenderEngine::Text> m_pLog;
 
@@ -85,6 +99,7 @@ private:
 	void keyF(const int action);
 
 	void keyMouseLeft(const int action);
+	void keyMouseRight(const int action);
 
 	float m_isFlashLightOn;
 	int m_blinn;

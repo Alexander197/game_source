@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
 	src/Resources/ResourceManager.cpp
 	src/Resources/ResourceManager.h
 	src/Resources/stb_image.h
+	
 	src/Renderer/Texture2D.cpp
 	src/Renderer/Texture2D.h
 	src/Renderer/VertexBuffer.cpp
@@ -44,7 +45,12 @@ add_executable(${PROJECT_NAME}
 	src/Renderer/FrameBuffer.h
 	src/Renderer/PostProcess.cpp
 	src/Renderer/PostProcess.h
+	src/Renderer/Light.cpp
+	src/Renderer/Light.h
 	
+	
+	src/Renderer/generation/plainMesh.cpp
+	src/Renderer/generation/plainMesh.h
 	
 	src/Game/Game.cpp
 	src/Game/Game.h
@@ -78,6 +84,7 @@ add_executable(${PROJECT_NAME}
 	
 	src/System/Timer.h
 	src/System/Timer.cpp
+	
  )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

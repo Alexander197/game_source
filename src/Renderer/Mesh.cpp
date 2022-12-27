@@ -43,6 +43,7 @@ namespace RenderEngine {
 		m_texCoordsBuffer.unbind();
 		m_normBuffer.unbind();
 		m_tanBuffer.unbind();
+
 		m_vertexArray.unbind();
 		m_indexBuffer.unbind();
 	}
@@ -63,6 +64,14 @@ namespace RenderEngine {
 			m_SpecTextures[i]->bind();
 		}
 
+		glActiveTexture(GL_TEXTURE9);
+		pShader->setInt("shadowMap", 9);
+		glBindTexture(GL_TEXTURE_2D, 20);
+
+		glActiveTexture(GL_TEXTURE10);
+		pShader->setInt("shadowMap1", 10);
+		glBindTexture(GL_TEXTURE_2D, 21);
+		
 		//std::shared_ptr<Texture2D> normalMap = ResourceManager::getTexture("normalMap");
 		//glActiveTexture(GL_TEXTURE2);
 		//pShader->setInt("normalMap", 2);

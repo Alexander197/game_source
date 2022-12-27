@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 position) : m_cameraPosition(position)
 
 	m_fov = 60.0f;
 
-	m_speed = 0.8;
+	m_speed = 0.008;
 	m_sensitivity = glm::vec3(0.02, 0.02, 0.05);
 }
 
@@ -26,6 +26,11 @@ glm::mat4 Camera::getLookAtMatrix()
 
 	//m_up = glm::vec3(-sin(glm::radians(m_roll)), cos(glm::radians(m_roll)), 0.0f);
 	return glm::lookAt(m_cameraPosition, lookAtPos, m_up);
+}
+
+void Camera::setSpeed(float speed)
+{
+	m_speed = speed;
 }
 
 void Camera::setPitch(float offset, float delta)

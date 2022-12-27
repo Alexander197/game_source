@@ -1,0 +1,14 @@
+#version 460
+layout(location = 0) in vec2 vertex_position;
+layout(location = 1) in float heigths;
+
+uniform mat4 projectionMat;
+uniform mat4 viewMat;
+uniform mat4 modelMat;
+
+out vec3 color;
+
+void main() {
+	color = vec3(heigths, heigths, heigths);
+	gl_Position = projectionMat * viewMat * modelMat * vec4(vertex_position.x, heigths, vertex_position.y, 1.0);
+}

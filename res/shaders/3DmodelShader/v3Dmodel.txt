@@ -5,17 +5,20 @@ layout(location = 2) in vec3 normal;
 layout(location = 3) in vec3 tangent;
 
 out vec2 texCoords;
-
 out vec3 Normal;
 out vec3 FragPos;
-
 out mat3 TBN;
+out vec4 FragPosLightSpace;
+out vec4 FragPosLightSpace1;
 
 uniform mat4 projectionMat;
 uniform mat4 viewMat;
 uniform mat4 modelMat;
 
 uniform mat3 nModelMat;
+
+uniform mat4 lightSpaceMatrix;
+uniform mat4 lightSpaceMatrix1;
 
 void main() {
    texCoords = texture_coords;
@@ -29,5 +32,8 @@ void main() {
    
    TBN = mat3(T, B, N);
    
-   gl_Position = projectionMat * viewMat * modelMat * vec4(vertex_position, 1.0);
+   FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
+   FragPosLightSpace1 = lightSpaceMatrix1 * vec4(FragPos, 1.0);
+   
+   gl_Position = projectionMat * viewMat * vec4(FragPos, 1.0);
 }

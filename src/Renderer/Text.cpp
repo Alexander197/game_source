@@ -57,6 +57,7 @@ namespace RenderEngine {
 		int currentOffsetY = 0;
 
 		glDepthMask(GL_FALSE);
+		glDisable(GL_CULL_FACE);
 		for (size_t i = 0; i < length; i++)
 		{
 			char c = text[i];
@@ -90,6 +91,7 @@ namespace RenderEngine {
 				currentOffsetX = 0;
 			}
 		}
+		//glEnable(GL_CULL_FACE);
 		glDepthMask(GL_TRUE);
 	}
 }

@@ -34,6 +34,16 @@
 			"name"		: "postProcessShader",
 			"filePath_v": "res/shaders/PostProcessShader/vPostProcess.txt",
 			"filePath_f": "res/shaders/PostProcessShader/fPostProcess.txt"
+		},
+		{
+			"name"		: "plainMeshShader",
+			"filePath_v": "res/shaders/PlainMeshShader/vPlaneMesh.txt",
+			"filePath_f": "res/shaders/PlainMeshShader/fPlaneMesh.txt"
+		},
+		{
+			"name"		: "simpleDepthShader",
+			"filePath_v": "res/shaders/SimpleDepthShader/vSimpleDepth.txt",
+			"filePath_f": "res/shaders/SimpleDepthShader/fSimpleDepth.txt"
 		}
 	],
 	

@@ -21,19 +21,6 @@
 
 namespace RenderEngine {
 
-	struct Light
-	{
-		Light(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
-		{
-			this->ambient = ambient;
-			this->diffuse = diffuse;
-			this->specular = specular;
-		}
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
-	};
-
 	class ShaderProgram;
 
 	class Model3D {
@@ -44,6 +31,7 @@ namespace RenderEngine {
 		Model3D& operator = (const Model3D&) = delete;
 
 		void render(const glm::vec3 position, const glm::vec3 size, const glm::vec3 rotation, const bool withStencil = false) const;
+		void depthRender(const glm::vec3 position, const glm::vec3 size, const glm::vec3 rotation, const std::shared_ptr<ShaderProgram> m_pDepthShader) const;
 
 		static std::vector<std::shared_ptr<Mesh>> loadMeshes(std::string path);
 	private:
@@ -53,7 +41,6 @@ namespace RenderEngine {
 
 		std::shared_ptr<ShaderProgram> m_pShaderProgram;
 		std::vector<std::shared_ptr<Mesh>> m_pMeshes;
-		Light m_ligth;
 
 		glm::vec3 m_stencilColor;
 		float m_stencilExpantion;

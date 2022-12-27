@@ -13,6 +13,8 @@ public:
 	glm::mat4 getLookAtMatrix();
 	float getFov() { return m_fov; }
 
+	void setSpeed(float speed);
+
 	void setPitch(float offset, float delta);
 	void setYaw(float offset, float delta);
 	void setRoll(float offset, float delta);

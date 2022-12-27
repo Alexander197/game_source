@@ -15,9 +15,9 @@ namespace RenderEngine {
 		};
 
 		const GLuint indices[] = {
-			0, 1, 2,	2, 3, 0,
+			0, 3, 2,	2, 1, 0,
 			0, 1, 5,	5, 4, 0,
-			0, 4, 7,	7, 4, 0,
+			0, 4, 7,	7, 3, 0,
 			1, 2, 6,	6, 5, 1,
 			2, 3, 7,	7, 6, 2,
 			4, 5, 6,	6, 7, 4
@@ -40,7 +40,7 @@ namespace RenderEngine {
 		glm::mat4 model(1.0f);
 
 		model = glm::translate(model, m_lightPosition);
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 
 		m_pShaderProgram->setMat4("modelMat", model);	
 

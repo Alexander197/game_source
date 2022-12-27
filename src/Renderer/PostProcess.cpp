@@ -65,8 +65,8 @@ namespace RenderEngine
 		m_vertexArray.bind();
 		glDisable(GL_DEPTH_TEST);
 		
-		//m_pShaderProgram->setInt("screenTexture", 0);
-		//glActiveTexture(GL_TEXTURE0);
+		m_pShaderProgram->setInt("screenTexture", 0);
+		glActiveTexture(GL_TEXTURE0);
 		m_frameBuffer.bindTexture();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glEnable(GL_DEPTH_TEST);

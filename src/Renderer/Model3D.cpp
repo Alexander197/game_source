@@ -15,7 +15,6 @@ namespace RenderEngine {
 	Model3D::Model3D(std::shared_ptr<ShaderProgram> pShaderProgram, std::vector<std::shared_ptr<Mesh>> pMeshes) :
 		m_pShaderProgram(std::move(pShaderProgram)),
 		m_pMeshes(pMeshes),
-		m_ligth(glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.9f, 0.9f, 0.9f)),
 		m_stencilColor(glm::vec3(1.0f, 1.0f, 1.0f)), m_stencilExpantion(1.1f)
 	{
 
@@ -50,27 +49,51 @@ namespace RenderEngine {
 		//m_pShaderProgram->setVec3("dirLight[1].diffuse", m_ligth.diffuse);
 		//m_pShaderProgram->setVec3("dirLight[1].specular", m_ligth.specular);
 
-		m_pShaderProgram->setVec3("dirLight[0].ambient", m_ligth.ambient);
-		m_pShaderProgram->setVec3("dirLight[0].diffuse", m_ligth.diffuse);
-		m_pShaderProgram->setVec3("dirLight[0].specular", m_ligth.specular);
+		//m_pShaderProgram->setVec3("dirLight[0].ambient", m_ligth.ambient);
+		//m_pShaderProgram->setVec3("dirLight[0].diffuse", m_ligth.diffuse);
+		//m_pShaderProgram->setVec3("dirLight[0].specular", m_ligth.specular);
 
 		//m_pShaderProgram->setFloat("pointLight[0].constant", 1.0);
 		//m_pShaderProgram->setFloat("pointLight[0].linear", 0.014);
 		//m_pShaderProgram->setFloat("pointLight[0].quadratic", 0.0007);
 
-		m_pShaderProgram->setVec3("spotLight[0].ambient", m_ligth.ambient * 1.0f);
-		m_pShaderProgram->setVec3("spotLight[0].diffuse", m_ligth.diffuse * 1.0f);
-		m_pShaderProgram->setVec3("spotLight[0].specular", m_ligth.specular * 1.0f);
+		//m_pShaderProgram->setVec3("spotLight[0].ambient", m_ligth.ambient * 1.0f);
+		//m_pShaderProgram->setVec3("spotLight[0].diffuse", m_ligth.diffuse * 1.0f);
+		//m_pShaderProgram->setVec3("spotLight[0].specular", m_ligth.specular * 1.0f);
 
-		m_pShaderProgram->setFloat("spotLight[0].constant", 1.0);
-		m_pShaderProgram->setFloat("spotLight[0].linear", 0.0014);
-		m_pShaderProgram->setFloat("spotLight[0].quadratic", 0.00007);
+		//m_pShaderProgram->setFloat("spotLight[0].constant", 1.0);
+		//m_pShaderProgram->setFloat("spotLight[0].linear", 0.0014);
+		//m_pShaderProgram->setFloat("spotLight[0].quadratic", 0.00007);
 
 		m_pShaderProgram->setFloat("material.shininess", 32.0f);
 		
 		for (size_t i = 0; i < m_pMeshes.size(); i++)
 		{
 			m_pMeshes[i]->render(m_pShaderProgram);
+		}
+	}
+	void Model3D::depthRender(const glm::vec3 position, const glm::vec3 size, const glm::vec3 rotation, const std::shared_ptr<ShaderProgram> pDepthShader) const
+	{
+		pDepthShader->use();
+
+		glm::mat4 model(1.0f);
+
+		model = glm::translate(model, position);
+
+		float pitch = glm::radians(rotation.x);
+		float yaw = glm::radians(rotation.y);
+		float roll = glm::radians(rotation.z);
+
+		model = glm::rotate(model, pitch, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, yaw, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, roll, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, size);
+
+		pDepthShader->setMat4("modelMat", model);
+
+		for (size_t i = 0; i < m_pMeshes.size(); i++)
+		{
+			m_pMeshes[i]->render(pDepthShader);
 		}
 	}
 

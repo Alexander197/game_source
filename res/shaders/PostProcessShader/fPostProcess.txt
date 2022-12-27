@@ -21,11 +21,11 @@ uniform float kernel[9];
 void main() {
 
 	vec4 color = texture(screenTexture, texCoords);
-	if(isNegative == 0)
+	if(isNegative == 1)
 	{
 		color = vec4(vec3(1.0 - color), 1.0);
 	}
-	if(isGrayScale == 0)
+	if(isGrayScale == 1)
 	{
 		float average = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
 		color = vec4(average, average, average, 1.0);
@@ -33,7 +33,7 @@ void main() {
 	
 	
 	frag_color = color;
-	/*
+	
 	vec2 offsets[9] = vec2[](
 		vec2(-offset,  offset),
 		vec2( 0.0, 	   offset),
@@ -51,19 +51,22 @@ void main() {
 	
 	for(int i = 0; i < 9; i++)
 	{
-		//vec4 c = texture(screenTexture, texCoords);
-		//float average = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
-		sampleTex[i] = vec3(texture(screenTexture, texCoords.st + offsets[i]));
-		float average = 0.2126 * sampleTex[i].r + 0.7152 * sampleTex[i].g + 0.0722 * sampleTex[i].b;
-		sampleTex[i] = vec3(average, average, average);
+		vec2 tex = abs(texCoords.st + offsets[i]);
+		
+		tex.x = (tex.x > 1.0) ? 2.0 - tex.x : tex.x;
+		tex.y = (tex.y > 1.0) ? 2.0 - tex.y : tex.y;
+		
+		sampleTex[i] = vec3(texture(screenTexture, tex));
 	}
 	for(int i = 0; i < 9; i++)
 	{
 		col += sampleTex[i] * kernel[i];
 	}
+	
+	
 	frag_color = vec4(col, 1.0);
 	//frag_color = vec4(texture(screenTexture, texCoords).rgb, 1.0);
 	//float average = 0.2126 * frag_color.r + 0.7152 * frag_color.g + 0.0722 * frag_color.b;
 	//frag_color = vec4(average, average, average, 1.0);
-	*/
+	
 }

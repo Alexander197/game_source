@@ -17,7 +17,9 @@
 
 
 
-Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize)
+Game::Game(const glm::ivec2& windowSize) :m_eCurrentGameState(EGameState::Active), m_windowSize(windowSize),
+    m_pDirLight0(std::make_shared<RenderEngine::DirLigth>(glm::vec3(-10.0f, 10.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.1f, 0.1f, 0.1f))),
+    m_pDirLight1(std::make_shared<RenderEngine::DirLigth>(glm::vec3(10.0f, 10.0f, 0.0f), glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(0.1f, 0.1f, 0.1f)))
 {
 	m_keys.fill(false);
     m_mouseButtons.fill(false);
@@ -33,10 +35,38 @@ Game::~Game()
 {
 
 }
+void Game::depthRender()
+{
+    auto pSimpleDepthShader = ResourceManager::getShaderProgram("simpleDepthShader");
+    m_pLight->depthRender();
+    pSimpleDepthShader->use();
+    pSimpleDepthShader->setMat4("lightSpaceMatrix", m_pLight->lightSpaceMatrix);
+    if (m_pModel && m_pModel1)
+    {
+        m_pModel->depthRender(glm::vec3(10.0f, 1.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.0f, 0.0f), pSimpleDepthShader);
+        m_pModel->depthRender(glm::vec3(1.8f, 0.0f, 1.8f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.0f, 0.0f), pSimpleDepthShader);
+        m_pModel1->depthRender(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(60.0f, 6.0f, 60.0f), glm::vec3(0.0f, 0.0f, 0.0f), pSimpleDepthShader);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, m_windowSize.x, m_windowSize.y);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    m_pLight->depthRender1();
+    pSimpleDepthShader->use();
+    pSimpleDepthShader->setMat4("lightSpaceMatrix", m_pLight->lightSpaceMatrix1);
+    if (m_pModel && m_pModel1)
+    {
+        m_pModel->depthRender(glm::vec3(10.0f, 1.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.0f, 0.0f), pSimpleDepthShader);
+        m_pModel->depthRender(glm::vec3(1.8f, 0.0f, 1.8f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.0f, 0.0f), pSimpleDepthShader);
+        m_pModel1->depthRender(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(60.0f, 6.0f, 60.0f), glm::vec3(0.0f, 0.0f, 0.0f), pSimpleDepthShader);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, m_windowSize.x, m_windowSize.y);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+}
 void Game::render()
 {
-    //ResourceManager::getAnimatedSprite("anim1")->render();
-    //ResourceManager::getSprite("Tex1Sprite")->render();
     auto pSpriteShaderProgram = ResourceManager::getShaderProgram("spriteShader");
     auto p3DModelShaderProgram = ResourceManager::getShaderProgram("3DModelShader");
     auto pLightShaderProgram = ResourceManager::getShaderProgram("lightShader");
@@ -44,6 +74,7 @@ void Game::render()
     auto pStencilShader = ResourceManager::getShaderProgram("stencilShader");
     auto pSkyBoxShaderProgram = ResourceManager::getShaderProgram("skyBoxShader");
     auto pPostProcessShaderProgram = ResourceManager::getShaderProgram("postProcessShader");
+    auto pPlainMeshShaderProgram = ResourceManager::getShaderProgram("plainMeshShader");
 
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(m_pCamera->getFov()), 
         static_cast<float>(m_windowSize.x) / static_cast<float>(m_windowSize.y), 0.1f, 2000.0f);
@@ -55,12 +86,51 @@ void Game::render()
     pSpriteShaderProgram->setMat4("projectionMat", projectionMatrix);
 
     p3DModelShaderProgram->use();
-    p3DModelShaderProgram->setVec3("dirLight[0].direction", m_pLightSource->getPosition());
 
-    p3DModelShaderProgram->setVec3("spotLight[0].position", m_isFlashLightOn * m_pCamera->getPosition());
-    p3DModelShaderProgram->setVec3("spotLight[0].direction", m_pCamera->getFront());
-    p3DModelShaderProgram->setFloat("spotLight[0].cutOff", glm::cos(glm::radians(5.0)));
-    p3DModelShaderProgram->setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(20.0)));
+    auto dirLigths = m_pLight->getDirLights();
+    for (size_t i = 0; i < dirLigths.size(); i++)
+    {
+        p3DModelShaderProgram->setVec3(("dirLight[" + std::to_string(i) + "].direction").c_str(), dirLigths[i]->direction);
+
+        p3DModelShaderProgram->setVec3(("dirLight[" + std::to_string(i) + "].ambient").c_str(), dirLigths[i]->ambient);
+        p3DModelShaderProgram->setVec3(("dirLight[" + std::to_string(i) + "].diffuse").c_str(), dirLigths[i]->diffuse);
+        p3DModelShaderProgram->setVec3(("dirLight[" + std::to_string(i) + "].specular").c_str(), dirLigths[i]->specular);
+    }
+    auto pointLights = m_pLight->getPointLighst();
+    for (size_t i = 0; i < pointLights.size(); i++)
+    {
+        p3DModelShaderProgram->setVec3(("pointLight[" + std::to_string(i) + "].position").c_str(), pointLights[i]->position);
+
+        p3DModelShaderProgram->setVec3(("pointLight[" + std::to_string(i) + "].ambient").c_str(), pointLights[i]->ambient);
+        p3DModelShaderProgram->setVec3(("pointLight[" + std::to_string(i) + "].diffuse").c_str(), pointLights[i]->diffuse);
+        p3DModelShaderProgram->setVec3(("pointLight[" + std::to_string(i) + "].specular").c_str(), pointLights[i]->specular);
+
+        p3DModelShaderProgram->setFloat(("pointLight[" + std::to_string(i) + "].constant").c_str(), pointLights[i]->constant);
+        p3DModelShaderProgram->setFloat(("pointLight[" + std::to_string(i) + "].linear").c_str(), pointLights[i]->linear);
+        p3DModelShaderProgram->setFloat(("pointLight[" + std::to_string(i) + "].quadratic").c_str(), pointLights[i]->quadratic);
+
+    }
+    auto spotLights = m_pLight->getSpotLights();
+    for (size_t i = 0; i < spotLights.size(); i++)
+    {
+        p3DModelShaderProgram->setVec3(("spotLight[" + std::to_string(i) + "].position").c_str(), spotLights[i]->position);
+        p3DModelShaderProgram->setVec3(("spotLight[" + std::to_string(i) + "].direction").c_str(), spotLights[i]->direction);
+
+        p3DModelShaderProgram->setVec3(("spotLight[" + std::to_string(i) + "].ambient").c_str(), spotLights[i]->ambient);
+        p3DModelShaderProgram->setVec3(("spotLight[" + std::to_string(i) + "].diffuse").c_str(), spotLights[i]->diffuse);
+        p3DModelShaderProgram->setVec3(("spotLight[" + std::to_string(i) + "].specular").c_str(), spotLights[i]->specular);
+
+        p3DModelShaderProgram->setFloat(("spotLight[" + std::to_string(i) + "].constant").c_str(), spotLights[i]->constant);
+        p3DModelShaderProgram->setFloat(("spotLight[" + std::to_string(i) + "].linear").c_str(), spotLights[i]->linear);
+        p3DModelShaderProgram->setFloat(("spotLight[" + std::to_string(i) + "].quadratic").c_str(), spotLights[i]->quadratic);
+
+        p3DModelShaderProgram->setFloat(("spotLight[" + std::to_string(i) + "].cutOff").c_str(), spotLights[i]->cutOff);
+        p3DModelShaderProgram->setFloat(("spotLight[" + std::to_string(i) + "].outerCutOff").c_str(), spotLights[i]->outerCutOff);
+    }
+    //p3DModelShaderProgram->setVec3("spotLight[0].position", m_isFlashLightOn * m_pCamera->getPosition());
+    //p3DModelShaderProgram->setVec3("spotLight[0].direction", m_pCamera->getFront());
+    //p3DModelShaderProgram->setFloat("spotLight[0].cutOff", glm::cos(glm::radians(5.0)));
+    //p3DModelShaderProgram->setFloat("spotLight[0].outerCutOff", glm::cos(glm::radians(20.0)));
 
     p3DModelShaderProgram->setVec3("viewPos", m_pCamera->getPosition());
     p3DModelShaderProgram->setMat4("viewMat", viewMatrix);
@@ -82,51 +152,70 @@ void Game::render()
     //pSkyBoxShaderProgram->setMat4("viewMat", viewMatrix);
     pSkyBoxShaderProgram->setMat4("projectionMat", projectionMatrix);
 
+    pPlainMeshShaderProgram->use();
+    pPlainMeshShaderProgram->setMat4("viewMat", viewMatrix);
+    pPlainMeshShaderProgram->setMat4("projectionMat", projectionMatrix);
+
     //pTextShaderProgram->use();
 
-    if (m_pPostProcess)
+    /*if (m_pPostProcess)
     {
         m_pPostProcess->capture();
-    }
+    }*/
         if (m_pLevel) {
-           m_pLevel->render();
+           //m_pLevel->render();
         }
         if (m_pTank) {
-           m_pTank->render();
+           //m_pTank->render();
         }
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_FRONT);
+        depthRender();
+        //glCullFace(GL_BACK);
+
+        p3DModelShaderProgram->use();
+        p3DModelShaderProgram->setMat4("lightSpaceMatrix", m_pLight->lightSpaceMatrix);
+        p3DModelShaderProgram->setMat4("lightSpaceMatrix1", m_pLight->lightSpaceMatrix1);
         if (m_pModel)
-        {
-     
-            m_pModel->render(glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-            m_pModel->render(glm::vec3(0.0f, 2.0f, 4.0f), glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-            m_pModel->render(glm::vec3(0.0f, -60.0f, 0.0f), glm::vec3(60.0f, 60.0f, 60.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        {   
+            //glEnable(GL_CULL_FACE);
+            m_pModel->render(glm::vec3(10.0f, 1.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
+            m_pModel->render(glm::vec3(1.8f, 0.0f, 1.8f), glm::vec3(0.2f, 0.2f, 0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
+            m_pModel1->render(glm::vec3(0.0f, -6.0f, 0.0f), glm::vec3(60.0f, 6.0f, 60.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         }
         if (m_pLightSource)
         {
-            m_pLightSource->setPosition(glm::vec3(-30.0f, 30.0f, -50.0f));
-            //m_pLightSource->render();
+            m_pLightSource->setPosition(m_pDirLight0->direction);
+            m_pLightSource->render();
+            m_pLightSource->setPosition(m_pDirLight1->direction);
+            m_pLightSource->render();
         }
-    
+        if (m_pPlainMesh)
+        {
+            //m_pPlainMesh->render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f, 0.0f, 0.0f));
+        }
         if (m_pSkyBox)
         {
             m_pSkyBox->render();
         }
-    if (m_pPostProcess)
+    /*if (m_pPostProcess)
     {
         pPostProcessShaderProgram->use();
-        pPostProcessShaderProgram->setFloat("offset", 1 / 100.0f);
+        pPostProcessShaderProgram->setFloat("offset", 1 / 300.0f);
 
-        pPostProcessShaderProgram->setFloat("kernel[0]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[1]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[2]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[3]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[4]",  0.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[5]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[6]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[7]",  2.0f / coff);
-        pPostProcessShaderProgram->setFloat("kernel[8]",  2.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[0]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[1]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[2]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[3]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[4]",  10.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[5]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[6]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[7]",  -1.0f / coff);
+        pPostProcessShaderProgram->setFloat("kernel[8]",  -1.0f / coff);
+       
+        
         m_pPostProcess->render();
-    }
+    }*/
     if (m_pLog)
     {
         std::string fps = std::to_string(static_cast<int>(m_fps));
@@ -154,9 +243,13 @@ void Game::update(const double delta)
 
         m_time += delta;
 
-        if (m_pLightSource)
+        if (m_pDirLight0)
         {
-            //m_pLightSource->setPosition(glm::vec3(50.0 * sin(m_time / 800.0), 0.0, 50.0 * sin(m_time / 3200.0)));
+            m_pDirLight0->direction = glm::vec3(10.0 * sin(m_time / 800.0), 10.0, 10.0 * sin(m_time / 800.0));
+        }
+        if (m_pDirLight1)
+        {
+            //m_pDirLight1->direction = glm::vec3(10.0 * cos(m_time / 2400.0), 10.0, 10.0 * sin(m_time / 800.0));
         }
         if (m_pTank)
         {
@@ -233,6 +326,7 @@ bool Game::init()
     auto pTextShaderProgram = ResourceManager::getShaderProgram("textShader");
     auto pSkyBoxShaderProgram = ResourceManager::getShaderProgram("skyBoxShader");
     auto pPostProcessShaderProgram = ResourceManager::getShaderProgram("postProcessShader");
+    auto pPlainMeshShaderProgram = ResourceManager::getShaderProgram("plainMeshShader");
 
     if (!pSpriteShaderProgram)
     {
@@ -266,13 +360,16 @@ bool Game::init()
     pLightShaderProgram->use();
     pLightShaderProgram->setMat4("projectionMat", projectionMatrixP);
 
-    m_pLightSource = std::make_shared<RenderEngine::LightSource>(pLightShaderProgram, glm::vec3(0.0f, 40.0f, 0.0f));
+    m_pLightSource = std::make_shared<RenderEngine::LightSource>(pLightShaderProgram, m_pDirLight0->direction);
 
     auto cubeMap = ResourceManager::getCubeMap("cubeMap2");
     m_pSkyBox = std::make_unique<RenderEngine::SkyBox>(cubeMap, pSkyBoxShaderProgram);
 
-    p3DModelShaderProgram->use();
+    pPlainMeshShaderProgram->use();
+    pPlainMeshShaderProgram->setMat4("projectionMat", projectionMatrixP);
+    m_pPlainMesh = std::make_unique<RenderEngine::PlainMesh>(pPlainMeshShaderProgram, 100, 100, 1.0f);
 
+    p3DModelShaderProgram->use();
     p3DModelShaderProgram->setMat4("projectionMat", projectionMatrixP);
     p3DModelShaderProgram->setInt("skybox", 8);
     glActiveTexture(GL_TEXTURE8);
@@ -283,6 +380,7 @@ bool Game::init()
         glm::vec2(Level::BLOCK_SIZE / 1.0, Level::BLOCK_SIZE / 1.0), 0.0f);
 
     m_pModel = ResourceManager::get3DModel("naruto");
+    m_pModel1 = ResourceManager::get3DModel("cube");
     m_pCamera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 10.0f));
 
 
@@ -293,6 +391,10 @@ bool Game::init()
 
     m_pPostProcess = std::make_unique<RenderEngine::PostProcess>(pPostProcessShaderProgram, m_windowSize);
 
+    m_pLight = std::make_shared<RenderEngine::Light>();
+    m_pLight->init();
+    m_pLight->addDirLight(m_pDirLight0);
+    m_pLight->addDirLight(m_pDirLight1);
     return true;
 }
 
@@ -367,6 +469,7 @@ void Game::setMouseButton(const int button, const int action)
         keyMouseLeft(action);
         break;
     case GLFW_MOUSE_BUTTON_RIGHT:
+        keyMouseRight(action);
         break;
     }
 }
@@ -592,8 +695,23 @@ void Game::keyMouseLeft(const int action)
     {
     case GLFW_PRESS:
        m_lastCursorPos = m_currentCursorPos;
+       m_pCamera->setSpeed(0.0008);
         break;
     case GLFW_RELEASE:
+        m_pCamera->setSpeed(0.008);
+        break;
+    }
+}
+void Game::keyMouseRight(const int action)
+{
+    switch (action)
+    {
+    case GLFW_PRESS:
+        m_lastCursorPos = m_currentCursorPos;
+        m_pCamera->setSpeed(0.08);
+        break;
+    case GLFW_RELEASE:
+        m_pCamera->setSpeed(0.008);
         break;
     }
 }
